@@ -1,0 +1,1623 @@
+import "./modulepreload-polyfill-COaX8i6R.js";
+var SoundMngr = {
+  BARMAN_ZIP_UP: 0,
+  BARMAN_ZIP_DOWN: 1,
+  OH_SUZANNA: 2,
+  GRAB_MUG: 3,
+  THROW_MUG: 4,
+  MUG_FILL1: 5,
+  MUG_FILL2: 6,
+  FULL_MUG: 7,
+  POP_OUT: 8,
+  OUT_DOOR: 9,
+  LAUGHING: 10,
+  GETREADYTOSERVE: 11,
+  YOU_LOSE: 12,
+  COLLECT_TIP: 13,
+  TIP_APPEAR: 14,
+  _audio_channels: new Array(),
+  init: function() {
+  },
+  load: function(sound_id, sound, loadCallBack) {
+    var soundclip = document.createElement("audio");
+    soundclip.src = sound.src;
+    soundclip.autobuffer = true;
+    soundclip.preload = "auto";
+    soundclip.addEventListener(
+      "canplaythrough",
+      function handler(event) {
+        this.removeEventListener("canplaythrough", handler, false);
+        loadCallBack();
+      },
+      false
+    );
+    soundclip.load();
+    this._audio_channels[sound_id] = [soundclip];
+    if (sound.channel > 1) {
+      for (var channel = 1; channel < sound.channel; channel++) {
+        this._audio_channels[sound_id].push(soundclip.cloneNode(true));
+      }
+    }
+  },
+  stop: function(sound_id) {
+    {
+      var sound = this._audio_channels[sound_id];
+      for (var channel_id = sound.length; channel_id--; ) {
+        sound[channel_id].pause();
+      }
+    }
+  },
+  play: function(sound_id, loop) {
+    {
+      var free_channel = 0;
+      var clip = this._audio_channels[sound_id];
+      for (var channel_id = clip.length; channel_id--; ) {
+        if (clip[channel_id].paused || clip[channel_id].ended) {
+          free_channel = channel_id;
+          break;
+        }
+      }
+      clip[free_channel].currentTime = 0;
+      clip[free_channel].loop = loop;
+      clip[free_channel].play();
+    }
+  }
+};
+const loadingTitleImage = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOoAAABoCAMAAADIMpyvAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAYBQTFRF/OjS/uXEk5P8/6Qr/9Wa/5EAk6j90vv8/N25qTg52Kam9tnD/5sVam1tu2Jj4Le3wWdnSEeokwQEoSUmstX9////aXDMxXBw/7lY/8Z0kmKkzIiJ/6kz05WVXTB0nBcY/9qm/uK7+vLyuFlZmTM//8uC/fHm/7NLuej97tbUt/7//71h8dzYrUBCfobi9OTh5cPD/5QFTjqP3bCv68nAlCc4lQgI6szL/8FqjXfS05yd/5YJsEhI4///hpfW9urp9ujlkEBqts7O0JGS+uvhlb386MW+kJKS2ItsZmi38NHEs7Gx//nzjavcrrTOxnt7kRcpvI2N/8+LjwAA0d3dmJqapFtkioS3TEKc/5MDiAsa/64//+/Z+/b4/5kP/48A+O3rq5uzdRxD77eI/6Eh1qCh69DQm0NH0peY/54dmA4Pzo6PtFBRXVix5L68vmtt/9GT58fHw3V3pi8v6MnK6cXFOjo6QT2kyYGC8t/fsMbkmmRykAAA/5IAkgAA////CAUcAwAAAIB0Uk5T/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////wA4BUtnAAAMa0lEQVR42uycj1/aRhvAEyFKKANJTMGKC5FJUKGArJEKVjr13drZuVf2owwEtwErEQGhe9Xu5P3X37vLL0Aqtcre6vJ8LObuniT3vedy9zxPqMR//zFCmKgmqolqopqoJqqJaqKaqCaqiWqimqgm6qeP+p/P7o2MQv36z/l7In9+PQrVkwX3QrKe0aigey8EmKgmqolqopqo15U3HPcHPshwHLcnwQ/uC1ia5rg2rm5wHA1/7XHcT/AXzXF27cwEx6XvEuoPU1MvXn+OjzY2NqbQx8YLWJb4Y/cqg4A2Nn74d7fb3tj4GVYz8iP361+UU/n0xg/rdwh1airkXv1chX4XQj9TD2GZ/+PF8ecI9dupqamv/mCaU1PPVrtdGVWrqF12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";
+const gameTitleImage = "/assets/game_title-D9tTbUbj.png";
+const pregameImage = "/assets/pregame-DVYQT5Ku.png";
+const level1Image = "/assets/level-1-BgzDeRpY.png";
+const barmanImage = "/assets/barman-PKekbaKX.png";
+const beerglassImage = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAgCAMAAABzRoe3AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAADBQTFRF/5ICACdKAJj/304YAo4A/5NBAo0A/5JAlSkA/5EAbW1t/5IAAJn/////AAAA////sNSLjgAAABB0Uk5T////////////////////AOAjXRkAAARhSURBVHjazFiJkuMqDHQYO4kQyP//t08HxgiIk0ztbj2SSU1ZPrql1oGXfboo50xE+/9/LS8IUJbvP4eDf4rALu6fRuBfxQU/JLOM+Mh+LkLzF3HD8M+3BFT72VB6IkZNkkMNX9I4Logxjt7Gb/3+igAV8JrClsne95oa9YT+0rpm+IP5JNKEAfw+CRwBRpX1T1Hu1OYx/3/LORdbDVI1x3bRBH9K4hNGT7Mg1Fhs/BvSrwgQFfj8R1VDJ37DbR+j2dzHQ4oj/kDCQP1P9JIBqZrSryKgEM3HeaKQXOnloqPcqMV5dQiB+J9ERFHPLD9zAhFrWoTwJYGyComRQGenJgrq2lNBPYEUtABEO3WfMUD1PaK5JIXn9xE49ENTAqe+yJS0k4uAS2JPgEjkb8gP7AMDeKKkMupz8QH4CwKHtHOnj9FO2emHnKpTCo6Ax/+KwRYlBoiZ0xhhu8GH3WCZ1UHzcwq+zrQ2Iqh2kvRs4aTkCZT601asfW8PmIYSAIfh9mQiQBaAD+LQEEBYlgUQUFMUS+Fr7SgS5YWyqp2ZBO/PjoCUIAd3nsjJngCRHwJ9h/uIwAK2hAEJ1NAykNvbxxYZMPV/Xxj7HAidu1sGiIdOcMsRJQBPTJs6H7/KAVgQT3BIpo2WQF3Cgkp17AUyEtj7rC5l1y5qQOJ2QwyYQ0iInfdftfjltYfNde/sNiK8IcCV1R/RrGkvwu0JDyYKDD2lzDrq8f/wmjBYLjzMxwJd21PheElAjH0IQvITRWTZpJg4kzkGEcZZ5EfXNYG6FGQBeG0PZKdcEVBbRyAJgQ4NxmfKcvcMOYVhGPkgAn5dEGjt7yMg0u3BprT3qtrjYws5p5QwPxLCPh12/3QOpL5LTSMQy2R4kSaGUO7+PB7hof/UH89klgMHwFdVyNnfVyGy2Y6cy4eJm2PCMQbuxE88G6pct67r/X5IaL2v+q33upDQ0AcGu3YAmzQvJSQh4DOao3G2n5MGxN1Mi3gIxyzKoFfya9VDIwGBWAWCDM/NEjw8qILgsJdOTHriZRUqJfM82tipBmCzvmh+Abwd2xqiO0fA1LNtVOJwxMARoNLDeBZRAn4WgmIhyNjadWqKGgTVZhz6lsVgiv/cDcoQyJ1Y5je9FzaX31eVED3o8RAGq5CypzsJafiUBylS6jZLxMVTeDCBjP00SrrV0ooTxwytiUwT/Do2cP2RTUxiAlDuHOrlRUQPDYEQks+cABp6K5MOBEtUvqCnZex7lX0jle+EQcnnqf4Za+bSGUJk10MeS1QpQEzAV6IJASj/Dbs9MGbKA2Eg0Nx4tquPprI5/oYHEwgcjZIYrpExfto6YXgCUCIwJ3BGaLBrDui2spP7UIviu/dJ3AC4EafJeyUTEb3e0KB5V6sN0KgCqVElQsfetZ03o700kRyYvxmKLyxnL3jzemjWi5e9Y1Cr/ORynYLmdnKbepo/Pn70Pu+blyr+xdabl2vX9ncX/633wv8JMACQqkpAbgFysgAAAABJRU5ErkJggg==";
+const customersImage = "/assets/customers-BPlNYiZk.png";
+const fontImage = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAAAQCAMAAACm24RqAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABhQTFRF2///ttv/krb/tv//kpL/////SUmq////skASswAAAAh0Uk5T/////////wDeg71ZAAAA30lEQVR42tRU0RLDIAjr6ob//8eTZhhQet7ebB56JARMz16PWj8dtcOzsZ/7Z7c57ljeH/mxfUCFXNCqS5dqzPdnv2rwRj9dZOqIndX+/QOWBgyyEmGNheUH1UZuz1JsiyHjAKe9A6/gJ1rM7QO+GmBkNdeAXZJpys3JCbtCVUwn99M8KfbJnxDwbICVla9R8SNXjiWozgD2bTLbD2+m2lby/QO+A9TqeWQzF/mX69Fzfe/fP6C34BJXB4x+XH42n/MYcOV/QkD+GPyvmYpI5LOfU+N8zk2JLPdvH/ArwAAqqzCJKEWtwAAAAABJRU5ErkJggg==";
+const miscImage = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAQCAMAAABA3o1rAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABhQTFRF/yYAAJj//28A/3AA/yUAAJn/////////Rm4mhgAAAAh0Uk5T/////////wDeg71ZAAAAXElEQVR42ozRUQrAMAgDUF0Tvf+NV5T9NXZC8MNHwWp5KfsJIugdDRjhFIAEIjpH4D4CMhOAoeoEvABmYBPg5YXeYq2OAFbDR4HdariRCYAPQB6rP2K4pgKvAAMA2xcMOn0svR4AAAAASUVORK5CYII=";
+const zipUpSound = "/assets/zip_up-NopGOQDR.mp3";
+const zipDownSound = "/assets/zip_down-aDPrgcc0.mp3";
+const ohSuzannaSound = "/assets/oh_suzanna-pQz6tSne.mp3";
+const grabMugSound = "data:audio/mpeg;base64,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";
+const throwMugSound = "/assets/throw_mug-6SArNzig.mp3";
+const mugFill1Sound = "data:audio/mpeg;base64,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";
+const mugFill2Sound = "data:audio/mpeg;base64,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";
+const fullMugSound = "/assets/full_mug-DLzgtZ5V.mp3";
+const popOutSound = "data:audio/mpeg;base64,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";
+const outDoorSound = "/assets/out_door-BVaAh28T.mp3";
+const laughingSound = "/assets/laughing-DXZk7KY9.mp3";
+const getReadyToServeSound = "/assets/get_ready_to_serve-GrFq-ynX.mp3";
+const youLoseSound = "/assets/you_lose-fy4sl49c.mp3";
+const collectTipSound = "/assets/collect_tip-CfGCPipc.mp3";
+const tipAppearSound = "/assets/tip_appear-D_SVu7xV.mp3";
+var g_imageData = [
+  { name: "game_title", src: gameTitleImage },
+  { name: "pregame", src: pregameImage },
+  { name: "level-1", src: level1Image },
+  { name: "barman", src: barmanImage },
+  { name: "beerglass", src: beerglassImage },
+  { name: "customers", src: customersImage },
+  { name: "font", src: fontImage },
+  { name: "misc", src: miscImage }
+];
+var g_soundData = [
+  { name: "zip_up", src: zipUpSound, channel: 4 },
+  // 0
+  { name: "zip_down", src: zipDownSound, channel: 4 },
+  // 1
+  { name: "oh_suzanna", src: ohSuzannaSound, channel: 1 },
+  // 2
+  { name: "grab_mug", src: grabMugSound, channel: 2 },
+  // 3
+  { name: "throw_mug", src: throwMugSound, channel: 4 },
+  // 4
+  { name: "mug_fill1", src: mugFill1Sound, channel: 2 },
+  // 5
+  { name: "mug_fill2", src: mugFill2Sound, channel: 2 },
+  // 6
+  { name: "full_mug", src: fullMugSound, channel: 1 },
+  // 7
+  { name: "pop_out", src: popOutSound, channel: 4 },
+  // 8
+  { name: "out_door", src: outDoorSound, channel: 4 },
+  // 9
+  { name: "laughing", src: laughingSound, channel: 1 },
+  // 10
+  {
+    name: "get_ready_to_serve",
+    src: getReadyToServeSound,
+    channel: 1
+  },
+  // 11
+  { name: "you_lose", src: youLoseSound, channel: 1 },
+  // 12
+  { name: "collect_tip", src: collectTipSound, channel: 1 },
+  // 13
+  { name: "tip_appear", src: tipAppearSound, channel: 1 }
+  // 14
+];
+var RessourceMngr = {
+  imageList: null,
+  loadCount: 0,
+  loadingscreenLogo: null,
+  loadingTitleName: loadingTitleImage,
+  logoWidth: 234,
+  logoHeight: 104,
+  ressourceCount: 0,
+  _loadedCallBack: void 0,
+  checkLoadStatus: function() {
+    if (RessourceMngr.loadCount == RessourceMngr.ressourceCount) {
+      RessourceMngr._loadedCallBack();
+    } else {
+      setTimeout(() => RessourceMngr.checkLoadStatus(), 100);
+    }
+  },
+  loadAllRessources: function(loadCallBack) {
+    RessourceMngr.ressourceCount = RessourceMngr.preloadImages(g_imageData);
+    RessourceMngr.ressourceCount += RessourceMngr.preLoadSounds(g_soundData);
+    RessourceMngr._loadedCallBack = loadCallBack;
+    setTimeout(() => RessourceMngr.checkLoadStatus(), 100);
+  },
+  ressourceLoaded: function() {
+    RessourceMngr.loadCount++;
+  },
+  preloadImages: function(images) {
+    this.imageList = new Array();
+    for (var i = 0; i < images.length; i++) {
+      var newImage = new Image();
+      this.imageList.push(images[i].name);
+      newImage.src = images[i].src;
+      newImage.onLoad = RessourceMngr.ressourceLoaded();
+      this.imageList[images[i].name] = newImage;
+    }
+    return images.length;
+  },
+  preLoadSounds: function(soundData) {
+    for (var i = 0; i < soundData.length; ++i) {
+      SoundMngr.load(i, soundData[i], RessourceMngr.ressourceLoaded);
+    }
+    return soundData.length;
+  },
+  displayLoadingScreen: function(context) {
+    this.loadingscreenLogo = new Image();
+    this.loadingscreenLogo.src = this.loadingTitleName;
+    context.fillStyle = "black";
+    context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+    context.fill();
+    context.drawImage(
+      this.loadingscreenLogo,
+      (context.canvas.width - this.logoWidth) / 2,
+      (context.canvas.height - this.logoHeight) / 2
+    );
+    var percent = RessourceMngr.loadCount / RessourceMngr.ressourceCount;
+    var width = Math.floor(percent * context.canvas.width);
+    context.strokeStyle = "gray";
+    context.strokeRect(0, 299, context.canvas.width, 20);
+    context.fillStyle = "gray";
+    context.fillRect(0, 299, width, 20);
+    context.fillStyle = "white";
+    context.font = "bold 14px Courier";
+    context.textBaseline = "top";
+    context.fillText("Loading...", 218, 300);
+  },
+  getImageRessource: function(name) {
+    return this.imageList[name];
+  }
+};
+var LevelManager = {
+  NUM_LEVEL: 1,
+  MAX_LIFE: 3,
+  TIME_COUNTER_MAX: 60,
+  // every max counter we increase the difficulty
+  row_lbound: [null, 120, 88, 56, 24],
+  row_rbound: [null, 304, 334, 368, 400],
+  row_ypos: [null, 80, 176, 272, 368],
+  _imageLevel: [2],
+  _currentLevel: 1,
+  _score: 0,
+  _life: 0,
+  _difficulty: 1,
+  _wave: 1,
+  // to manage the "wave of incoming customer
+  _lastrow: -1,
+  _timecounter: 0,
+  _time_step: 3,
+  // secondes
+  _fontImage: null,
+  _miscImage: null,
+  _gameTitleImage: null,
+  _readyToPlayImage: null,
+  _gameTitlelogoWidth: 416,
+  _gameTitlelogoHeigth: 160,
+  _copyright1: "Based on the Original Tapper Game",
+  _copyright2: "(c) 1983 Bally Midway MFG",
+  _gameOver: "GAME OVER !",
+  LIFE_ICON_OFF: 0,
+  // offset of the life icon
+  ICON_SIZE: 16,
+  // sprite size of the font
+  FONT_Y_OFF: 0,
+  // y offset of the font
+  FONT_NUM_OFF: 0,
+  // numerical offset
+  FONT_SIZE: 16,
+  // sprite size of the font
+  _SCORE_XPOS: 100,
+  _SCORE_YPOS: 8,
+  _LIFE_YPOS: 24,
+  _DIFF_XPOS: 376,
+  // SCORE TABLE :
+  SCORE_BONUS: 1500,
+  SCORE_EMPTY_BEER: 100,
+  SCORE_CUSTOMER: 50,
+  init: function() {
+    this._gameTitleImage = RessourceMngr.getImageRessource("game_title");
+    this._readyToPlayImage = RessourceMngr.getImageRessource("pregame");
+    this._imageLevel[1] = RessourceMngr.getImageRessource("level-1");
+    this._fontImage = RessourceMngr.getImageRessource("font");
+    this._miscImage = RessourceMngr.getImageRessource("misc");
+    this._currentLevel = 1;
+    this._score = 0;
+    this._life = this.MAX_LIFE;
+    this._difficulty = 1;
+    this._wave = 1;
+    this._timecounter = 0;
+  },
+  addCustomer: function() {
+    if (g_game_state == g_STATE_PLAY) {
+      if (Customers.isAnyCustomer() < 2) {
+        if (this._wave++ == this._difficulty * 2) this._difficulty++;
+        for (var i = 1; i <= this._difficulty; i++) {
+          Customers.add(1, i, Customers.CUST_GREEN_HAT_COWBOY);
+          Customers.add(2, i, Customers.CUST_WOMEM);
+          Customers.add(3, i, Customers.CUST_BLACK_GUY);
+          Customers.add(4, i, Customers.CUST_GRAY_HAT_COWBOY);
+          SoundMngr.play(SoundMngr.POP_OUT, false);
+        }
+      } else {
+        var randomrow = Math.floor(Math.random() * 5);
+        if (randomrow != 0 && randomrow != this._lastrow) {
+          var randomcusttype = Math.floor(
+            Math.random() * Customers.MAX_CUSTOMER_TYPE
+          );
+          Customers.add(randomrow, 1, randomcusttype);
+          SoundMngr.play(SoundMngr.POP_OUT, false);
+          this._lastrow = randomrow;
+        }
+      }
+      setTimeout(() => LevelManager.addCustomer(), this._time_step * 1e3);
+    }
+  },
+  addScore: function(points) {
+    this._score += points;
+  },
+  lifeLost: function(type) {
+    this._life -= 1;
+  },
+  displayScore: function(context) {
+    var scoreText = "" + this._score;
+    var xpos = this._SCORE_XPOS;
+    var offset;
+    for (var i = scoreText.length; i--; ) {
+      offset = scoreText.charAt(i) * this.FONT_SIZE + this.FONT_NUM_OFF;
+      context.drawImage(
+        this._fontImage,
+        offset,
+        this.FONT_Y_OFF,
+        this.FONT_SIZE,
+        this.FONT_SIZE,
+        xpos,
+        this._SCORE_YPOS,
+        this.FONT_SIZE,
+        this.FONT_SIZE
+      );
+      xpos -= this.FONT_SIZE;
+    }
+  },
+  displayDifficulty: function(context) {
+    var diffText = "" + this._difficulty;
+    var xpos = this._DIFF_XPOS;
+    var offset;
+    for (var i = diffText.length; i--; ) {
+      offset = diffText.charAt(i) * this.FONT_SIZE + this.FONT_NUM_OFF;
+      context.drawImage(
+        this._fontImage,
+        offset,
+        this.FONT_Y_OFF,
+        this.FONT_SIZE,
+        this.FONT_SIZE,
+        xpos,
+        this._SCORE_YPOS,
+        // aligned on the score y pos
+        this.FONT_SIZE,
+        this.FONT_SIZE
+      );
+      xpos -= this.FONT_SIZE;
+    }
+  },
+  displayLife: function(context) {
+    var xpos = this._SCORE_XPOS;
+    if (this._life <= 0) return;
+    for (var i = this._life; i--; ) {
+      context.drawImage(
+        this._miscImage,
+        this.LIFE_ICON_OFF,
+        0,
+        this.ICON_SIZE,
+        this.ICON_SIZE,
+        xpos,
+        this._LIFE_YPOS,
+        this.ICON_SIZE,
+        this.ICON_SIZE
+      );
+      xpos -= this.FONT_SIZE;
+    }
+  },
+  displayGameTitle: function(context) {
+    context.fillStyle = "rgb(0,0,0)";
+    context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+    context.fill();
+    context.drawImage(
+      this._gameTitleImage,
+      (context.canvas.width - this._gameTitlelogoWidth) / 2,
+      280 - this._gameTitlelogoHeigth
+    );
+    context.fillStyle = "rgb(255,255,255)";
+    context.font = "bold 14px Courier";
+    context.textBaseline = "top";
+    context.fillText(this._copyright1, 122, 290);
+    context.fillText(this._copyright2, 154, 310);
+    context.fillText("Press [ENTER] to play", 172, 400);
+  },
+  displayReadyToPlay: function(context) {
+    context.drawImage(this._readyToPlayImage, 0, 0);
+  },
+  displayGameOver: function(context) {
+    context.fillStyle = "rgb(0,0,0)";
+    context.fillRect(
+      (context.canvas.width - 180) / 2,
+      (context.canvas.height - 32) / 2,
+      180,
+      32
+    );
+    context.fill();
+    context.fillStyle = "rgb(255,255,255)";
+    context.font = "bold 14px Courier";
+    context.textBaseline = "top";
+    context.fillText(
+      this._gameOver,
+      (context.canvas.width - 180) / 2 + 48,
+      (context.canvas.height - 32) / 2 + 8
+    );
+  },
+  reset: function() {
+    for (var i = 1; i <= this._difficulty; i++) {
+      Customers.add(1, i, Customers.CUST_GREEN_HAT_COWBOY);
+      Customers.add(2, i, Customers.CUST_WOMEM);
+      Customers.add(3, i, Customers.CUST_BLACK_GUY);
+      Customers.add(4, i, Customers.CUST_GRAY_HAT_COWBOY);
+    }
+    this._lastrow = -1;
+    setTimeout(() => LevelManager.addCustomer(), this._time_step * 1e3);
+  },
+  newGame: function() {
+    this._currentLevel = 1;
+    this._score = 0;
+    this._life = this.MAX_LIFE;
+    this._difficulty = 1;
+    this._wave = 1;
+    this._timecounter = 0;
+    this._lastrow = -1;
+  },
+  drawGameHUD: function(context) {
+    LevelManager.displayScore(context);
+    LevelManager.displayLife(context);
+    LevelManager.displayDifficulty(context);
+  },
+  drawLevelBackground: function(context) {
+    var bgimage = this._imageLevel[this._currentLevel];
+    context.drawImage(bgimage, 0, 0);
+  }
+};
+function Glass(row, default_xpos, default_ypos, type) {
+  var glassObj = {
+    sprite: Beerglass.SPRITE_FULL_1,
+    xpos: default_xpos,
+    ypos: default_ypos,
+    row,
+    type,
+    // FULL / EMPTY MUG
+    l_bound: LevelManager.row_lbound[row] - 4,
+    r_bound: LevelManager.row_rbound[row] + 16,
+    fpscount: 0,
+    fpsmax: g_FPS >> 1,
+    broken: false,
+    update: function() {
+      if (type == Beerglass.FULL_MUG) {
+        if (this.fpscount++ > this.fpsmax) {
+          this.sprite = this.sprite == Beerglass.SPRITE_FULL_1 ? Beerglass.SPRITE_FULL_2 : Beerglass.SPRITE_FULL_1;
+          this.fpscount = 0;
+        }
+        if (this.xpos > this.l_bound) this.xpos -= Beerglass.STEP;
+        else {
+          this.broken = true;
+          this.sprite = Beerglass.SPRITE_BROKEN;
+        }
+      } else {
+        this.sprite = Beerglass.SPRITE_EMPTY_1;
+        if (this.xpos < this.r_bound)
+          this.xpos += Customers.STEP;
+        else {
+          this.broken = true;
+          this.sprite = Beerglass.SPRITE_FALLING;
+          this.xpos += 16;
+          this.ypos += Beerglass._spriteheight;
+        }
+      }
+    }
+  };
+  return glassObj;
+}
+var Beerglass = {
+  //
+  SPRITE_FULL_1: 0,
+  SPRITE_FULL_2: 32,
+  SPRITE_EMPTY_1: 64,
+  SPRITE_FALLING: 96,
+  // falling image
+  SPRITE_BROKEN: 128,
+  // falling image
+  STEP: 4,
+  // moving speed
+  FULL_MUG: 0,
+  EMPTY_MUG: 1,
+  _spritewidth: 32,
+  _spriteheight: 32,
+  isOneFullGlassBroken: false,
+  isOneEmptyGlassBroken: false,
+  // define the ypos position of our beer
+  //_row_ypos:				[null,  88, 184, 280, 376],
+  _glasses_full: new Array(),
+  // [row, Glass Obj]
+  _glasses_empty: new Array(),
+  // [row, Glass Obj]
+  _spriteimage: null,
+  /* ---
+  
+  Initialize required stuff...
+  ---									*/
+  init: function() {
+    this._spriteimage = RessourceMngr.getImageRessource("beerglass");
+  },
+  /* ---
+  
+  	to be called before each new game
+  	
+  	---										*/
+  reset: function() {
+    for (var count = 1; count < 5; count++) {
+      this._glasses_full[count] = [];
+      this._glasses_empty[count] = [];
+    }
+    this.isOneFullGlassBroken = false;
+    this.isOneEmptyGlassBroken = false;
+  },
+  /* ---
+  
+  	add a new glass
+  	
+  	row where the beer is thrown
+  	type (full / empty)
+  	---										*/
+  add: function(row, xpos, type) {
+    var glass = new Glass(row, xpos, LevelManager.row_ypos[row] + 8, type);
+    if (type == Beerglass.FULL_MUG) this._glasses_full[row].push(glass);
+    else this._glasses_empty[row].push(glass);
+  },
+  /* ---
+  
+  	Stop the beer (live lost)
+  	
+  	---										*/
+  stop: function() {
+  },
+  /* ---
+  
+  	check for collision with customers
+  	
+  	return true if we meet one :)
+  	
+  	---										*/
+  checkCustomerCollision: function(glass, row) {
+    var cust_pos = Customers.getFirstCustomerPos(row) + 24;
+    if (glass.xpos <= cust_pos) {
+      return Customers.beerCollisionDetected(row);
+    }
+    return false;
+  },
+  /* ---
+  
+  	check for collision with customers
+  	
+  	return true if we meet one :)
+  	
+  	---										*/
+  checkPlayerCollision: function(glass, row) {
+    if (Player._currentrow == row && glass.xpos + this._spritewidth >= Player._player_xpos) {
+      SoundMngr.play(SoundMngr.GRAB_MUG, false);
+      LevelManager.addScore(LevelManager.SCORE_EMPTY_BEER);
+      return true;
+    }
+    return false;
+  },
+  /* ---
+  
+  draw the beer glass(es) in the specified canvas context
+  return >0 if a beer fall at the end of a row
+  
+  ---														*/
+  draw: function(context) {
+    var ret = 0;
+    ret += Beerglass.drawFullMug(context, 1);
+    ret += Beerglass.drawEmptyMug(context, 1);
+    ret += Beerglass.drawFullMug(context, 2);
+    ret += Beerglass.drawEmptyMug(context, 2);
+    ret += Beerglass.drawFullMug(context, 3);
+    ret += Beerglass.drawEmptyMug(context, 3);
+    ret += Beerglass.drawFullMug(context, 4);
+    ret += Beerglass.drawEmptyMug(context, 4);
+    return ret;
+  },
+  /* ---
+  
+  draw the full beer glass(es) in the specified canvas context
+  return the current row if a beer fall at the end of a row
+  
+  ---														*/
+  drawFullMug: function(context, rowcount) {
+    var glass;
+    var ret = 0;
+    var collision = false;
+    var glassArrayCopy;
+    glassArrayCopy = this._glasses_full[rowcount].slice();
+    for (var i = this._glasses_full[rowcount].length; i--; ) {
+      glass = this._glasses_full[rowcount][i];
+      if (!this.isOneFullGlassBroken && g_game_state == g_STATE_PLAY) {
+        glass.update();
+        if (glass.broken) {
+          if (!this.isOneFullGlassBroken) {
+            this.isOneFullGlassBroken = true;
+            LevelManager.lifeLost();
+            ret = rowcount;
+          }
+        } else {
+          collision = Beerglass.checkCustomerCollision(glass, rowcount);
+        }
+      }
+      if (collision) {
+        glassArrayCopy.splice(i, 1);
+      } else {
+        context.drawImage(
+          this._spriteimage,
+          glass.sprite,
+          0,
+          this._spritewidth,
+          this._spriteheight,
+          glass.xpos,
+          glass.ypos,
+          this._spritewidth,
+          this._spriteheight
+        );
+      }
+    }
+    if (collision) {
+      this._glasses_full[rowcount] = glassArrayCopy.slice();
+    }
+    return ret;
+  },
+  /* ---
+  
+  draw the empty beer glass(es) in the specified canvas context
+  return the current row if a beer fall at the end of the row
+  
+  ---														*/
+  drawEmptyMug: function(context, rowcount) {
+    var glass;
+    var ret = 0;
+    var collision = false;
+    var glassArrayCopy;
+    glassArrayCopy = this._glasses_empty[rowcount].slice();
+    for (var i = this._glasses_empty[rowcount].length; i--; ) {
+      glass = this._glasses_empty[rowcount][i];
+      if (!this.isOneEmptyGlassBroken && g_game_state == g_STATE_PLAY) {
+        glass.update();
+        if (glass.broken) {
+          if (!this.isOneEmptyGlassBroken) {
+            this.isOneEmptyGlassBroken = true;
+            LevelManager.lifeLost();
+            ret = rowcount;
+          }
+        } else {
+          collision = Beerglass.checkPlayerCollision(glass, rowcount);
+        }
+      }
+      if (collision) {
+        glassArrayCopy.splice(i, 1);
+      } else {
+        context.drawImage(
+          this._spriteimage,
+          glass.sprite,
+          0,
+          this._spritewidth,
+          this._spriteheight,
+          glass.xpos,
+          glass.ypos,
+          this._spritewidth,
+          this._spriteheight
+        );
+      }
+    }
+    if (collision) {
+      this._glasses_empty[rowcount] = glassArrayCopy.slice();
+    }
+    return ret;
+  }
+};
+function oneCustomer(row, default_xpos, movingPattern, type) {
+  var CustomerObj = {
+    STATE_WAIT: 0,
+    STATE_CATCH: 1,
+    STATE_DRINK: 2,
+    STEP: Customers.STEP,
+    state: 0,
+    type,
+    sprite: 0,
+    sprite2: 0,
+    movingPattern,
+    animationCounter: -1,
+    xpos: default_xpos,
+    ypos: LevelManager.row_ypos[row],
+    ypos2: LevelManager.row_ypos[row],
+    row,
+    l_bound: LevelManager.row_lbound[row],
+    r_bound: LevelManager.row_rbound[row],
+    fpscount: 0,
+    fpsmax: g_FPS >> 3,
+    newxpos: 0,
+    EndOfRow: false,
+    isOut: false,
+    update: function() {
+      switch (this.state) {
+        case this.STATE_WAIT: {
+          if (this.fpscount++ > this.fpsmax) {
+            this.animationCounter++;
+            this.sprite = this.movingPattern[this.animationCounter] << 5;
+            if (this.animationCounter == this.movingPattern.length)
+              this.animationCounter = -1;
+            this.fpscount = 0;
+          }
+          if (this.movingPattern[this.animationCounter] < 2) {
+            if (this.xpos < this.r_bound) this.xpos += this.STEP;
+            else this.EndOfRow = true;
+          }
+          break;
+        }
+        case this.STATE_CATCH: {
+          this.xpos -= this.STEP * 2;
+          if (this.xpos < this.l_bound) {
+            this.isOut = true;
+          } else if (this.xpos < this.newxpos) {
+            this.fpscount = 0;
+            this.animationCounter = 0;
+            this.state = this.STATE_DRINK;
+            this.sprite = Customers.DRINKING_BEER_1 << 5;
+            this.sprite2 = Customers.DRINKING_BEER_2 << 5;
+            this.ypos2 = this.ypos;
+          }
+          break;
+        }
+        case this.STATE_DRINK: {
+          if (this.fpscount++ > this.fpsmax) {
+            this.animationCounter++;
+            this.fpscount = 0;
+          }
+          if (this.animationCounter == 3) {
+            this.state = this.STATE_WAIT;
+            this.animationCounter = -1;
+            this.fpscount = 0;
+            this.sprite = this.movingPattern[0] << 5;
+            Beerglass.add(
+              this.row,
+              this.xpos + Customers._spritewidth,
+              Beerglass.EMPTY_MUG
+            );
+            Customers.checkBonus(this.row, this.xpos);
+          }
+          break;
+        }
+      }
+    },
+    catchBeer: function() {
+      this.newxpos = this.xpos - (this.r_bound - this.l_bound) / 5 * 2;
+      this.state = this.STATE_CATCH;
+      this.sprite = Customers.HOLDING_BEER_1 << 5;
+      this.sprite2 = Customers.HOLDING_BEER_2 << 5;
+      this.ypos2 = this.ypos + 8;
+    }
+  };
+  return CustomerObj;
+}
+var Customers = {
+  STEP: 1,
+  CUST_GREEN_HAT_COWBOY: 0,
+  CUST_WOMEM: 1,
+  CUST_BLACK_GUY: 2,
+  CUST_GRAY_HAT_COWBOY: 3,
+  MAX_CUSTOMER_TYPE: 4,
+  REGULAR_1: 0,
+  REGULAR_2: 1,
+  ANGRY_1: 2,
+  ANGRY_2: 3,
+  HOLDING_BEER_1: 4,
+  HOLDING_BEER_2: 7,
+  DRINKING_BEER_1: 5,
+  DRINKING_BEER_2: 8,
+  BONUS_OFF: 5,
+  _cust_y_offset: [0, 32, 64, 96],
+  _movingPatternArray: [
+    null,
+    // no row 0
+    [0, 1, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3],
+    // row 1
+    [0, 1, 0, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3],
+    // row 2
+    [0, 1, 0, 2, 3, 2, 3, 2, 3],
+    // row 3
+    [0, 1, 0, 1, 2, 3, 2, 3]
+    // row 4
+  ],
+  _customerxpos: [5],
+  _maxpos: [5],
+  _customersList: new Array(),
+  // [row, Cust Obj]
+  _endOfTheRowCustomer: null,
+  _spriteimage: null,
+  _miscImage: null,
+  _spritewidth: 32,
+  _spriteheight: 32,
+  _bonus: {
+    visible: false,
+    timeout: 10 * 1e3,
+    // 10ms
+    timeout_reached: true,
+    row: 1,
+    xpos: 100
+  },
+  init: function() {
+    this._spriteimage = RessourceMngr.getImageRessource("customers");
+    this._miscImage = RessourceMngr.getImageRessource("beerglass");
+  },
+  reset: function() {
+    for (var count = 1; count < 5; count++) {
+      this._customersList[count] = [];
+      this._customerxpos[count] = -1;
+    }
+    this.oneReachEndOfRow = false;
+    this._endOfTheRowCustomer = false;
+    this._bonus.visible = false;
+  },
+  add: function(row, pos, type) {
+    var cust = new oneCustomer(
+      row,
+      LevelManager.row_lbound[row],
+      this._movingPatternArray[row],
+      type
+    );
+    cust.xpos += (pos - 1) * this._spritewidth;
+    this._customersList[row].push(cust);
+  },
+  checkBonus: function(row, customerxpos) {
+    if (!this._bonus.visible && this._bonus.timeout_reached) {
+      if (customerxpos < LevelManager.row_lbound[row] + (LevelManager.row_rbound[row] - LevelManager.row_lbound[row]) / 3) {
+        var randomrow = Math.floor(Math.random() * 6);
+        if (randomrow == row) {
+          this._bonus.visible = true;
+          this._bonus.row = row;
+          this._bonus.xpos = customerxpos;
+          this._bonus.ypos = LevelManager.row_ypos[row] + 16;
+          this._bonus.timeout_reached = false;
+          setTimeout(
+            "Customers._bonus.visible = false; Customers._bonus.timeout_reached = true",
+            this._bonus.timeout
+          );
+          SoundMngr.play(SoundMngr.TIP_APPEAR, false);
+        }
+      }
+    }
+  },
+  checkBonusCollision: function(row, xpos) {
+    if (this._bonus.visible && this._bonus.row == row && xpos <= this._bonus.xpos + this._spritewidth) {
+      this._bonus.visible = false;
+      LevelManager.addScore(LevelManager.SCORE_BONUS);
+      SoundMngr.play(SoundMngr.COLLECT_TIP, false);
+    }
+  },
+  drawBonus: function(context) {
+    if (this._bonus.visible) {
+      context.drawImage(
+        this._miscImage,
+        this.BONUS_OFF << 5,
+        0,
+        this._spritewidth,
+        this._spriteheight,
+        this._bonus.xpos,
+        this._bonus.ypos,
+        this._spritewidth,
+        this._spriteheight
+      );
+    }
+  },
+  stop: function() {
+  },
+  getFirstCustomerPos: function(row) {
+    if (this._customerxpos[row] != -1 && this._customersList[row][this._customerxpos[row]])
+      return this._customersList[row][this._customerxpos[row]].xpos;
+  },
+  beerCollisionDetected: function(row) {
+    if (this._customersList[row][this._customerxpos[row]].state == 0) {
+      this._customersList[row][this._customerxpos[row]].catchBeer();
+      return true;
+    } else return false;
+  },
+  isAnyCustomer: function() {
+    return this._customersList[1].length + this._customersList[2].length + this._customersList[3].length + this._customersList[4].length;
+  },
+  draw: function(context) {
+    var cust;
+    var ret = 0;
+    var custArrayCopy = null;
+    var copyFlag = false;
+    this._customerxpos = [-1, -1, -1, -1, -1];
+    this._maxpos = [0, 0, 0, 0, 0];
+    for (var rowcount = 1; rowcount < 5; rowcount++) {
+      custArrayCopy = this._customersList[rowcount].slice();
+      for (var i = this._customersList[rowcount].length; i--; ) {
+        cust = this._customersList[rowcount][i];
+        if (!this.oneReachEndOfRow && g_game_state == g_STATE_PLAY) {
+          cust.update();
+          if (cust.isOut) {
+            custArrayCopy.splice(i, 1);
+            copyFlag = true;
+            SoundMngr.play(SoundMngr.OUT_DOOR, false);
+            LevelManager.addScore(LevelManager.SCORE_CUSTOMER);
+            continue;
+          } else {
+            if (cust.xpos > this._maxpos[rowcount] && cust.state == cust.STATE_WAIT) {
+              this._customerxpos[rowcount] = i;
+              this._maxpos[rowcount] = cust.xpos;
+            }
+          }
+        }
+        if (cust.EndOfRow && this.oneReachEndOfRow == false) {
+          this.oneReachEndOfRow = true;
+          this._endOfTheRowCustomer = cust;
+          LevelManager.lifeLost();
+          ret = rowcount;
+        }
+        context.drawImage(
+          this._spriteimage,
+          cust.sprite,
+          this._cust_y_offset[cust.type],
+          this._spritewidth,
+          this._spriteheight,
+          cust.xpos,
+          cust.ypos,
+          this._spritewidth,
+          this._spriteheight
+        );
+        if (cust.state != cust.STATE_WAIT) {
+          context.drawImage(
+            this._spriteimage,
+            cust.sprite2,
+            this._cust_y_offset[cust.type],
+            this._spritewidth,
+            this._spriteheight,
+            cust.xpos + 32,
+            cust.ypos2,
+            this._spritewidth,
+            this._spriteheight
+          );
+        }
+      }
+      if (copyFlag) {
+        this._customersList[rowcount] = custArrayCopy.slice();
+      }
+    }
+    this.drawBonus(context);
+    return ret;
+  }
+};
+var Player = {
+  STEP: 16,
+  LEFT: 0,
+  RIGHT: 1,
+  UP: 2,
+  DOWN: 3,
+  FIRE: 4,
+  NONE: 6,
+  STAND_L1: 0,
+  STAND_L2: 1,
+  STAND_R1: 8,
+  STAND_R2: 9,
+  RUN_UP_L1: 12,
+  RUN_UP_R1: 13,
+  RUN_DOWN_1: 14,
+  RUN_DOWN_2: 16,
+  RUN_DOWN_3: 18,
+  RUN_DOWN_4: 20,
+  RUN_DOWN_RIGHT_OFF: 8,
+  TAPPER_1: 30,
+  // free
+  TAPPER_2: 31,
+  // hold
+  TAPPER_3: 32,
+  // serve
+  SERVE_UP_1_1: 33,
+  SERVE_UP_1_2: 34,
+  SERVE_DOWN_1: 35,
+  SERVE_UP_2_1: 36,
+  SERVE_UP_2_2: 37,
+  SERVE_DOWN_2: 38,
+  BEER_FILL: [null, 39, 40, 41, 42],
+  SERVING_MAX: 4,
+  LOST_1: 43,
+  LOST_2: 44,
+  // ----- SPRITE TABLE (barman.png) Offset END ----///
+  GO1: 4,
+  GO2: 5,
+  GO3: 6,
+  GO4: 7,
+  // Global Player Variable,
+  _spritewidth: 32,
+  _spriteheight: 32,
+  _spriteshift: 5,
+  // this variable is useless, it's just for me to remember (<<5 = * 32)
+  // bartender sprites
+  _spriteimage: null,
+  // some variable to manage animation
+  _goState: 0,
+  // disapearing image
+  _legState: 0,
+  // leg animation when running
+  _tapperState: 0,
+  // to animate the beertender serving
+  _servingcounter: 0,
+  // to animate the beer serving
+  // hold the default pos when changing row
+  _row_xpos: [null, 336, 368, 400, 432],
+  _row_ypos: [null, 96, 192, 288, 384],
+  // define the row moving limit
+  _row_lbound: [null, 128, 96, 64, 32],
+  _row_rbound: [null, 336, 368, 400, 432],
+  // current player sprite to be displayed
+  _player_action: null,
+  _game_play: false,
+  _currentrow: 2,
+  _lastrow: 0,
+  _lastplayer_xpos: null,
+  _player_goleft: true,
+  _player_running: false,
+  _tapper_serving: false,
+  // default position (at end of the second row)
+  _player_xpos: 336,
+  _player_ypos: 192,
+  fpscount: 0,
+  leg_anim_timing: 20,
+  init: function() {
+    this._spriteimage = RessourceMngr.getImageRessource("barman");
+  },
+  reset: function() {
+    this._currentrow = 2;
+    this._lastrow = 0;
+    this._player_xpos = 336;
+    this._player_ypos = 192;
+    this._player_action = 0;
+    this._goState = this.GO1;
+    this._legState = this.RUN_DOWN_1 - 2;
+    this._tapperState = this.TAPPER_1;
+    this._lastrow = 0;
+    this._player_goleft = true;
+    this._player_running = false;
+    this._game_play = true;
+    this._tapper_serving = false;
+  },
+  lost: function() {
+    this._player_running = false;
+    this._tapper_serving = false;
+    this._game_play = false;
+    this._player_action = this.LOST_1;
+  },
+  setAnimation: function() {
+    if (this.fpscount++ > this.leg_anim_timing && this._game_play) {
+      if (this._player_goleft) {
+        this._player_action = this._player_action == this.STAND_L1 ? this.STAND_L2 : this.STAND_L1;
+      } else {
+        this._player_action = this._player_action == this.STAND_R1 ? this.STAND_R2 : this.STAND_R1;
+      }
+      this.fpscount = 0;
+    }
+  },
+  drawTapper: function(context) {
+    for (var rownum = 1; rownum < 5; rownum++) {
+      if (this._currentrow != rownum || !this._tapper_serving || this._goState != 0) {
+        context.drawImage(
+          this._spriteimage,
+          this.TAPPER_1 << this._spriteshift,
+          0,
+          this._spritewidth,
+          this._spriteheight,
+          this._row_rbound[rownum] + 12,
+          this._row_ypos[rownum] - 24,
+          this._spritewidth,
+          this._spriteheight
+        );
+      } else {
+        context.drawImage(
+          this._spriteimage,
+          this._tapperState << this._spriteshift,
+          0,
+          this._spritewidth,
+          this._spriteheight,
+          this._row_rbound[rownum] + 12,
+          this._row_ypos[rownum] - 30,
+          this._spritewidth,
+          this._spriteheight
+        );
+      }
+    }
+  },
+  drawServing: function(context) {
+    for (var i = 1, count = this._servingcounter + 1; i < count; i++) {
+      context.drawImage(
+        this._spriteimage,
+        this.BEER_FILL[i] << this._spriteshift,
+        0,
+        this._spritewidth,
+        this._spriteheight,
+        this._player_xpos + 12,
+        this._player_ypos + 2,
+        this._spritewidth,
+        this._spriteheight
+      );
+    }
+    if (this._tapperState == this.TAPPER_2) {
+      context.drawImage(
+        this._spriteimage,
+        this.SERVE_UP_1_1 << this._spriteshift,
+        0,
+        this._spritewidth,
+        this._spriteheight,
+        this._player_xpos - 20,
+        this._player_ypos + 2,
+        this._spritewidth,
+        this._spriteheight
+      );
+      context.drawImage(
+        this._spriteimage,
+        this.SERVE_UP_1_2 << this._spriteshift,
+        0,
+        this._spritewidth,
+        this._spriteheight,
+        this._player_xpos + 12,
+        this._player_ypos + 2,
+        this._spritewidth,
+        this._spriteheight
+      );
+      context.drawImage(
+        this._spriteimage,
+        this.SERVE_DOWN_1 << this._spriteshift,
+        0,
+        this._spritewidth,
+        this._spriteheight,
+        this._player_xpos - 20,
+        this._player_ypos + this._spriteheight + 2,
+        this._spritewidth,
+        this._spriteheight
+      );
+    } else {
+      context.drawImage(
+        this._spriteimage,
+        this.SERVE_UP_2_1 << this._spriteshift,
+        0,
+        this._spritewidth,
+        this._spriteheight,
+        this._player_xpos - 20,
+        this._player_ypos + 2,
+        this._spritewidth,
+        this._spriteheight
+      );
+      context.drawImage(
+        this._spriteimage,
+        this.SERVE_UP_2_2 << this._spriteshift,
+        0,
+        this._spritewidth,
+        this._spriteheight,
+        this._player_xpos + 12,
+        this._player_ypos + 2,
+        this._spritewidth,
+        this._spriteheight
+      );
+      context.drawImage(
+        this._spriteimage,
+        this.SERVE_DOWN_2 << this._spriteshift,
+        0,
+        this._spritewidth,
+        this._spriteheight,
+        this._player_xpos - 20,
+        this._player_ypos + this._spriteheight + 2,
+        this._spritewidth,
+        this._spriteheight
+      );
+    }
+  },
+  draw: function(context) {
+    Player.drawTapper(context);
+    if (this._lastrow != 0) {
+      context.drawImage(
+        this._spriteimage,
+        this._goState << this._spriteshift,
+        0,
+        this._spritewidth,
+        this._spriteheight,
+        this._lastplayer_xpos,
+        this._row_ypos[this._lastrow],
+        this._spritewidth,
+        this._spriteheight
+      );
+      this._goState += 1;
+      if (this._goState > this.GO4) {
+        this._goState = 0;
+        this._lastrow = 0;
+        return true;
+      }
+      return false;
+    }
+    if (this._tapper_serving) {
+      Player.drawServing(context);
+      return true;
+    }
+    context.drawImage(
+      this._spriteimage,
+      this._player_action << this._spriteshift,
+      0,
+      this._spritewidth,
+      this._spriteheight,
+      this._player_xpos,
+      this._player_ypos,
+      this._spritewidth,
+      this._spriteheight
+    );
+    if (!this._player_running) {
+      Player.setAnimation();
+      context.drawImage(
+        this._spriteimage,
+        2 + this._player_action << this._spriteshift,
+        0,
+        this._spritewidth,
+        this._spriteheight,
+        this._player_xpos,
+        this._player_ypos + this._spriteheight,
+        this._spritewidth,
+        this._spriteheight
+      );
+    } else {
+      if (this._player_goleft) {
+        context.drawImage(
+          this._spriteimage,
+          this._legState << this._spriteshift,
+          0,
+          this._spritewidth,
+          this._spriteheight,
+          this._player_xpos,
+          this._player_ypos + this._spriteheight,
+          this._spritewidth,
+          this._spriteheight
+        );
+        context.drawImage(
+          this._spriteimage,
+          this._legState + 1 << this._spriteshift,
+          0,
+          this._spritewidth,
+          this._spriteheight,
+          this._player_xpos + this._spriteheight,
+          this._player_ypos + this._spriteheight,
+          this._spritewidth,
+          this._spriteheight
+        );
+      } else {
+        context.drawImage(
+          this._spriteimage,
+          this._legState + this.RUN_DOWN_RIGHT_OFF << this._spriteshift,
+          0,
+          this._spritewidth,
+          this._spriteheight,
+          this._player_xpos,
+          this._player_ypos + this._spriteheight,
+          this._spritewidth,
+          this._spriteheight
+        );
+        context.drawImage(
+          this._spriteimage,
+          this._legState + 1 + this.RUN_DOWN_RIGHT_OFF << this._spriteshift,
+          0,
+          this._spritewidth,
+          this._spriteheight,
+          this._player_xpos - this._spriteheight,
+          this._player_ypos + this._spriteheight,
+          this._spritewidth,
+          this._spriteheight
+        );
+      }
+    }
+    return true;
+  },
+  move: function(direction) {
+    this._player_running = false;
+    switch (direction) {
+      case this.UP: {
+        this._tapper_serving = false;
+        this._lastrow = this._currentrow;
+        this._currentrow -= 1;
+        if (this._currentrow == 0) this._currentrow = 4;
+        this._goState = this.GO1;
+        this._lastplayer_xpos = this._player_xpos;
+        this._player_xpos = this._row_xpos[this._currentrow];
+        this._player_ypos = this._row_ypos[this._currentrow];
+        SoundMngr.play(SoundMngr.BARMAN_ZIP_UP);
+        break;
+      }
+      case this.DOWN: {
+        this._tapper_serving = false;
+        this._lastrow = this._currentrow;
+        this._currentrow += 1;
+        if (this._currentrow == 5) this._currentrow = 1;
+        this._goState = this.GO1;
+        this._lastplayer_xpos = this._player_xpos;
+        this._player_xpos = this._row_xpos[this._currentrow];
+        this._player_ypos = this._row_ypos[this._currentrow];
+        SoundMngr.play(SoundMngr.BARMAN_ZIP_DOWN);
+        break;
+      }
+      case this.LEFT: {
+        this._tapper_serving = false;
+        if (this._player_goleft && this._player_xpos > this._row_lbound[this._currentrow]) {
+          this._player_xpos -= this.STEP;
+          this._player_running = true;
+          this._player_action = this.RUN_UP_L1;
+          this._legState += 2;
+          if (this._legState > this.RUN_DOWN_4)
+            this._legState = this.RUN_DOWN_1;
+          Customers.checkBonusCollision(this._currentrow, this._player_xpos);
+        }
+        this._player_goleft = true;
+        break;
+      }
+      case this.RIGHT: {
+        this._tapper_serving = false;
+        if (!this._player_goleft && this._player_xpos < this._row_rbound[this._currentrow]) {
+          this._player_xpos += this.STEP;
+          this._player_running = true;
+          this._player_action = this.RUN_UP_R1;
+          this._legState += 2;
+          if (this._legState > this.RUN_DOWN_4)
+            this._legState = this.RUN_DOWN_1;
+        }
+        this._player_goleft = false;
+        break;
+      }
+      case this.FIRE: {
+        if (this._player_xpos != this._row_rbound[this._currentrow]) {
+          this._lastrow = this._currentrow;
+          this._goState = this.GO1;
+          this._lastplayer_xpos = this._player_xpos;
+          this._player_xpos = this._row_xpos[this._currentrow];
+        }
+        if (this._tapper_serving == false) this._servingcounter = 0;
+        this._tapper_serving = true;
+        this._tapperState = this.TAPPER_3;
+        if (this._servingcounter < this.SERVING_MAX) {
+          this._servingcounter += 1;
+          switch (this._servingcounter) {
+            case 1:
+              SoundMngr.play(SoundMngr.MUG_FILL1);
+              break;
+            case 2:
+            case 3:
+              SoundMngr.play(SoundMngr.MUG_FILL2);
+              break;
+            case this.SERVING_MAX:
+              SoundMngr.play(SoundMngr.FULL_MUG);
+              break;
+          }
+        }
+        break;
+      }
+      case this.NONE: {
+        if (this._tapper_serving) {
+          this._tapperState = this.TAPPER_2;
+          if (this._servingcounter == this.SERVING_MAX) {
+            this._servingcounter = 0;
+            Beerglass.add(
+              this._currentrow,
+              this._player_xpos - this._spritewidth,
+              Beerglass.FULL_MUG
+            );
+            this._tapper_serving = false;
+            this._player_goleft = false;
+            this._player_action = this.STAND_R1;
+            SoundMngr.play(SoundMngr.THROW_MUG);
+          }
+        } else {
+          if (this._player_goleft) this._player_action = this.STAND_L1;
+          else this._player_action = this.STAND_R1;
+          this._legState = this.RUN_DOWN_1 - 2;
+        }
+        break;
+      }
+    }
+  }
+};
+var System = {
+  canvasSupported: false,
+  canvas: null,
+  context2D: null,
+  backBuffer: null,
+  backBufferContext2D: null,
+  wrapper: null,
+  double_buffering: false,
+  zoom_factor: 1,
+  game_width: 0,
+  game_height: 0,
+  game_width_zoom: 0,
+  game_height_zoom: 0,
+  initVideo: function(wrapperid, game_width, game_height, double_buffering, zoom_factor) {
+    this.game_width = game_width;
+    this.game_height = game_height;
+    this.double_buffering = double_buffering;
+    if (this.double_buffering) {
+      this.zoom_factor = zoom_factor;
+    } else {
+      this.zoom_factor = 1;
+    }
+    this.game_width_zoom = this.game_width * this.zoom_factor;
+    this.game_height_zoom = this.game_height * this.zoom_factor;
+    this.wrapper = document.getElementById(wrapperid);
+    this.canvas = document.createElement("canvas");
+    this.canvas.setAttribute("width", this.game_width_zoom + "px");
+    this.canvas.setAttribute("height", this.game_height_zoom + "px");
+    this.canvas.setAttribute("border", "1px solid black");
+    this.canvas.setAttribute("style", "1background: #fff");
+    this.wrapper.appendChild(this.canvas);
+    if (this.canvas.getContext) {
+      this.canvasSupported = true;
+      this.context2D = this.canvas.getContext("2d");
+      if (this.double_buffering) {
+        this.backBuffer = document.createElement("canvas");
+        this.backBuffer.width = this.game_width;
+        this.backBuffer.height = this.game_height;
+        this.backBufferContext2D = this.backBuffer.getContext("2d");
+      }
+      this.canvasSupported = true;
+    } else {
+      this.canvasSupported = false;
+    }
+    return this.canvasSupported;
+  },
+  getFrameBuffer: function() {
+    if (this.double_buffering) {
+      return this.backBufferContext2D;
+    } else {
+      return this.context2D;
+    }
+  },
+  drawFrameBuffer: function() {
+    if (this.double_buffering) {
+      this.context2D.drawImage(
+        this.backBuffer,
+        0,
+        0,
+        this.backBuffer.width,
+        this.backBuffer.height,
+        0,
+        0,
+        this.game_width_zoom,
+        this.game_height_zoom
+      );
+    }
+  },
+  random: function(min, max) {
+    var ran = Math.floor(Math.random() * (max - min + 1));
+    return ran + min;
+  }
+};
+const g_STATE_PLAY = 0;
+const g_STATE_LIFELOST = 1;
+const g_STATE_MENU = 2;
+const g_STATE_GAMEOVER = 3;
+const g_STATE_READY = 4;
+const g_STATE_LOADING = 5;
+const g_FPS = 60;
+var g_game_state;
+var Game = {
+  _keyPressAllowed: true,
+  _frameBuffer: null,
+  initialize: function() {
+    if (!System.initVideo("tapperJS", 512, 480, false, 1)) {
+      alert(
+        "Sorry but no beer for you, your browser does not support html 5 canvas. Please try with another one!"
+      );
+      return;
+    }
+    this._frameBuffer = System.getFrameBuffer();
+    g_game_state = g_STATE_LOADING;
+    setInterval(function() {
+      Game.onUpdateFrame();
+    }, 1e3 / g_FPS);
+    RessourceMngr.loadAllRessources(Game.loaded);
+  },
+  loaded: function(status) {
+    LevelManager.init();
+    Player.init();
+    Beerglass.init();
+    Customers.init();
+    document.onkeydown = function(e) {
+      Game.onkeypress(e);
+    };
+    document.onkeyup = function(e) {
+      Game.onkeyrelease(e);
+    };
+    g_game_state = g_STATE_MENU;
+  },
+  changeState: function(status) {
+    g_game_state = status;
+  },
+  reset: function() {
+    g_game_state = g_STATE_READY;
+    Player.reset();
+    Beerglass.reset();
+    Customers.reset();
+    LevelManager.reset();
+    SoundMngr.play(SoundMngr.GETREADYTOSERVE, false);
+    setTimeout(() => {
+      Game.changeState(g_STATE_PLAY);
+      SoundMngr.play(SoundMngr.OH_SUZANNA, true);
+    }, 2.5 * 1e3);
+  },
+  lost: function() {
+    Player.lost();
+    Customers.stop();
+    SoundMngr.stop(SoundMngr.OH_SUZANNA);
+    if (LevelManager._life <= 0) {
+      g_game_state = g_STATE_GAMEOVER;
+      SoundMngr.play(SoundMngr.YOU_LOSE, false);
+    } else {
+      g_game_state = g_STATE_LIFELOST;
+      SoundMngr.play(SoundMngr.LAUGHING, false);
+      setTimeout(() => Game.reset(), 3 * 1e3);
+    }
+  },
+  onUpdateFrame: function() {
+    switch (g_game_state) {
+      case g_STATE_LOADING: {
+        RessourceMngr.displayLoadingScreen(this._frameBuffer);
+        break;
+      }
+      case g_STATE_MENU: {
+        LevelManager.displayGameTitle(this._frameBuffer);
+        break;
+      }
+      case g_STATE_READY: {
+        LevelManager.displayReadyToPlay(this._frameBuffer);
+        break;
+      }
+      default:
+        {
+          LevelManager.drawLevelBackground(this._frameBuffer);
+          if (Customers.draw(this._frameBuffer) != 0) {
+            Game.lost();
+          }
+          if (Beerglass.draw(this._frameBuffer) != 0) {
+            Game.lost();
+          }
+          this._keyPressAllowed = Player.draw(this._frameBuffer);
+          LevelManager.drawGameHUD(this._frameBuffer);
+          if (g_game_state == g_STATE_GAMEOVER) {
+            LevelManager.displayGameOver(this._frameBuffer);
+          }
+        }
+        break;
+    }
+    System.drawFrameBuffer();
+  },
+  onkeypress: function(e) {
+    var prevenEvent = false;
+    if (!this._keyPressAllowed) return;
+    switch (e.keyCode) {
+      case 38: {
+        if (g_game_state == g_STATE_PLAY) Player.move(Player.UP);
+        prevenEvent = true;
+        break;
+      }
+      case 40: {
+        if (g_game_state == g_STATE_PLAY) Player.move(Player.DOWN);
+        prevenEvent = true;
+        break;
+      }
+      case 37: {
+        if (g_game_state == g_STATE_PLAY) Player.move(Player.LEFT);
+        prevenEvent = true;
+        break;
+      }
+      case 39: {
+        if (g_game_state == g_STATE_PLAY) Player.move(Player.RIGHT);
+        prevenEvent = true;
+        break;
+      }
+      case 32: {
+        if (g_game_state == g_STATE_PLAY) Player.move(Player.FIRE);
+        prevenEvent = true;
+        break;
+      }
+      case 13: {
+        switch (g_game_state) {
+          case g_STATE_MENU: {
+            LevelManager.newGame();
+            Game.reset();
+            break;
+          }
+          case g_STATE_GAMEOVER: {
+            g_game_state = g_STATE_MENU;
+            break;
+          }
+        }
+        prevenEvent = true;
+        break;
+      }
+    }
+    if (prevenEvent) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+    }
+  },
+  onkeyrelease: function(e) {
+    var prevenEvent = false;
+    if (!this._keyPressAllowed) return;
+    switch (e.keyCode) {
+      case 38:
+      // UP
+      case 40: {
+        prevenEvent = true;
+        break;
+      }
+      case 37: {
+        if (g_game_state == g_STATE_PLAY) Player.move(Player.NONE);
+        prevenEvent = true;
+        break;
+      }
+      case 39: {
+        if (g_game_state == g_STATE_PLAY) Player.move(Player.NONE);
+        prevenEvent = true;
+        break;
+      }
+      case 32: {
+        if (g_game_state == g_STATE_PLAY) Player.move(Player.NONE);
+        prevenEvent = true;
+        break;
+      }
+    }
+    if (prevenEvent) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+    }
+  }
+};
+window.onload = function() {
+  Game.initialize();
+};
