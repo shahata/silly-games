@@ -4,9 +4,9 @@
     <title>angularMemoryGame</title>
     <meta name="viewport" content="width=device-width">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.js"></script>
-    <script type="module" crossorigin src="/assets/memoryGame-BJUHxjoi.js"></script>
-    <link rel="modulepreload" crossorigin href="/assets/modulepreload-polyfill-COaX8i6R.js">
-    <link rel="stylesheet" crossorigin href="/assets/memoryGame-B4OSTsZL.css">
+    <script type="module" crossorigin src="/silly-games/assets/memoryGame-Bq0mwjd_.js"></script>
+    <link rel="modulepreload" crossorigin href="/silly-games/assets/modulepreload-polyfill-COaX8i6R.js">
+    <link rel="stylesheet" crossorigin href="/silly-games/assets/memoryGame-B4OSTsZL.css">
   </head>
   <body>
     <div ng-controller="GameController as gameCtrl">
@@ -16,7 +16,7 @@
         <tr ng-repeat="row in gameCtrl.game.grid">
           <td ng-repeat="tile in row" class="container">
             <div class="card" ng-class="{flipped: tile.flipped}" ng-click="gameCtrl.game.flipTile(tile)">
-              <img class="front" src="/assets/back-Db2KKMtv.png">
+              <img class="front" src="/silly-games/assets/back-Db2KKMtv.png">
               <img class="back" ng-src="{{tile.imageUrl}}">
             </div>
           </td>

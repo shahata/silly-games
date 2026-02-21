@@ -16,16 +16,16 @@ angular.module("angularMemoryGameApp", []);
   }
   angular.module("angularMemoryGameApp").controller("GameController", GameController);
 })();
-const __vite_glob_0_0 = "/assets/8-ball-D_9Vn-GD.png";
-const __vite_glob_0_1 = "/assets/back-Db2KKMtv.png";
-const __vite_glob_0_2 = "/assets/baked-potato-zkIEreom.png";
-const __vite_glob_0_3 = "/assets/dinosaur-CApzIoh4.png";
-const __vite_glob_0_4 = "/assets/kronos-BwsMa8gR.png";
-const __vite_glob_0_5 = "/assets/rocket-4i0xpyYl.png";
-const __vite_glob_0_6 = "/assets/skinny-unicorn-CclFCvvD.png";
-const __vite_glob_0_7 = "/assets/that-guy-C9hGFqb9.png";
-const __vite_glob_0_8 = "/assets/yeoman-BBOISh3g.png";
-const __vite_glob_0_9 = "/assets/zeppelin-D1lQ3B3s.png";
+const __vite_glob_0_0 = "/silly-games/assets/8-ball-D_9Vn-GD.png";
+const __vite_glob_0_1 = "/silly-games/assets/back-Db2KKMtv.png";
+const __vite_glob_0_2 = "/silly-games/assets/baked-potato-zkIEreom.png";
+const __vite_glob_0_3 = "/silly-games/assets/dinosaur-CApzIoh4.png";
+const __vite_glob_0_4 = "/silly-games/assets/kronos-BwsMa8gR.png";
+const __vite_glob_0_5 = "/silly-games/assets/rocket-4i0xpyYl.png";
+const __vite_glob_0_6 = "/silly-games/assets/skinny-unicorn-CclFCvvD.png";
+const __vite_glob_0_7 = "/silly-games/assets/that-guy-C9hGFqb9.png";
+const __vite_glob_0_8 = "/silly-games/assets/yeoman-BBOISh3g.png";
+const __vite_glob_0_9 = "/silly-games/assets/zeppelin-D1lQ3B3s.png";
 (function() {
   function memoryGameFactory() {
     function Tile(title) {
