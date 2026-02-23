@@ -6,6 +6,7 @@ import react from "@vitejs/plugin-react";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
+  base: "/silly-games/",
   build: {
     minify: false,
     rollupOptions: {
