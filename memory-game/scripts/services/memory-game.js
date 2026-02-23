@@ -1,7 +1,6 @@
 "use strict";
 
 (function () {
-  /* @ngInject */
   function memoryGameFactory() {
     function Tile(title) {
       this.title = title;

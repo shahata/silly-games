@@ -1,7 +1,6 @@
 "use strict";
 
 (function () {
-  /* @ngInject */
   function GameController(MemoryGame) {
     var tileNames = [
       "8-ball",
@@ -16,6 +15,8 @@
 
     this.game = new MemoryGame(tileNames);
   }
+
+  GameController.$inject = ["MemoryGame"];
 
   angular
     .module("angularMemoryGameApp")

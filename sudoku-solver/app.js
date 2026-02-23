@@ -35,7 +35,6 @@ class MainController {
   cells;
   $timeout;
 
-  /* @ngInject */
   constructor($timeout) {
     function c(v) {
       return new Cell(v);
@@ -253,5 +252,7 @@ class MainController {
     }
   }
 }
+
+MainController.$inject = ["$timeout"];
 
 angular.module("sodukuApp", []).controller("MainController", MainController);

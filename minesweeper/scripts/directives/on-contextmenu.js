@@ -1,6 +1,6 @@
 "use strict";
 
-angular.module("minesweeperApp").directive("onContextmenu", function ($parse) {
+function onContextmenu($parse) {
   return {
     restrict: "A",
     link: function (scope, element, attrs) {
@@ -13,4 +13,8 @@ angular.module("minesweeperApp").directive("onContextmenu", function ($parse) {
       });
     },
   };
-});
+}
+
+onContextmenu.$inject = ["$parse"];
+
+angular.module("minesweeperApp").directive("onContextmenu", onContextmenu);

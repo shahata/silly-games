@@ -8,7 +8,6 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   base: "/silly-games/",
   build: {
-    minify: false,
     rollupOptions: {
       input: {
         main: resolve(__dirname, "index.html"),
