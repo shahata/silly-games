@@ -17,4 +17,4 @@ function onContextmenu($parse) {
 
 onContextmenu.$inject = ["$parse"];
 
-angular.module("minesweeperApp").directive("onContextmenu", onContextmenu);
+export default onContextmenu;

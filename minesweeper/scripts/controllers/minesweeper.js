@@ -1,6 +1,7 @@
-"use strict";
+import gameState from "../services/game-state.js";
+import Minefield from "../services/minefield.js";
 
-function MinesweeperCtrl($scope, Minefield, gameState, $window) {
+function MinesweeperCtrl($scope, $window) {
   $scope.parameters = {
     rows: 10,
     columns: 10,
@@ -28,6 +29,6 @@ function MinesweeperCtrl($scope, Minefield, gameState, $window) {
   $scope.restart();
 }
 
-MinesweeperCtrl.$inject = ["$scope", "Minefield", "gameState", "$window"];
+MinesweeperCtrl.$inject = ["$scope", "$window"];
 
-angular.module("minesweeperApp").controller("MinesweeperCtrl", MinesweeperCtrl);
+export default MinesweeperCtrl;
