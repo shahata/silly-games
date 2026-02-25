@@ -3,21 +3,130 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
-    <meta name="theme-color" content="#000000">
+    <meta name="theme-color" content="#1a1a2e">
     <title>Silly Games</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: #1a1a2e;
+        font-family: 'Press Start 2P', monospace;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem 1rem;
+        color: #eee;
+        overflow-x: hidden;
+      }
+
+      /* CRT scanline overlay */
+      body::after {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background: repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          rgba(0, 0, 0, 0.15) 2px,
+          rgba(0, 0, 0, 0.15) 4px
+        );
+        pointer-events: none;
+        z-index: 999;
+      }
+
+      h1 {
+        font-size: clamp(1.4rem, 5vw, 2.5rem);
+        text-align: center;
+        margin-bottom: 2.5rem;
+        color: #ff2975;
+        text-shadow:
+          0 0 10px #ff2975,
+          0 0 30px #ff2975,
+          0 0 60px #ff297580;
+        animation: flicker 3s infinite alternate;
+      }
+
+      @keyframes flicker {
+        0%, 95%, 100% { opacity: 1; }
+        96% { opacity: 0.8; }
+        97% { opacity: 1; }
+        98% { opacity: 0.7; }
+      }
+
+      #games {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.2rem;
+        max-width: 700px;
+        width: 100%;
+      }
+
+      .game-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 1.4rem 1rem;
+        font-family: 'Press Start 2P', monospace;
+        font-size: clamp(0.55rem, 1.5vw, 0.8rem);
+        line-height: 1.6;
+        color: #fff;
+        text-decoration: none;
+        border: 3px solid;
+        border-radius: 4px;
+        transition: transform 0.15s, box-shadow 0.15s;
+      }
+
+      .game-btn:nth-child(6n+1) { border-color: #00d4ff; color: #00d4ff; }
+      .game-btn:nth-child(6n+2) { border-color: #ff6ec7; color: #ff6ec7; }
+      .game-btn:nth-child(6n+3) { border-color: #39ff14; color: #39ff14; }
+      .game-btn:nth-child(6n+4) { border-color: #ffe600; color: #ffe600; }
+      .game-btn:nth-child(6n+5) { border-color: #ff4444; color: #ff4444; }
+      .game-btn:nth-child(6n+6) { border-color: #bf5fff; color: #bf5fff; }
+
+      .game-btn:hover {
+        transform: scale(1.06);
+        box-shadow: 0 0 12px currentColor, 0 0 30px currentColor;
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .game-btn:active {
+        transform: scale(0.97);
+      }
+
+      footer {
+        margin-top: auto;
+        padding-top: 3rem;
+        font-size: 0.6rem;
+        color: #555;
+        text-align: center;
+        letter-spacing: 2px;
+      }
+
+      @media (max-width: 480px) {
+        #games {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+    <script type="module" crossorigin src="/silly-games/assets/main-1ma8AloW.js"></script>
+    <link rel="modulepreload" crossorigin href="/silly-games/assets/modulepreload-polyfill-B5Qt9EMX.js">
   </head>
   <body>
-    <a href="15-puzzle/">15 Puzzle</a>
-    <br />
-    <a href="bulls-and-cows/">Bulls and Cows</a>
-    <br />
-    <a href="memory-game/">Memory Game</a>
-    <br />
-    <a href="minesweeper/">Minesweeper</a>
-    <br />
-    <a href="sudoku-solver/">Sudoku Solver</a>
-    <br />
-    <a href="tapper/">Tapper</a>
-    <br />
+    <h1>Silly Games</h1>
+    <div id="games"></div>
+    <footer>Insert Coin To Continue</footer>
+    <template id="game-link">
+      <a class="game-btn"></a>
+    </template>
   </body>
 </html>
