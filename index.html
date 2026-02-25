@@ -7,17 +7,25 @@
     <title>Silly Games</title>
   </head>
   <body>
-    <a href="15-puzzle/">15 Puzzle</a>
-    <br />
-    <a href="bulls-and-cows/">Bulls and Cows</a>
-    <br />
-    <a href="memory-game/">Memory Game</a>
-    <br />
-    <a href="minesweeper/">Minesweeper</a>
-    <br />
-    <a href="sudoku-solver/">Sudoku Solver</a>
-    <br />
-    <a href="tapper/">Tapper</a>
-    <br />
+    <div id="games"></div>
+    <script type="module">
+      const pages = import.meta.glob(
+        ["./*/index.html", "!./dist/**", "!./node_modules/**"],
+        { eager: false }
+      );
+      const names = Object.keys(pages)
+        .map((p) => p.split("/")[1])
+        .sort();
+      const container = document.getElementById("games");
+      for (const name of names) {
+        const title = name
+          .replace(/-/g, " ")
+          .replace(/\b\w/g, (c) => c.toUpperCase());
+        const a = document.createElement("a");
+        a.href = name + "/";
+        a.textContent = title;
+        container.append(a, document.createElement("br"));
+      }
+    </script>
   </body>
 </html>
