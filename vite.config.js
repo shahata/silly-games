@@ -22,6 +22,9 @@ const gameInputs = Object.fromEntries(
 
 export default defineConfig({
   base: "/silly-games/",
+  define: {
+    __GAMES__: JSON.stringify(Object.keys(gameInputs).sort()),
+  },
   build: {
     rollupOptions: {
       input: {
