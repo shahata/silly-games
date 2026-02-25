@@ -1,6 +1,6 @@
 function Tile(title) {
   this.title = title;
-  this.imageUrl = new URL(`../../images/${title}.png`, import.meta.url).href;
+  this.imageUrl = new URL(`../images/${title}.png`, import.meta.url).href;
   this.flipped = false;
 }
 
