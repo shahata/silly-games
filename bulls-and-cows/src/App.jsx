@@ -12,7 +12,7 @@ const Answer = props => <div className="Answer">{props.answer ? props.answer.map
 
 function Game() {
   const [game, setGame] = useState(initGame(10, 4));
-  const getBackground = () => isSolved(game) ? 'green' : getAnswer(game) ? 'red' : '';
+  const getBackground = () => isSolved(game) ? 'rgba(57,255,20,0.2)' : getAnswer(game) ? 'rgba(255,68,68,0.2)' : '';
 
   return (
     <div className="App" style={{ backgroundColor: getBackground() }}>

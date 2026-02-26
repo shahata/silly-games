@@ -1,12 +1,87 @@
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.controls label {
+  font-size: 0.5rem;
+  color: #aaa;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.controls input[type="number"] {
+  width: 60px;
+  padding: 0.3rem 0.4rem;
+  background: rgba(255, 68, 68, 0.1);
+  border: 1px solid rgba(255, 68, 68, 0.4);
+  border-radius: 4px;
+  color: #eee;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  text-align: center;
+}
+
+.controls input[type="submit"] {
+  padding: 0.4rem 1rem;
+  background: rgba(255, 68, 68, 0.15);
+  border: 2px solid rgba(255, 68, 68, 0.5);
+  border-radius: 4px;
+  color: #ff4444;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.controls input[type="submit"]:hover {
+  background: rgba(255, 68, 68, 0.25);
+  box-shadow: 0 0 10px rgba(255, 68, 68, 0.3);
+}
+
+.grid-wrapper {
+  overflow: auto;
+  max-width: 95vw;
+  max-height: 70vh;
+}
+
 #minesweeper {
+  border-collapse: separate;
+  border-spacing: 2px;
+
   td {
-    border: 2px solid black;
-    width: 50px;
-    height: 50px;
+    border: 1px solid rgba(255, 68, 68, 0.3);
+    width: clamp(28px, 6vw, 44px);
+    height: clamp(28px, 6vw, 44px);
     text-align: center;
     user-select: none;
+    font-size: clamp(0.4rem, 1.5vw, 0.65rem);
+    font-family: 'Press Start 2P', monospace;
+    color: #eee;
+    cursor: pointer;
+    transition: background-color 0.15s;
   }
+
   td.covered {
-    background-color: #bbbbbb;
+    background-color: rgba(255, 68, 68, 0.15);
+  }
+
+  td.covered:hover {
+    background-color: rgba(255, 68, 68, 0.3);
+    box-shadow: inset 0 0 8px rgba(255, 68, 68, 0.2);
+  }
+
+  td:not(.covered) {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .cell-flag {
+    color: #ff4444;
+    font-size: clamp(0.35rem, 1.2vw, 0.5rem);
   }
 }

@@ -109,7 +109,7 @@ class MainController {
 
   getStyle(rowIndex, colIndex) {
     function border(side) {
-      return `border-${side}: solid black 3px; `;
+      return `border-${side}: solid var(--neon-accent) 3px; `;
     }
     return (
       (rowIndex % BOX_HEIGHT === 0 ? border("top") : "") +

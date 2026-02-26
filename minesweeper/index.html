@@ -1,28 +1,36 @@
 <!doctype html>
 <html ng-app="minesweeperApp">
   <head>
-    <title>minesweeper</title>
-    <meta name="viewport" content="width=device-width">
+    <title>Minesweeper</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#1a1a2e">
+    <link rel="stylesheet" href="../shared/theme.css">
+    <link rel="stylesheet" href="./styles/main.css">
+    <style>:root { --neon-accent: #ff4444; }</style>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.js"></script>
     <script type="module" src="./scripts/app.js"></script>
   </head>
   <body>
-    <div ng-controller="MinesweeperCtrl">
-      <form ng-submit="restart()">
-        <input ng-model="parameters.rows" type="number">
-        <input ng-model="parameters.columns" type="number">
-        <input ng-model="parameters.mines" type="number">
+    <a class="back-home" href="../">&larr; Home</a>
+    <div class="game-page" ng-controller="MinesweeperCtrl">
+      <form class="controls" ng-submit="restart()">
+        <label>Rows <input ng-model="parameters.rows" type="number"></label>
+        <label>Cols <input ng-model="parameters.columns" type="number"></label>
+        <label>Mines <input ng-model="parameters.mines" type="number"></label>
         <input type="submit" value="Restart">
       </form>
-      <table id="minesweeper">
-        <tr ng-repeat="row in minefield.game">
-          <td ng-repeat="cell in row" ng-click="cell.$reveal()" ng-dblclick="cell.$autoReveal()"
-            on-contextmenu="cell.$flag()" ng-class="{covered: !cell.revealed}">
-            <div class="cell-value" ng-show="cell.revealed">{{cell.$displayValue()}}</div>
-            <div class="cell-flag" ng-show="cell.flagged">Flag</div>
-          </td>
-        </tr>
-      </table>
+      <div class="grid-wrapper">
+        <table id="minesweeper">
+          <tr ng-repeat="row in minefield.game">
+            <td ng-repeat="cell in row" ng-click="cell.$reveal()" ng-dblclick="cell.$autoReveal()"
+              on-contextmenu="cell.$flag()" ng-class="{covered: !cell.revealed}">
+              <div class="cell-value" ng-show="cell.revealed">{{cell.$displayValue()}}</div>
+              <div class="cell-flag" ng-show="cell.flagged">Flag</div>
+            </td>
+          </tr>
+        </table>
+      </div>
     </div>
   </body>
 </html>

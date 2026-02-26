@@ -1,66 +1,54 @@
 body {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
+  font-family: 'Press Start 2P', monospace;
 }
 
 .App {
-  text-align: center;
-}
-
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
-}
-
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
-}
-
-.App-title {
-  font-size: 1.5em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem;
+  min-height: 100vh;
 }
 
 .NewGame {
   user-select: none;
   font-size: 40px;
   cursor: pointer;
-  margin: auto;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  display: block;
+  text-align: center;
+  margin-bottom: 1rem;
 }
 
 table {
-  margin: auto;
-  margin-top: 50px;
   table-layout: fixed;
-  border: 20px solid purple;
+  width: min(85vw, 360px);
+  border: clamp(10px, 3vw, 20px) solid rgba(0, 212, 255, 0.3);
   border-radius: 10px;
-  background-color: tan;
+  background-color: rgba(0, 212, 255, 0.05);
+  border-collapse: separate;
+  border-spacing: 4px;
 }
 
 td {
-  border-radius: 10px;
-  background-color: yellow;
-  border: 1px solid black;
-  width: 80px;
-  height: 80px;
-  font-size: 50px;
+  border-radius: 8px;
+  background-color: rgba(0, 212, 255, 0.15);
+  border: 2px solid rgba(0, 212, 255, 0.4);
+  height: calc((min(85vw, 360px) - 5 * 4px) / 4);
+  font-size: clamp(1.2rem, 5vw, 2rem);
+  font-family: 'Press Start 2P', monospace;
+  color: #00d4ff;
+  text-align: center;
   user-select: none;
+  transition: background-color 0.15s, box-shadow 0.15s;
 }
 
 td.cell {
   cursor: pointer;
+}
+
+td.cell:hover {
+  background-color: rgba(0, 212, 255, 0.25);
+  box-shadow: 0 0 12px rgba(0, 212, 255, 0.4);
 }
 
 td.empty {

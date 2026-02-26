@@ -24,18 +24,18 @@ html {
 }
 
 body {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
+  font-family: 'Press Start 2P', monospace;
 }
 
 .App {
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
+  align-items: center;
   height: 100vh;
   max-height: calc(var(--board-min-height) + var(--circle-size) * 9);
   min-height: calc(var(--board-min-height) + var(--circle-size) * 2);
+  padding-top: 2.5rem;
 }
 
 .Board {
@@ -46,7 +46,8 @@ body {
   max-height: calc(var(--board-min-height) + var(--circle-size) * 7);
   min-height: var(--board-min-height);
   padding: var(--padding-size);
-  background-color: darkblue;
+  background-color: rgba(255, 110, 199, 0.12);
+  border: 2px solid rgba(255, 110, 199, 0.3);
   border-radius: calc(var(--circle-size) / 2);
 }
 
@@ -61,7 +62,8 @@ body {
   margin: auto;
   display: flex;
   justify-content: space-between;
-  background-color: tomato;
+  background-color: rgba(255, 110, 199, 0.08);
+  border: 1px solid rgba(255, 110, 199, 0.2);
   border-radius: calc(var(--circle-size) / 2);
 }
 
@@ -98,7 +100,7 @@ body {
 .PinSlot {
   width: calc(var(--circle-size) / 2 - var(--border-size));
   height: calc(var(--circle-size) / 2 - var(--border-size));
-  background-color: black;
+  background-color: rgba(255, 255, 255, 0.1);
   border-radius: calc((var(--circle-size) / 2 - var(--border-size)) / 2);
   margin: calc(var(--border-size) * 2);
 }
@@ -119,9 +121,10 @@ body {
 }
 
 .Counter {
-  color: silver;
+  color: var(--neon-accent, #ff6ec7);
   margin: var(--padding-size);
   font-size: var(--circle-size);
+  font-family: 'Press Start 2P', monospace;
 }
 
 .Guess {
@@ -135,7 +138,7 @@ body {
   height: calc(var(--circle-size) + var(--padding-size) * 2);
   border-radius: calc(var(--circle-size) / 2 + var(--padding-size));
   margin: var(--padding-size);
-  background-color: black;
+  background-color: rgba(255, 255, 255, 0.08);
 }
 
 .Circle {
@@ -150,7 +153,8 @@ body {
 }
 
 .Answer {
-  background-color: lightskyblue;
+  background-color: rgba(255, 110, 199, 0.15);
+  border: 1px solid rgba(255, 110, 199, 0.3);
   display: flex;
   justify-content: center;
   height: calc(var(--circle-size) + (var(--padding-size) + var(--border-size)) * 4);

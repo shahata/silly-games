@@ -1,0 +1,92 @@
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.controls button {
+  padding: 0.4rem 1.2rem;
+  background: rgba(255, 230, 0, 0.15);
+  border: 2px solid rgba(255, 230, 0, 0.5);
+  border-radius: 4px;
+  color: #ffe600;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.controls button:hover {
+  background: rgba(255, 230, 0, 0.25);
+  box-shadow: 0 0 10px rgba(255, 230, 0, 0.3);
+}
+
+.controls label {
+  font-size: 0.45rem;
+  color: #aaa;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  cursor: pointer;
+}
+
+.controls input[type="checkbox"] {
+  accent-color: #ffe600;
+}
+
+.grid-wrapper {
+  overflow: auto;
+  max-width: 95vw;
+  max-height: 70vh;
+  margin: 0 auto;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+td {
+  padding: 0;
+  font-size: clamp(0.3rem, 0.8vw, 0.45rem);
+  color: rgba(255, 230, 0, 0.5);
+  vertical-align: middle;
+}
+
+td input {
+  width: clamp(20px, 4.5vw, 30px);
+  height: clamp(20px, 4.5vw, 30px);
+  background: rgba(255, 230, 0, 0.08);
+  border: 1px solid rgba(255, 230, 0, 0.2);
+  color: #ffe600;
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(0.35rem, 1vw, 0.55rem);
+  text-align: center;
+  padding: 0;
+}
+
+td input:focus {
+  outline: none;
+  background: rgba(255, 230, 0, 0.15);
+  box-shadow: 0 0 6px rgba(255, 230, 0, 0.3);
+}
+
+/* Hide number input spinners */
+td input::-webkit-inner-spin-button,
+td input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+td input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+pre {
+  color: rgba(255, 230, 0, 0.6);
+  font-size: 0.4rem;
+  max-width: 95vw;
+  overflow: auto;
+  margin-top: 1rem;
+}
