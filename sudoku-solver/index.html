@@ -1,30 +1,42 @@
 <!doctype html>
 <html ng-app="sodukuApp">
   <head>
-    <title>soduku</title>
-    <meta name="viewport" content="width=device-width">
+    <title>Sudoku Solver</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#1a1a2e">
+    <style>:root { --neon-accent: #ffe600; }</style>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.js"></script>
-    <script type="module" crossorigin src="/silly-games/assets/sudoku-solver-B38pjpNN.js"></script>
+    <script type="module" crossorigin src="/silly-games/assets/sudoku-solver-e9lyB7Gx.js"></script>
     <link rel="modulepreload" crossorigin href="/silly-games/assets/modulepreload-polyfill-B5Qt9EMX.js">
+    <link rel="stylesheet" crossorigin href="/silly-games/assets/sudoku-solver-B8ljxLk0.css">
+    <link rel="stylesheet" crossorigin href="/silly-games/assets/theme-C481Y2Dq.css">
   </head>
   <body>
-    <div class="container">
-      <div ng-controller="MainController as main">
-        <button ng-click="main.solve(true)">solve!</button>
-        <input type="checkbox" ng-model="main.showPossibilities" id="showPossibilities">
-        <label for="showPossibilities">show possibilities</label>
-        <input type="checkbox" ng-model="main.showCode" id="showCode">
-        <label for="showCode">show code</label>
+    <a class="back-home" href="../">&larr; Home</a>
+    <div class="game-page" ng-controller="MainController as main">
+      <div class="controls">
+        <button ng-click="main.solve(true)">Solve!</button>
+        <label>
+          <input type="checkbox" ng-model="main.showPossibilities" id="showPossibilities">
+          possibilities
+        </label>
+        <label>
+          <input type="checkbox" ng-model="main.showCode" id="showCode">
+          code
+        </label>
+      </div>
+      <div class="grid-wrapper">
         <table>
           <tr ng-repeat="row in main.cells" ng-init="rowScope = this">
             <td ng-repeat="cell in row" style="{{main.getStyle(rowScope.$index, $index)}}">
-              <input ng-model="cell.value" style="width: 30px; height: 30px; border: solid gray 1px" type="number">
+              <input ng-model="cell.value" type="number">
               {{main.showPossibilities ? cell.possibilities : ''}}
             </td>
           </tr>
         </table>
-        <pre>{{main.showCode ? main.code : ''}}</pre>
       </div>
+      <pre>{{main.showCode ? main.code : ''}}</pre>
     </div>
   </body>
 </html>
