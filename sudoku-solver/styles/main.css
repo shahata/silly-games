@@ -38,13 +38,16 @@
 }
 
 .grid-wrapper {
+  --board-width: min(calc(100vw - 2rem), 480px);
+  --cell-size: clamp(18px, calc(var(--board-width) / 16), 30px);
   overflow: auto;
-  max-width: 95vw;
+  max-width: calc(100vw - 2rem);
   max-height: 70vh;
   margin: 0 auto;
 }
 
 table {
+  width: calc(var(--cell-size) * 16);
   border-collapse: collapse;
 }
 
@@ -56,8 +59,8 @@ td {
 }
 
 td input {
-  width: clamp(20px, 4.5vw, 30px);
-  height: clamp(20px, 4.5vw, 30px);
+  width: var(--cell-size);
+  height: var(--cell-size);
   background: rgba(255, 230, 0, 0.08);
   border: 1px solid rgba(255, 230, 0, 0.2);
   color: #ffe600;
@@ -86,7 +89,7 @@ td input[type="number"] {
 pre {
   color: rgba(255, 230, 0, 0.6);
   font-size: 0.4rem;
-  max-width: 95vw;
+  max-width: calc(100vw - 2rem);
   overflow: auto;
   margin-top: 1rem;
 }

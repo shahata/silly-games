@@ -12,6 +12,7 @@
     <script type="module" src="./scripts/app.js"></script>
   </head>
   <body>
+    <script>document.fonts.ready.then(() => document.body.classList.add('ready'))</script>
     <a class="back-home" href="../">&larr; Home</a>
     <div class="game-page" ng-controller="GameController as gameCtrl">
       <div class="pairs-left">Pairs left: {{gameCtrl.game.unmatchedPairs}}</div>

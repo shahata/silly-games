@@ -46,18 +46,19 @@
 
 .grid-wrapper {
   overflow: auto;
-  max-width: 95vw;
+  max-width: calc(100vw - 2rem);
   max-height: 70vh;
 }
 
 #minesweeper {
+  --cell-size: clamp(28px, calc((100vw - 2rem - 22px) / 10), 44px);
   border-collapse: separate;
   border-spacing: 2px;
 
   td {
     border: 1px solid rgba(255, 68, 68, 0.3);
-    width: clamp(28px, 6vw, 44px);
-    height: clamp(28px, 6vw, 44px);
+    width: var(--cell-size);
+    height: var(--cell-size);
     text-align: center;
     user-select: none;
     font-size: clamp(0.4rem, 1.5vw, 0.65rem);

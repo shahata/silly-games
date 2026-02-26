@@ -18,6 +18,12 @@ body {
   min-height: 100vh;
   color: #eee;
   overflow-x: hidden;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+body.ready {
+  opacity: 1;
 }
 
 /* CRT scanline overlay */

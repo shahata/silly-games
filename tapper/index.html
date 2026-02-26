@@ -10,8 +10,12 @@
 			:root { --neon-accent: #bf5fff; }
 			body { text-align: center; }
 			.game-page { padding-top: 2.5rem; }
+			#tapperJS {
+				max-width: min(calc(100vw - 2rem), 512px);
+				margin: 0 auto;
+			}
 			#tapperJS canvas {
-				max-width: 100%;
+				width: 100%;
 				height: auto;
 				border: 2px solid rgba(191, 95, 255, 0.4);
 				border-radius: 4px;
@@ -21,6 +25,7 @@
 		<script type="module" src="./src/Main.js"></script>
 	</head>
 	<body>
+		<script>document.fonts.ready.then(() => document.body.classList.add('ready'))</script>
 		<a class="back-home" href="../">&larr; Home</a>
 		<div class="game-page">
 			<div id="tapperJS"></div>

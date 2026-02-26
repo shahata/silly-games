@@ -3,6 +3,10 @@ body {
 }
 
 .App {
+  --board-width: min(calc(100vw - 2rem), 400px);
+  --border-width: clamp(10px, 3vw, 20px);
+  --cell-gap: 4px;
+  --cell-size: calc((var(--board-width) - 2 * var(--border-width) - 5 * var(--cell-gap)) / 4);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -21,19 +25,19 @@ body {
 
 table {
   table-layout: fixed;
-  width: min(85vw, 360px);
-  border: clamp(10px, 3vw, 20px) solid rgba(0, 212, 255, 0.3);
+  width: var(--board-width);
+  border: var(--border-width) solid rgba(0, 212, 255, 0.3);
   border-radius: 10px;
   background-color: rgba(0, 212, 255, 0.05);
   border-collapse: separate;
-  border-spacing: 4px;
+  border-spacing: var(--cell-gap);
 }
 
 td {
   border-radius: 8px;
   background-color: rgba(0, 212, 255, 0.15);
   border: 2px solid rgba(0, 212, 255, 0.4);
-  height: calc((min(85vw, 360px) - 5 * 4px) / 4);
+  height: var(--cell-size);
   font-size: clamp(1.2rem, 5vw, 2rem);
   font-family: 'Press Start 2P', monospace;
   color: #00d4ff;

@@ -1,3 +1,9 @@
+:root {
+  --board-width: min(calc(100vw - 2rem), 500px);
+  --card-width: calc((var(--board-width) - 5 * 8px) / 4);
+  --card-height: calc(var(--card-width) * 1.2);
+}
+
 .pairs-left {
   font-size: clamp(0.5rem, 2vw, 0.8rem);
   color: var(--neon-accent);
@@ -5,13 +11,15 @@
 }
 
 table {
+  table-layout: fixed;
+  width: var(--board-width);
   border-collapse: separate;
   border-spacing: 8px;
 }
 
 .container {
-  width: clamp(70px, 20vw, 150px);
-  height: clamp(85px, 24vw, 180px);
+  width: var(--card-width);
+  height: var(--card-height);
   position: relative;
   perspective: 800px;
 }
