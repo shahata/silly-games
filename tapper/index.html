@@ -7,13 +7,23 @@
 		<meta name="theme-color" content="#1a1a2e">
 		<link rel="stylesheet" href="../shared/theme.css">
 		<style>
-			:root { --neon-accent: #bf5fff; }
-			body { text-align: center; }
-			.game-page { padding-top: 2.5rem; }
+			:root {
+				--neon-accent: #bf5fff;
+			}
+
+			body {
+				text-align: center;
+			}
+
+			.game-page {
+				padding-top: 2.5rem;
+			}
+
 			#tapperJS {
 				max-width: min(calc(100vw - 2rem), 512px);
 				margin: 0 auto;
 			}
+
 			#tapperJS canvas {
 				width: 100%;
 				height: auto;
@@ -28,6 +38,7 @@
 		<script>document.fonts.ready.then(() => document.body.classList.add('ready'))</script>
 		<a class="back-home" href="../">&larr; Home</a>
 		<div class="game-page">
+			<span class="new-game" id="tapper-new-game" role="img" aria-label="New Game">🔄</span>
 			<div id="tapperJS"></div>
 		</div>
 	</body>

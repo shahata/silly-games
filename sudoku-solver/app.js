@@ -34,11 +34,15 @@ class MainController {
   $timeout;
 
   constructor($timeout) {
+    this.$timeout = $timeout;
+    this.restart();
+  }
+
+  restart() {
     function c(v) {
       return new Cell(v);
     }
 
-    this.$timeout = $timeout;
     this.code = "code is generated when you click the solve button";
 
     this.cells = [];
@@ -73,6 +77,12 @@ class MainController {
     ];
 
     this.cells = this.cells.map((row) => row.map(c));
+    this.result = null;
+    this.showPopup = false;
+  }
+
+  dismissPopup() {
+    this.showPopup = false;
   }
 
   generateCode() {
@@ -244,9 +254,15 @@ class MainController {
     if (this.solveByOnlyPossibility() || this.solveByNoOtherOptionInTable()) {
       this.$timeout(() => this.solve(), 10);
     } else if (this.getAll().filter((cell) => !cell.value).length > 0) {
-      this.$timeout(() => alert("stuck!!!"), 0);
+      this.$timeout(() => {
+        this.result = "Stuck!";
+        this.showPopup = true;
+      }, 0);
     } else {
-      this.$timeout(() => alert("done!!!"), 0);
+      this.$timeout(() => {
+        this.result = "Solved!";
+        this.showPopup = true;
+      }, 0);
     }
   }
 }

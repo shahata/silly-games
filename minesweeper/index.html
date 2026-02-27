@@ -15,12 +15,12 @@
     <script>document.fonts.ready.then(() => document.body.classList.add('ready'))</script>
     <a class="back-home" href="../">&larr; Home</a>
     <div class="game-page" ng-controller="MinesweeperCtrl">
-      <form class="controls" ng-submit="restart()">
+      <span class="new-game" role="img" aria-label="New Game" ng-click="restart()">🔄</span>
+      <div class="controls">
         <label>Rows <input ng-model="parameters.rows" type="number"></label>
         <label>Cols <input ng-model="parameters.columns" type="number"></label>
         <label>Mines <input ng-model="parameters.mines" type="number"></label>
-        <input type="submit" value="Restart">
-      </form>
+      </div>
       <div class="grid-wrapper">
         <table id="minesweeper">
           <tr ng-repeat="row in minefield.game">
@@ -31,6 +31,12 @@
             </td>
           </tr>
         </table>
+      </div>
+      <div class="game-popup-overlay" ng-if="showPopup">
+        <div class="game-popup">
+          <h2>{{endMessage}}</h2>
+          <button class="ok-btn" ng-click="dismissPopup()">OK</button>
+        </div>
       </div>
     </div>
   </body>

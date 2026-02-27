@@ -5,24 +5,23 @@ import "./App.css";
 class Game extends Component {
   state = {
     data: initGame(4, 4),
+    ended: false,
+    showPopup: false,
   };
 
   startGame() {
-    this.setState({ data: initGame(4, 4) });
+    this.setState({ data: initGame(4, 4), ended: false, showPopup: false });
   }
 
   makeMove(row, column) {
-    if (!isSolved(this.state.data)) {
+    if (!this.state.ended) {
       this.setState({ data: makeMove(this.state.data, row, column) });
     }
   }
 
   componentDidUpdate() {
-    if (isSolved(this.state.data)) {
-      setTimeout(() => {
-        alert("כל הכבוד!");
-        this.startGame();
-      }, 100);
+    if (!this.state.ended && isSolved(this.state.data)) {
+      this.setState({ ended: true, showPopup: true });
     }
   }
 
@@ -56,6 +55,19 @@ class Game extends Component {
             ))}
           </tbody>
         </table>
+        {this.state.showPopup && (
+          <div className="game-popup-overlay">
+            <div className="game-popup">
+              <h2>!כל הכבוד</h2>
+              <button
+                className="ok-btn"
+                onClick={() => this.setState({ showPopup: false })}
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     );
   }

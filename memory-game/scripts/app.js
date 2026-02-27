@@ -14,6 +14,16 @@ function GameController() {
   ];
 
   this.game = new MemoryGame(tileNames);
+  this.popupDismissed = false;
+
+  this.dismissPopup = function () {
+    this.popupDismissed = true;
+  };
+
+  this.restart = function () {
+    this.game = new MemoryGame(tileNames);
+    this.popupDismissed = false;
+  };
 }
 
 angular

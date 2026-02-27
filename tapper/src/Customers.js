@@ -2,7 +2,7 @@ import Beerglass from "./Beerglass.js";
 import LevelManager from "./LevelManager.js";
 import SoundMngr from "./SoundMngr.js";
 import RessourceMngr from "./RessourceMngr.js";
-import { g_FPS, g_game_state, g_STATE_PLAY } from "./Main.js";
+import GameState from "./GameState.js";
 
 function oneCustomer(row, default_xpos, movingPattern, type) {
   var CustomerObj = {
@@ -31,7 +31,7 @@ function oneCustomer(row, default_xpos, movingPattern, type) {
     r_bound: LevelManager.row_rbound[row],
 
     fpscount: 0,
-    fpsmax: g_FPS >> 3,
+    fpsmax: GameState.FPS >> 3,
     newxpos: 0,
 
     EndOfRow: false,
@@ -184,10 +184,10 @@ var Customers = {
           this._bonus.xpos = customerxpos;
           this._bonus.ypos = LevelManager.row_ypos[row] + 16;
           this._bonus.timeout_reached = false;
-          setTimeout(
-            "Customers._bonus.visible = false; Customers._bonus.timeout_reached = true",
-            this._bonus.timeout,
-          );
+          setTimeout(() => {
+            Customers._bonus.visible = false;
+            Customers._bonus.timeout_reached = true;
+          }, this._bonus.timeout);
           SoundMngr.play(SoundMngr.TIP_APPEAR, false);
         }
       }
@@ -268,7 +268,10 @@ var Customers = {
       for (var i = this._customersList[rowcount].length; i--; ) {
         cust = this._customersList[rowcount][i];
 
-        if (!this.oneReachEndOfRow && g_game_state == g_STATE_PLAY) {
+        if (
+          !this.oneReachEndOfRow &&
+          GameState.getState() == GameState.STATE_PLAY
+        ) {
           cust.update();
 
           if (cust.isOut) {

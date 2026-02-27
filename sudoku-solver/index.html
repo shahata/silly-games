@@ -15,6 +15,7 @@
     <script>document.fonts.ready.then(() => document.body.classList.add('ready'))</script>
     <a class="back-home" href="../">&larr; Home</a>
     <div class="game-page" ng-controller="MainController as main">
+      <span class="new-game" role="img" aria-label="Restart" ng-click="main.restart()">🔄</span>
       <div class="controls">
         <button ng-click="main.solve(true)">Solve!</button>
         <label>
@@ -37,6 +38,12 @@
         </table>
       </div>
       <pre>{{main.showCode ? main.code : ''}}</pre>
+      <div class="game-popup-overlay" ng-if="main.showPopup">
+        <div class="game-popup">
+          <h2>{{main.result}}</h2>
+          <button class="ok-btn" ng-click="main.dismissPopup()">OK</button>
+        </div>
+      </div>
     </div>
   </body>
 </html>

@@ -3,7 +3,7 @@ import Customers from "./Customers.js";
 import LevelManager from "./LevelManager.js";
 import SoundMngr from "./SoundMngr.js";
 import RessourceMngr from "./RessourceMngr.js";
-import { g_FPS, g_game_state, g_STATE_PLAY } from "./Main.js";
+import GameState from "./GameState.js";
 
 function Glass(row, default_xpos, default_ypos, type) {
   var glassObj = {
@@ -15,7 +15,7 @@ function Glass(row, default_xpos, default_ypos, type) {
     l_bound: LevelManager.row_lbound[row] - 4,
     r_bound: LevelManager.row_rbound[row] + 16,
     fpscount: 0,
-    fpsmax: g_FPS >> 1,
+    fpsmax: GameState.FPS >> 1,
 
     broken: false,
 
@@ -222,7 +222,10 @@ var Beerglass = {
 
       glass = this._glasses_full[rowcount][i];
 
-      if (!this.isOneFullGlassBroken && g_game_state == g_STATE_PLAY) {
+      if (
+        !this.isOneFullGlassBroken &&
+        GameState.getState() == GameState.STATE_PLAY
+      ) {
         glass.update();
 
         if (glass.broken) {
@@ -287,7 +290,10 @@ var Beerglass = {
 
       glass = this._glasses_empty[rowcount][i];
 
-      if (!this.isOneEmptyGlassBroken && g_game_state == g_STATE_PLAY) {
+      if (
+        !this.isOneEmptyGlassBroken &&
+        GameState.getState() == GameState.STATE_PLAY
+      ) {
         glass.update();
 
         if (glass.broken) {

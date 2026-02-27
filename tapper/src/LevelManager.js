@@ -1,7 +1,7 @@
 import Customers from "./Customers.js";
 import SoundMngr from "./SoundMngr.js";
 import RessourceMngr from "./RessourceMngr.js";
-import { g_game_state, g_STATE_PLAY } from "./Main.js";
+import GameState from "./GameState.js";
 
 var LevelManager = {
   NUM_LEVEL: 1,
@@ -62,7 +62,7 @@ var LevelManager = {
   },
 
   addCustomer: function () {
-    if (g_game_state == g_STATE_PLAY) {
+    if (GameState.getState() == GameState.STATE_PLAY) {
       // if less than 1 customer, we add diff * 1 customer per row
       if (Customers.isAnyCustomer() < 2) {
         //this._difficulty++;
