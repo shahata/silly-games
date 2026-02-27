@@ -7,14 +7,16 @@
     <meta name="theme-color" content="#1a1a2e">
     <style>:root { --neon-accent: #ffe600; }</style>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.js"></script>
-    <script type="module" crossorigin src="/silly-games/assets/sudoku-solver-e9lyB7Gx.js"></script>
+    <script type="module" crossorigin src="/silly-games/assets/sudoku-solver-BCVu17Vx.js"></script>
     <link rel="modulepreload" crossorigin href="/silly-games/assets/modulepreload-polyfill-B5Qt9EMX.js">
-    <link rel="stylesheet" crossorigin href="/silly-games/assets/sudoku-solver-B8ljxLk0.css">
-    <link rel="stylesheet" crossorigin href="/silly-games/assets/theme-C481Y2Dq.css">
+    <link rel="stylesheet" crossorigin href="/silly-games/assets/sudoku-solver-CUjcYPGp.css">
+    <link rel="stylesheet" crossorigin href="/silly-games/assets/theme-B3nrMUQu.css">
   </head>
   <body>
+    <script>document.fonts.ready.then(() => document.body.classList.add('ready'))</script>
     <a class="back-home" href="../">&larr; Home</a>
     <div class="game-page" ng-controller="MainController as main">
+      <span class="new-game" role="img" aria-label="Restart" ng-click="main.restart()">🔄</span>
       <div class="controls">
         <button ng-click="main.solve(true)">Solve!</button>
         <label>
@@ -37,6 +39,12 @@
         </table>
       </div>
       <pre>{{main.showCode ? main.code : ''}}</pre>
+      <div class="game-popup-overlay" ng-if="main.showPopup">
+        <div class="game-popup">
+          <h2>{{main.result}}</h2>
+          <button class="ok-btn" ng-click="main.dismissPopup()">OK</button>
+        </div>
+      </div>
     </div>
   </body>
 </html>

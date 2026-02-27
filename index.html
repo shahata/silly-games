@@ -25,6 +25,12 @@
         padding: 2rem 1rem;
         color: #eee;
         overflow-x: hidden;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      body.ready {
+        opacity: 1;
       }
 
       /* CRT scanline overlay */
@@ -128,5 +134,6 @@
     <template id="game-link">
       <a class="game-btn"></a>
     </template>
+    <script>document.fonts.ready.then(() => document.body.classList.add('ready'))</script>
   </body>
 </html>

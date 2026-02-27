@@ -7,14 +7,16 @@
     <meta name="theme-color" content="#1a1a2e">
     <style>:root { --neon-accent: #39ff14; }</style>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.js"></script>
-    <script type="module" crossorigin src="/silly-games/assets/memory-game-DbaBMnZ1.js"></script>
+    <script type="module" crossorigin src="/silly-games/assets/memory-game-vGy5YuKT.js"></script>
     <link rel="modulepreload" crossorigin href="/silly-games/assets/modulepreload-polyfill-B5Qt9EMX.js">
-    <link rel="stylesheet" crossorigin href="/silly-games/assets/memory-game-BBVhMsky.css">
-    <link rel="stylesheet" crossorigin href="/silly-games/assets/theme-C481Y2Dq.css">
+    <link rel="stylesheet" crossorigin href="/silly-games/assets/memory-game-CuZoDw9y.css">
+    <link rel="stylesheet" crossorigin href="/silly-games/assets/theme-B3nrMUQu.css">
   </head>
   <body>
+    <script>document.fonts.ready.then(() => document.body.classList.add('ready'))</script>
     <a class="back-home" href="../">&larr; Home</a>
     <div class="game-page" ng-controller="GameController as gameCtrl">
+      <span class="new-game" role="img" aria-label="New Game" ng-click="gameCtrl.restart()">🔄</span>
       <div class="pairs-left">Pairs left: {{gameCtrl.game.unmatchedPairs}}</div>
       <table>
         <tr ng-repeat="row in gameCtrl.game.grid">
@@ -26,7 +28,13 @@
           </td>
         </tr>
       </table>
-      <div class="message">{{gameCtrl.game.message}}</div>
+      <div class="message" ng-if="gameCtrl.game.unmatchedPairs > 0">{{gameCtrl.game.message}}</div>
+      <div class="game-popup-overlay" ng-if="gameCtrl.game.unmatchedPairs === 0 && !gameCtrl.popupDismissed">
+        <div class="game-popup">
+          <h2>You Win!</h2>
+          <button class="ok-btn" ng-click="gameCtrl.dismissPopup()">OK</button>
+        </div>
+      </div>
     </div>
   </body>
 </html>

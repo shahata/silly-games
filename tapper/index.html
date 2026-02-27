@@ -6,24 +6,40 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta name="theme-color" content="#1a1a2e">
 		<style>
-			:root { --neon-accent: #bf5fff; }
-			body { text-align: center; }
-			.game-page { padding-top: 2.5rem; }
+			:root {
+				--neon-accent: #bf5fff;
+			}
+
+			body {
+				text-align: center;
+			}
+
+			.game-page {
+				padding-top: 2.5rem;
+			}
+
+			#tapperJS {
+				max-width: min(calc(100vw - 2rem), 512px);
+				margin: 0 auto;
+			}
+
 			#tapperJS canvas {
-				max-width: 100%;
+				width: 100%;
 				height: auto;
 				border: 2px solid rgba(191, 95, 255, 0.4);
 				border-radius: 4px;
 				box-shadow: 0 0 20px rgba(191, 95, 255, 0.2);
 			}
 		</style>
-		<script type="module" crossorigin src="/silly-games/assets/tapper-DPTnAOAR.js"></script>
+		<script type="module" crossorigin src="/silly-games/assets/tapper-DvOAwmWw.js"></script>
 		<link rel="modulepreload" crossorigin href="/silly-games/assets/modulepreload-polyfill-B5Qt9EMX.js">
-		<link rel="stylesheet" crossorigin href="/silly-games/assets/theme-C481Y2Dq.css">
+		<link rel="stylesheet" crossorigin href="/silly-games/assets/theme-B3nrMUQu.css">
 	</head>
 	<body>
+		<script>document.fonts.ready.then(() => document.body.classList.add('ready'))</script>
 		<a class="back-home" href="../">&larr; Home</a>
 		<div class="game-page">
+			<span class="new-game" id="tapper-new-game" role="img" aria-label="New Game">🔄</span>
 			<div id="tapperJS"></div>
 		</div>
 	</body>
