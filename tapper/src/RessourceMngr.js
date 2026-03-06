@@ -24,7 +24,7 @@ import youLoseSound from "../sounds/you_lose.mp3";
 import collectTipSound from "../sounds/collect_tip.mp3";
 import tipAppearSound from "../sounds/tip_appear.mp3";
 
-var g_imageData = [
+const g_imageData = [
   { name: "game_title", src: gameTitleImage },
   { name: "pregame", src: pregameImage },
   { name: "level-1", src: level1Image },
@@ -35,7 +35,7 @@ var g_imageData = [
   { name: "misc", src: miscImage },
 ];
 
-var g_soundData = [
+const g_soundData = [
   { name: "zip_up", src: zipUpSound, channel: 4 }, // 0
   { name: "zip_down", src: zipDownSound, channel: 4 }, // 1
   { name: "oh_suzanna", src: ohSuzannaSound, channel: 1 }, // 2
@@ -57,7 +57,7 @@ var g_soundData = [
   { name: "tip_appear", src: tipAppearSound, channel: 1 }, // 14
 ];
 
-var RessourceMngr = {
+const RessourceMngr = {
   imageList: null,
 
   loadCount: 0,
@@ -95,8 +95,8 @@ var RessourceMngr = {
 
   preloadImages: function (/* Array */ images) {
     this.imageList = [];
-    for (var i = 0; i < images.length; i++) {
-      var newImage = new Image();
+    for (let i = 0; i < images.length; i++) {
+      let newImage = new Image();
       this.imageList.push(images[i].name);
       newImage.src = images[i].src;
       newImage.onLoad = RessourceMngr.ressourceLoaded();
@@ -106,7 +106,7 @@ var RessourceMngr = {
   },
 
   preLoadSounds: function (soundData) {
-    for (var i = 0; i < soundData.length; ++i) {
+    for (let i = 0; i < soundData.length; ++i) {
       SoundMngr.load(i, soundData[i], RessourceMngr.ressourceLoaded);
     }
     return soundData.length;
@@ -125,8 +125,8 @@ var RessourceMngr = {
       (context.canvas.height - this.logoHeight) / 2,
     );
 
-    var percent = RessourceMngr.loadCount / RessourceMngr.ressourceCount;
-    var width = Math.floor(percent * context.canvas.width);
+    let percent = RessourceMngr.loadCount / RessourceMngr.ressourceCount;
+    let width = Math.floor(percent * context.canvas.width);
 
     context.strokeStyle = "gray";
     context.strokeRect(0, 299, context.canvas.width, 20);

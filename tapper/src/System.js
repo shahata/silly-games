@@ -1,4 +1,4 @@
-var System = {
+const System = {
   canvasSupported: false,
   canvas: null,
   context2D: null,
@@ -93,7 +93,7 @@ var System = {
   },
 
   random: function (min, max) {
-    var ran = Math.floor(Math.random() * (max - min + 1));
+    let ran = Math.floor(Math.random() * (max - min + 1));
     return ran + min;
   },
 };

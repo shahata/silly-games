@@ -3,7 +3,7 @@ import Beerglass from "./Beerglass.js";
 import SoundMngr from "./SoundMngr.js";
 import RessourceMngr from "./RessourceMngr.js";
 
-var Player = {
+const Player = {
   STEP: 16,
   LEFT: 0,
   RIGHT: 1,
@@ -143,7 +143,7 @@ var Player = {
   },
 
   drawTapper: function (context) {
-    for (var rownum = 1; rownum < 5; rownum++) {
+    for (let rownum = 1; rownum < 5; rownum++) {
       if (
         this._currentrow !== rownum ||
         !this._tapper_serving ||
@@ -180,7 +180,7 @@ var Player = {
 
   drawServing: function (context /*2D Canvas context*/) {
     // fill the glass :)
-    for (var i = 1, count = this._servingcounter + 1; i < count; i++) {
+    for (let i = 1, count = this._servingcounter + 1; i < count; i++) {
       context.drawImage(
         this._spriteimage,
         this.BEER_FILL[i] << this._spriteshift,

@@ -8,11 +8,11 @@ function MinesweeperCtrl($scope) {
     mines: 15,
   };
 
-  $scope.dismissPopup = function () {
+  $scope.dismissPopup = () => {
     $scope.showPopup = false;
   };
 
-  $scope.restart = function () {
+  $scope.restart = () => {
     $scope.endMessage = null;
     $scope.showPopup = false;
     $scope.minefield = new Minefield(
@@ -22,8 +22,8 @@ function MinesweeperCtrl($scope) {
     );
   };
 
-  $scope.$watch("minefield.state", function (newValue) {
-    $scope.$evalAsync(function () {
+  $scope.$watch("minefield.state", (newValue) => {
+    $scope.$evalAsync(() => {
       if (newValue === gameState.LOST) {
         $scope.endMessage = "You Lost!";
         $scope.showPopup = true;
@@ -42,10 +42,10 @@ MinesweeperCtrl.$inject = ["$scope"];
 function onContextmenu($parse) {
   return {
     restrict: "A",
-    link: function (scope, element, attrs) {
-      var fn = $parse(attrs.onContextmenu);
-      element.on("contextmenu", function (e) {
-        scope.$apply(function () {
+    link(scope, element, attrs) {
+      const fn = $parse(attrs.onContextmenu);
+      element.on("contextmenu", (e) => {
+        scope.$apply(() => {
           e.preventDefault();
           fn(scope, { $event: e });
         });

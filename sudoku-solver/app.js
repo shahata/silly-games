@@ -1,8 +1,8 @@
 import "./app.css";
 
-var TABLE_WIDTH = 16;
-var BOX_WIDTH = 4;
-var BOX_HEIGHT = 4;
+const TABLE_WIDTH = 16;
+const BOX_WIDTH = 4;
+const BOX_HEIGHT = 4;
 
 class Cell {
   _value;
@@ -23,7 +23,7 @@ class Cell {
 }
 
 function hasPossibility(value) {
-  return (cell) => cell.possibilities.indexOf(value) > -1;
+  return (cell) => cell.possibilities.includes(value);
 }
 
 function hasValue(value) {
@@ -152,9 +152,7 @@ class MainController {
   }
 
   getAll() {
-    return this.cells.reduce((prev, curr) => {
-      return prev.concat(curr);
-    }, []);
+    return this.cells.flat();
   }
 
   someUnsolvedCell(f) {
@@ -176,33 +174,33 @@ class MainController {
   }
 
   isInRow(rowIndex, value) {
-    return this.getRow(rowIndex).filter(hasValue(value)).length > 0;
+    return this.getRow(rowIndex).some(hasValue(value));
   }
 
   isInCol(colIndex, value) {
-    return this.getCol(colIndex).filter(hasValue(value)).length > 0;
+    return this.getCol(colIndex).some(hasValue(value));
   }
 
   isInBox(rowIndex, colIndex, value) {
-    return this.getBox(rowIndex, colIndex).filter(hasValue(value)).length > 0;
+    return this.getBox(rowIndex, colIndex).some(hasValue(value));
   }
 
   otherOptionInRow(rowIndex, value) {
-    return this.getRow(rowIndex).filter(hasPossibility(value)).length > 1;
+    return this.getRow(rowIndex).filter(hasPossibility(value)).length >= 2;
   }
 
   otherOptionInCol(colIndex, value) {
-    return this.getCol(colIndex).filter(hasPossibility(value)).length > 1;
+    return this.getCol(colIndex).filter(hasPossibility(value)).length >= 2;
   }
 
   otherOptionInBox(rowIndex, colIndex, value) {
     return (
-      this.getBox(rowIndex, colIndex).filter(hasPossibility(value)).length > 1
+      this.getBox(rowIndex, colIndex).filter(hasPossibility(value)).length >= 2
     );
   }
 
   getPossibleValues(rowIndex, colIndex) {
-    let arr = [];
+    const arr = [];
     for (let i = 1; i <= TABLE_WIDTH; i++) {
       if (
         !this.isInRow(rowIndex, i) &&
@@ -255,7 +253,7 @@ class MainController {
 
     if (this.solveByOnlyPossibility() || this.solveByNoOtherOptionInTable()) {
       this.$timeout(() => this.solve(), 10);
-    } else if (this.getAll().filter((cell) => !cell.value).length > 0) {
+    } else if (this.getAll().some((cell) => !cell.value)) {
       this.$timeout(() => {
         this.result = "Stuck!";
         this.showPopup = true;

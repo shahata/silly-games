@@ -4,24 +4,24 @@ export function Cell(coord, onCellRevealed) {
     mine: false,
     revealed: false,
     flagged: false,
-    coord: coord,
-    $autoReveal: function () {
+    coord,
+    $autoReveal() {
       if (this.revealed) {
-        (onCellRevealed || angular.noop)(this, true);
+        onCellRevealed?.(this, true);
       }
     },
-    $reveal: function () {
+    $reveal() {
       if (!this.revealed && !this.flagged) {
         this.revealed = true;
-        (onCellRevealed || angular.noop)(this);
+        onCellRevealed?.(this);
       }
     },
-    $flag: function () {
+    $flag() {
       if (!this.revealed) {
         this.flagged = !this.flagged;
       }
     },
-    $displayValue: function () {
+    $displayValue() {
       if (this.mine) {
         return "*";
       } else {

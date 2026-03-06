@@ -3,7 +3,7 @@ import SoundMngr from "./SoundMngr.js";
 import RessourceMngr from "./RessourceMngr.js";
 import GameState from "./GameState.js";
 
-var LevelManager = {
+const LevelManager = {
   NUM_LEVEL: 1,
   MAX_LIFE: 3,
   TIME_COUNTER_MAX: 60, // every max counter we increase the difficulty
@@ -68,7 +68,7 @@ var LevelManager = {
 
         if (this._wave++ === this._difficulty * 2) this._difficulty++;
 
-        for (var i = 1; i <= this._difficulty; i++) {
+        for (let i = 1; i <= this._difficulty; i++) {
           Customers.add(1, i, Customers.CUST_GREEN_HAT_COWBOY); // row, pos, type
           Customers.add(2, i, Customers.CUST_WOMEM);
           Customers.add(3, i, Customers.CUST_BLACK_GUY);
@@ -77,10 +77,10 @@ var LevelManager = {
         }
       } // 1 random customer
       else {
-        var randomrow = Math.floor(Math.random() * 5);
+        let randomrow = Math.floor(Math.random() * 5);
 
         if (randomrow !== 0 && randomrow !== this._lastrow) {
-          var randomcusttype = Math.floor(
+          let randomcusttype = Math.floor(
             Math.random() * Customers.MAX_CUSTOMER_TYPE,
           );
           Customers.add(randomrow, 1, randomcusttype); // row, pos, type
@@ -100,13 +100,13 @@ var LevelManager = {
   },
 
   displayScore: function (context) {
-    var scoreText = "" + this._score;
+    let scoreText = "" + this._score;
 
-    var xpos = this._SCORE_XPOS;
+    let xpos = this._SCORE_XPOS;
 
-    var offset;
+    let offset;
 
-    for (var i = scoreText.length; i--; ) {
+    for (let i = scoreText.length; i--; ) {
       offset = scoreText.charAt(i) * this.FONT_SIZE + this.FONT_NUM_OFF;
 
       context.drawImage(
@@ -125,11 +125,11 @@ var LevelManager = {
   },
 
   displayDifficulty: function (context) {
-    var diffText = "" + this._difficulty;
-    var xpos = this._DIFF_XPOS; // aligned on the score x pos
-    var offset;
+    let diffText = "" + this._difficulty;
+    let xpos = this._DIFF_XPOS; // aligned on the score x pos
+    let offset;
 
-    for (var i = diffText.length; i--; ) {
+    for (let i = diffText.length; i--; ) {
       offset = diffText.charAt(i) * this.FONT_SIZE + this.FONT_NUM_OFF;
       context.drawImage(
         this._fontImage,
@@ -148,9 +148,9 @@ var LevelManager = {
   },
 
   displayLife: function (context) {
-    var xpos = this._SCORE_XPOS; // aligned on the score x pos
+    let xpos = this._SCORE_XPOS; // aligned on the score x pos
     if (this._life <= 0) return; // should never happen
-    for (var i = this._life; i--; ) {
+    for (let i = this._life; i--; ) {
       context.drawImage(
         this._miscImage,
         this.LIFE_ICON_OFF,
@@ -216,7 +216,7 @@ var LevelManager = {
   },
 
   reset: function () {
-    for (var i = 1; i <= this._difficulty; i++) {
+    for (let i = 1; i <= this._difficulty; i++) {
       Customers.add(1, i, Customers.CUST_GREEN_HAT_COWBOY); // row, pos, type
       Customers.add(2, i, Customers.CUST_WOMEM);
       Customers.add(3, i, Customers.CUST_BLACK_GUY);
@@ -243,7 +243,7 @@ var LevelManager = {
   },
 
   drawLevelBackground: function (context) {
-    var bgimage = this._imageLevel[this._currentLevel];
+    let bgimage = this._imageLevel[this._currentLevel];
     context.drawImage(bgimage, 0, 0);
   },
 };

@@ -21,7 +21,7 @@ Entry points are configured in `vite.config.js` via `rollupOptions.input`.
 
 The games use a mix of frameworks — there is no single standard:
 
-- **15-puzzle** — React (class components), game logic in `src/game.js` as pure functions
+- **15-puzzle** — React (functional components + hooks), game logic in `src/game.js` as pure functions
 - **bulls-and-cows** — React (functional components + hooks), uses lodash for shuffle, game logic in `src/game.js`
 - **memory-game** — AngularJS 1.x (loaded from CDN), game logic in `src/game.js`, controller in `src/app.js`
 - **minesweeper** — AngularJS 1.x (loaded from CDN), game logic in `src/game.js` (cell, minefield, game-state), controller in `src/app.js`

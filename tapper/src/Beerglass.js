@@ -6,7 +6,7 @@ import RessourceMngr from "./RessourceMngr.js";
 import GameState from "./GameState.js";
 
 function Glass(row, default_xpos, default_ypos, type) {
-  var glassObj = {
+  let glassObj = {
     sprite: Beerglass.SPRITE_FULL_1,
     xpos: default_xpos,
     ypos: default_ypos,
@@ -52,7 +52,7 @@ function Glass(row, default_xpos, default_ypos, type) {
   return glassObj;
 }
 
-var Beerglass = {
+const Beerglass = {
   //
   SPRITE_FULL_1: 0,
   SPRITE_FULL_2: 32,
@@ -98,7 +98,7 @@ var Beerglass = {
 
   reset: function () {
     // reset our arrays.
-    for (var count = 1; count < 5; count++) {
+    for (let count = 1; count < 5; count++) {
       // if this freeing memory when object have been allocated before ?
       this._glasses_full[count] = [];
       this._glasses_empty[count] = [];
@@ -118,7 +118,7 @@ var Beerglass = {
 
   add: function (row, xpos, type) {
     // new glass (starting x position as parameter)
-    var glass = new Glass(row, xpos, LevelManager.row_ypos[row] + 8, type);
+    let glass = new Glass(row, xpos, LevelManager.row_ypos[row] + 8, type);
 
     // add it to the corresponding array
     if (type === Beerglass.FULL_MUG) this._glasses_full[row].push(glass);
@@ -141,7 +141,7 @@ var Beerglass = {
 		
 		---										*/
   checkCustomerCollision: function (glass, row) {
-    var cust_pos = Customers.getFirstCustomerPos(row) + 24;
+    let cust_pos = Customers.getFirstCustomerPos(row) + 24;
 
     if (glass.xpos <= cust_pos) {
       // notify back the Customer object
@@ -179,7 +179,7 @@ var Beerglass = {
 		---														*/
 
   draw: function (context) {
-    var ret = 0;
+    let ret = 0;
 
     //  loop unroll
     ret += Beerglass.drawFullMug(context, 1);
@@ -205,16 +205,16 @@ var Beerglass = {
 		---														*/
 
   drawFullMug: function (context /*2D Canvas context*/, rowcount) {
-    var glass;
-    var ret = 0;
-    var collision = false;
+    let glass;
+    let ret = 0;
+    let collision = false;
 
-    var glassArrayCopy;
+    let glassArrayCopy;
 
     // we copy the array, since we will maybe remove some glasses
     glassArrayCopy = this._glasses_full[rowcount].slice();
 
-    for (var i = this._glasses_full[rowcount].length; i--; ) {
+    for (let i = this._glasses_full[rowcount].length; i--; ) {
       // ----------  draw the beers ! ----------------------//
 
       glass = this._glasses_full[rowcount][i];
@@ -272,16 +272,16 @@ var Beerglass = {
 		---														*/
 
   drawEmptyMug: function (context /*2D Canvas context*/, rowcount) {
-    var glass;
-    var ret = 0;
-    var collision = false;
+    let glass;
+    let ret = 0;
+    let collision = false;
 
-    var glassArrayCopy;
+    let glassArrayCopy;
 
     // we copy the array, since we will maybe remove some glasses
     glassArrayCopy = this._glasses_empty[rowcount].slice();
 
-    for (var i = this._glasses_empty[rowcount].length; i--; ) {
+    for (let i = this._glasses_empty[rowcount].length; i--; ) {
       // ----------  draw the empty beers ! ----------------------//
 
       glass = this._glasses_empty[rowcount][i];

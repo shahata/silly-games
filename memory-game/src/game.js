@@ -1,27 +1,23 @@
-function Tile(title) {
-  this.title = title;
-  this.imageUrl = new URL(`../images/${title}.png`, import.meta.url).href;
-  this.flipped = false;
+function makeTile(title) {
+  return {
+    title,
+    imageUrl: new URL(`../images/${title}.png`, import.meta.url).href,
+    flipped: false,
+    flip() {
+      this.flipped = !this.flipped;
+    },
+  };
 }
 
-Tile.prototype.flip = function () {
-  this.flipped = !this.flipped;
-};
-
 function makeGrid(tileNames) {
-  var tileDeck = [];
-  tileNames.forEach(function (name) {
-    tileDeck.push(new Tile(name));
-    tileDeck.push(new Tile(name));
-  });
+  const tileDeck = tileNames.flatMap((name) => [makeTile(name), makeTile(name)]);
+  const gridDimension = Math.sqrt(tileDeck.length);
+  const grid = [];
 
-  var gridDimension = Math.sqrt(tileDeck.length),
-    grid = [];
-
-  for (var row = 0; row < gridDimension; row++) {
+  for (let row = 0; row < gridDimension; row++) {
     grid[row] = [];
-    for (var col = 0; col < gridDimension; col++) {
-      var i = Math.floor(Math.random() * tileDeck.length);
+    for (let col = 0; col < gridDimension; col++) {
+      const i = Math.floor(Math.random() * tileDeck.length);
       grid[row][col] = tileDeck.splice(i, 1)[0];
     }
   }
@@ -30,23 +26,21 @@ function makeGrid(tileNames) {
 }
 
 export function MemoryGame(tileNames) {
-  var currentPair = [];
+  let currentPair = [];
   this.grid = makeGrid(tileNames);
   this.message = "Click on a tile.";
   this.unmatchedPairs = tileNames.length;
 
-  function hideUnmatchedPairIfNeeded() {
+  const hideUnmatchedPairIfNeeded = () => {
     if (currentPair.length === 2) {
       currentPair[0].flip();
       currentPair[1].flip();
       currentPair = [];
     }
-  }
+  };
 
-  this.flipTile = function (tile) {
-    if (tile.flipped) {
-      return;
-    }
+  this.flipTile = (tile) => {
+    if (tile.flipped) return;
 
     hideUnmatchedPairIfNeeded();
     tile.flip();

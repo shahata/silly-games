@@ -6,14 +6,12 @@ function random(max) {
 
 function minePlanter(rows, columns, mines) {
   function coordExists(arr, coord) {
-    return arr.some(function (value) {
-      return angular.equals(value, coord);
-    });
+    return arr.some((value) => value.row === coord.row && value.column === coord.column);
   }
 
-  var mineArr = [];
+  const mineArr = [];
   while (mineArr.length !== mines) {
-    var coord = { row: random(rows), column: random(columns) };
+    const coord = { row: random(rows), column: random(columns) };
     if (!coordExists(mineArr, coord)) {
       mineArr.push(coord);
     }
@@ -28,15 +26,15 @@ export const gameState = {
 };
 
 export function Minefield(rows, columns, mines) {
-  var game,
-    self = this;
+  let game;
+  const self = this;
 
   function getNeighbors(coord) {
-    var neighbors = [];
+    const neighbors = [];
 
     function pushNeighbor(drow, dcolumn) {
-      var actualRow = coord.row + drow;
-      var actualColumn = coord.column + dcolumn;
+      const actualRow = coord.row + drow;
+      const actualColumn = coord.column + dcolumn;
 
       if (game[actualRow] && game[actualRow][actualColumn]) {
         neighbors.push(game[actualRow][actualColumn]);
@@ -56,13 +54,11 @@ export function Minefield(rows, columns, mines) {
   }
 
   function allCells() {
-    return game.reduce(function (all, row) {
-      return all.concat(row);
-    }, []);
+    return game.reduce((all, row) => all.concat(row), []);
   }
 
   function revealAll() {
-    allCells().forEach(function (cell) {
+    allCells().forEach((cell) => {
       cell.revealed = true;
     });
   }
@@ -79,34 +75,28 @@ export function Minefield(rows, columns, mines) {
     }
 
     if (auto) {
-      var neighbors = getNeighbors(cell.coord);
-      if (
-        neighbors.filter(function (neighbor) {
-          return neighbor.flagged;
-        }).length >= cell.count
-      ) {
-        neighbors.forEach(function (neighbor) {
+      const neighbors = getNeighbors(cell.coord);
+      if (neighbors.filter((neighbor) => neighbor.flagged).length >= cell.count) {
+        neighbors.forEach((neighbor) => {
           neighbor.$reveal();
         });
       }
     } else if (cell.count === 0) {
-      getNeighbors(cell.coord).forEach(function (neighbor) {
+      getNeighbors(cell.coord).forEach((neighbor) => {
         neighbor.$reveal();
       });
     }
 
-    var won = allCells().every(function (cell) {
-      return cell.revealed || cell.mine;
-    });
+    const won = allCells().every((cell) => cell.revealed || cell.mine);
     if (won) {
       gameOver(gameState.WON);
     }
   }
 
   function plantMines() {
-    minePlanter(rows, columns, mines).forEach(function (coord) {
+    minePlanter(rows, columns, mines).forEach((coord) => {
       game[coord.row][coord.column].mine = true;
-      getNeighbors(coord).forEach(function (cell) {
+      getNeighbors(coord).forEach((cell) => {
         cell.count++;
       });
     });
@@ -114,10 +104,10 @@ export function Minefield(rows, columns, mines) {
 
   function initGame() {
     game = [];
-    for (var row = 0; row < rows; row++) {
+    for (let row = 0; row < rows; row++) {
       game.push([]);
-      for (var column = 0; column < columns; column++) {
-        game[row].push(new Cell({ row: row, column: column }, onCellRevealed));
+      for (let column = 0; column < columns; column++) {
+        game[row].push(new Cell({ row, column }, onCellRevealed));
       }
     }
   }

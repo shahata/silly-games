@@ -2,7 +2,7 @@ import { MemoryGame } from "./game.js";
 import "./app.css";
 
 function GameController() {
-  var tileNames = [
+  const tileNames = [
     "8-ball",
     "kronos",
     "baked-potato",
@@ -16,11 +16,11 @@ function GameController() {
   this.game = new MemoryGame(tileNames);
   this.popupDismissed = false;
 
-  this.dismissPopup = function () {
+  this.dismissPopup = () => {
     this.popupDismissed = true;
   };
 
-  this.restart = function () {
+  this.restart = () => {
     this.game = new MemoryGame(tileNames);
     this.popupDismissed = false;
   };

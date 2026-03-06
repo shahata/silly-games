@@ -7,7 +7,7 @@ import System from "./System.js";
 import RessourceMngr from "./RessourceMngr.js";
 import GameState from "./GameState.js";
 
-var Game = {
+const Game = {
   _keyPressAllowed: true,
   _frameBuffer: null,
   initialize: function () {
@@ -20,36 +20,29 @@ var Game = {
 
     this._frameBuffer = System.getFrameBuffer();
 
-    // init sound manager (used during preloading)
     SoundMngr.init();
 
     GameState.changeState(GameState.STATE_LOADING);
 
-    // start the drawing loop :)
     setInterval(function () {
       Game.onUpdateFrame();
     }, 1000 / GameState.FPS);
 
-    // load all ressources
     RessourceMngr.loadAllRessources(Game.loaded);
   },
 
-  loaded: function (status) {
+  loaded: function () {
     LevelManager.init();
     Player.init();
     Beerglass.init();
     Customers.init();
 
-    document.onkeydown = function (e) {
-      Game.onkeypress(e);
-    };
-    document.onkeyup = function (e) {
-      Game.onkeyrelease(e);
-    };
+    document.addEventListener("keydown", (e) => Game.onkeypress(e));
+    document.addEventListener("keyup", (e) => Game.onkeyrelease(e));
 
     GameState.changeState(GameState.STATE_MENU);
 
-    var newGameBtn = document.getElementById("tapper-new-game");
+    const newGameBtn = document.getElementById("tapper-new-game");
 
     if (newGameBtn) {
       newGameBtn.addEventListener("click", function () {
@@ -132,49 +125,43 @@ var Game = {
   },
 
   onkeypress: function (e) {
-    var prevenEvent = false;
+    let preventDefault = false;
 
     if (!this._keyPressAllowed) return;
 
-    switch (e.keyCode) {
-      case 38: {
-        // UP arrow
+    switch (e.key) {
+      case "ArrowUp": {
         if (GameState.getState() === GameState.STATE_PLAY)
           Player.move(Player.UP);
-        prevenEvent = true;
+        preventDefault = true;
         break;
       }
-      case 40: {
-        // DOWN arrow
+      case "ArrowDown": {
         if (GameState.getState() === GameState.STATE_PLAY)
           Player.move(Player.DOWN);
-        prevenEvent = true;
+        preventDefault = true;
         break;
       }
-      case 37: {
-        // LEFT arrow
+      case "ArrowLeft": {
         if (GameState.getState() === GameState.STATE_PLAY)
           Player.move(Player.LEFT);
-        prevenEvent = true;
+        preventDefault = true;
         break;
       }
-      case 39: {
-        // RIGHT arrow
+      case "ArrowRight": {
         if (GameState.getState() === GameState.STATE_PLAY)
           Player.move(Player.RIGHT);
-        prevenEvent = true;
+        preventDefault = true;
         break;
       }
-      case 32: {
-        // SPACE
+      case " ": {
         if (GameState.getState() === GameState.STATE_PLAY)
           Player.move(Player.FIRE);
-        prevenEvent = true;
+        preventDefault = true;
         break;
       }
 
-      case 13: {
-        // Press ENTER
+      case "Enter": {
         switch (GameState.getState()) {
           case GameState.STATE_MENU: {
             LevelManager.newGame();
@@ -187,64 +174,55 @@ var Game = {
             break;
           }
 
-          case GameState.STATE_PLAY: {
+          default:
             break;
-          }
-
-          default: {
-            break;
-          }
-        } // end switch
-        prevenEvent = true;
+        }
+        preventDefault = true;
         break;
       }
 
       default:
         break;
     }
-    if (prevenEvent) {
+    if (preventDefault) {
       e.preventDefault();
       e.stopImmediatePropagation();
     }
   },
 
   onkeyrelease: function (e) {
-    var prevenEvent = false;
+    let preventDefault = false;
 
     if (!this._keyPressAllowed) return;
 
-    switch (e.keyCode) {
-      case 38: // UP
-      case 40: {
-        // DOWN
-        prevenEvent = true;
+    switch (e.key) {
+      case "ArrowUp":
+      case "ArrowDown": {
+        preventDefault = true;
         break;
       }
-      case 37: {
-        // LEFT arrow
+      case "ArrowLeft": {
         if (GameState.getState() === GameState.STATE_PLAY)
           Player.move(Player.NONE);
-        prevenEvent = true;
+        preventDefault = true;
         break;
       }
-      case 39: {
-        // RIGHT arrow
+      case "ArrowRight": {
         if (GameState.getState() === GameState.STATE_PLAY)
           Player.move(Player.NONE);
-        prevenEvent = true;
+        preventDefault = true;
         break;
       }
-      case 32: {
-        // SPACE
+      case " ": {
         if (GameState.getState() === GameState.STATE_PLAY)
           Player.move(Player.NONE);
-        prevenEvent = true;
+        preventDefault = true;
         break;
       }
       default:
         break;
     }
-    if (prevenEvent) {
+    if (preventDefault) {
       e.preventDefault();
       e.stopImmediatePropagation();
     }

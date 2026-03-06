@@ -1,6 +1,4 @@
-var g_sound_enable = true;
-
-var SoundMngr = {
+const SoundMngr = {
   BARMAN_ZIP_UP: 0,
   BARMAN_ZIP_DOWN: 1,
   OH_SUZANNA: 2,
@@ -17,12 +15,13 @@ var SoundMngr = {
   COLLECT_TIP: 13,
   TIP_APPEAR: 14,
 
+  _enabled: true,
   _audio_channels: [],
 
-  init: function () {},
+  init() {},
 
-  load: function (sound_id, sound, loadCallBack) {
-    var soundclip = document.createElement("audio");
+  load(sound_id, sound, loadCallBack) {
+    const soundclip = document.createElement("audio");
 
     soundclip.src = sound.src;
     soundclip.autobuffer = true;
@@ -30,7 +29,7 @@ var SoundMngr = {
 
     soundclip.addEventListener(
       "canplaythrough",
-      function handler(event) {
+      function handler() {
         this.removeEventListener("canplaythrough", handler, false);
         loadCallBack();
       },
@@ -39,41 +38,35 @@ var SoundMngr = {
     soundclip.load();
 
     this._audio_channels[sound_id] = [soundclip];
-    // create other copy channels if necessary
     if (sound.channel > 1) {
-      for (var channel = 1; channel < sound.channel; channel++) {
+      for (let channel = 1; channel < sound.channel; channel++) {
         this._audio_channels[sound_id].push(soundclip.cloneNode(true));
       }
     }
   },
 
-  stop: function (sound_id) {
-    if (g_sound_enable) {
-      var sound = this._audio_channels[sound_id];
-      for (var channel_id = sound.length; channel_id--; ) {
-        sound[channel_id].pause();
+  stop(sound_id) {
+    if (this._enabled) {
+      const sound = this._audio_channels[sound_id];
+      for (let i = sound.length; i--; ) {
+        sound[i].pause();
       }
     }
   },
 
-  play: function (sound_id, loop) {
-    if (g_sound_enable) {
-      var free_channel = 0;
+  play(sound_id, loop) {
+    if (this._enabled) {
+      let free_channel = 0;
+      const clip = this._audio_channels[sound_id];
 
-      var clip = this._audio_channels[sound_id];
-
-      for (var channel_id = clip.length; channel_id--; ) {
-        if (clip[channel_id].paused || clip[channel_id].ended) {
-          // we found a free channel !
-          free_channel = channel_id;
+      for (let i = clip.length; i--; ) {
+        if (clip[i].paused || clip[i].ended) {
+          free_channel = i;
           break;
         }
       }
-      // force reset to beginning
       clip[free_channel].currentTime = 0;
-
       clip[free_channel].loop = loop;
-
       clip[free_channel].play();
     }
   },

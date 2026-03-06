@@ -5,7 +5,7 @@ import RessourceMngr from "./RessourceMngr.js";
 import GameState from "./GameState.js";
 
 function oneCustomer(row, default_xpos, movingPattern, type) {
-  var CustomerObj = {
+  let CustomerObj = {
     STATE_WAIT: 0,
     STATE_CATCH: 1,
     STATE_DRINK: 2,
@@ -101,7 +101,7 @@ function oneCustomer(row, default_xpos, movingPattern, type) {
   return CustomerObj;
 }
 
-var Customers = {
+const Customers = {
   STEP: 1,
   CUST_GREEN_HAT_COWBOY: 0,
   CUST_WOMEM: 1,
@@ -150,7 +150,7 @@ var Customers = {
   },
 
   reset: function () {
-    for (var count = 1; count < 5; count++) {
+    for (let count = 1; count < 5; count++) {
       this._customersList[count] = [];
       this._customerxpos[count] = -1;
     }
@@ -160,7 +160,7 @@ var Customers = {
   },
 
   add: function (row, pos, type) {
-    var cust = new oneCustomer(
+    let cust = new oneCustomer(
       row,
       LevelManager.row_lbound[row],
       this._movingPatternArray[row],
@@ -177,7 +177,7 @@ var Customers = {
         LevelManager.row_lbound[row] +
           (LevelManager.row_rbound[row] - LevelManager.row_lbound[row]) / 3
       ) {
-        var randomrow = Math.floor(Math.random() * 6);
+        let randomrow = Math.floor(Math.random() * 6);
         if (randomrow === row) {
           this._bonus.visible = true;
           this._bonus.row = row;
@@ -254,18 +254,18 @@ var Customers = {
   },
 
   draw: function (context /*2D Canvas context*/) {
-    var cust;
-    var ret = 0;
-    var custArrayCopy = null;
-    var copyFlag = false;
+    let cust;
+    let ret = 0;
+    let custArrayCopy = null;
+    let copyFlag = false;
 
     this._customerxpos = [-1, -1, -1, -1, -1];
     this._maxpos = [0, 0, 0, 0, 0];
 
-    for (var rowcount = 1; rowcount < 5; rowcount++) {
+    for (let rowcount = 1; rowcount < 5; rowcount++) {
       custArrayCopy = this._customersList[rowcount].slice();
 
-      for (var i = this._customersList[rowcount].length; i--; ) {
+      for (let i = this._customersList[rowcount].length; i--; ) {
         cust = this._customersList[rowcount][i];
 
         if (
