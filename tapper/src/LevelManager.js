@@ -1,12 +1,12 @@
 import Customers, {
-  CUST_BLACK_GUY,
-  CUST_GRAY_HAT_COWBOY,
-  CUST_GREEN_HAT_COWBOY,
-  CUST_WOMAN,
+  CUSTOMER_BLACK_GUY,
+  CUSTOMER_GRAY_HAT_COWBOY,
+  CUSTOMER_GREEN_HAT_COWBOY,
+  CUSTOMER_WOMAN,
   MAX_CUSTOMER_TYPE,
 } from "./Customers.js";
-import SoundManager, { POP_OUT } from "./SoundMngr.js";
-import ResourceManager from "./RessourceMngr.js";
+import SoundManager, { POP_OUT } from "./SoundManager.js";
+import ResourceManager from "./ResourceManager.js";
 import GameState, { STATE_PLAY } from "./GameState.js";
 
 export const NUM_LEVEL = 1;
@@ -79,10 +79,10 @@ class LevelManagerClass {
       }
 
       for (let i = 1; i <= this.#difficulty; i++) {
-        Customers.add(1, i, CUST_GREEN_HAT_COWBOY);
-        Customers.add(2, i, CUST_WOMAN);
-        Customers.add(3, i, CUST_BLACK_GUY);
-        Customers.add(4, i, CUST_GRAY_HAT_COWBOY);
+        Customers.add(1, i, CUSTOMER_GREEN_HAT_COWBOY);
+        Customers.add(2, i, CUSTOMER_WOMAN);
+        Customers.add(3, i, CUSTOMER_BLACK_GUY);
+        Customers.add(4, i, CUSTOMER_GRAY_HAT_COWBOY);
         SoundManager.play(POP_OUT, false);
       }
     } else {
@@ -222,10 +222,10 @@ class LevelManagerClass {
 
   reset() {
     for (let i = 1; i <= this.#difficulty; i++) {
-      Customers.add(1, i, CUST_GREEN_HAT_COWBOY);
-      Customers.add(2, i, CUST_WOMAN);
-      Customers.add(3, i, CUST_BLACK_GUY);
-      Customers.add(4, i, CUST_GRAY_HAT_COWBOY);
+      Customers.add(1, i, CUSTOMER_GREEN_HAT_COWBOY);
+      Customers.add(2, i, CUSTOMER_WOMAN);
+      Customers.add(3, i, CUSTOMER_BLACK_GUY);
+      Customers.add(4, i, CUSTOMER_GRAY_HAT_COWBOY);
     }
     this.#lastRow = -1;
     setTimeout(() => this.addCustomer(), TIME_STEP_SECONDS * 1000);

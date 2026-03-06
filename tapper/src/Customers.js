@@ -4,15 +4,15 @@ import SoundManager, {
   COLLECT_TIP,
   OUT_DOOR,
   TIP_APPEAR,
-} from "./SoundMngr.js";
-import ResourceManager from "./RessourceMngr.js";
+} from "./SoundManager.js";
+import ResourceManager from "./ResourceManager.js";
 import GameState, { FPS, STATE_PLAY } from "./GameState.js";
 
 export const STEP = 1;
-export const CUST_GREEN_HAT_COWBOY = 0;
-export const CUST_WOMAN = 1;
-export const CUST_BLACK_GUY = 2;
-export const CUST_GRAY_HAT_COWBOY = 3;
+export const CUSTOMER_GREEN_HAT_COWBOY = 0;
+export const CUSTOMER_WOMAN = 1;
+export const CUSTOMER_BLACK_GUY = 2;
+export const CUSTOMER_GRAY_HAT_COWBOY = 3;
 export const MAX_CUSTOMER_TYPE = 4;
 
 const REGULAR_1 = 0;

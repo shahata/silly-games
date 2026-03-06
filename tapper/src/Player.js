@@ -7,8 +7,8 @@ import SoundManager, {
   MUG_FILL_1,
   MUG_FILL_2,
   THROW_MUG,
-} from "./SoundMngr.js";
-import ResourceManager from "./RessourceMngr.js";
+} from "./SoundManager.js";
+import ResourceManager from "./ResourceManager.js";
 
 const STEP = 16;
 export const LEFT = 0;

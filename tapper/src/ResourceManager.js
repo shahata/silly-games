@@ -1,4 +1,4 @@
-import SoundManager from "./SoundMngr.js";
+import SoundManager from "./SoundManager.js";
 import loadingTitleImage from "../images/loading_title.png";
 import gameTitleImage from "../images/game_title.png";
 import pregameImage from "../images/pregame.png";

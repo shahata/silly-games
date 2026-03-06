@@ -7,9 +7,9 @@ import SoundManager, {
   LAUGHING,
   OH_SUZANNA,
   YOU_LOSE,
-} from "./SoundMngr.js";
+} from "./SoundManager.js";
 import System from "./System.js";
-import ResourceManager from "./RessourceMngr.js";
+import ResourceManager from "./ResourceManager.js";
 import GameState, {
   FPS,
   STATE_GAME_OVER,

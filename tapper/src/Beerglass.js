@@ -1,8 +1,8 @@
 import Player from "./Player.js";
 import Customers, { STEP as CUSTOMER_STEP } from "./Customers.js";
 import LevelManager, { SCORE_EMPTY_BEER } from "./LevelManager.js";
-import SoundManager, { GRAB_MUG } from "./SoundMngr.js";
-import ResourceManager from "./RessourceMngr.js";
+import SoundManager, { GRAB_MUG } from "./SoundManager.js";
+import ResourceManager from "./ResourceManager.js";
 import GameState, { FPS, STATE_PLAY } from "./GameState.js";
 
 const SPRITE_FULL_1 = 0;
