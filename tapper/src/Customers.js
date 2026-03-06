@@ -43,7 +43,7 @@ function oneCustomer(row, default_xpos, movingPattern, type) {
           if (this.fpscount++ > this.fpsmax) {
             this.animationCounter++;
             this.sprite = this.movingPattern[this.animationCounter] << 5; //* 32;
-            if (this.animationCounter == this.movingPattern.length)
+            if (this.animationCounter === this.movingPattern.length)
               this.animationCounter = -1;
             this.fpscount = 0;
           }
@@ -73,7 +73,7 @@ function oneCustomer(row, default_xpos, movingPattern, type) {
             this.animationCounter++;
             this.fpscount = 0;
           }
-          if (this.animationCounter == 3) {
+          if (this.animationCounter === 3) {
             this.state = this.STATE_WAIT;
             this.animationCounter = -1;
             this.fpscount = 0;
@@ -130,7 +130,7 @@ var Customers = {
   ],
   _customerxpos: [5],
   _maxpos: [5],
-  _customersList: new Array(), // [row, Cust Obj]
+  _customersList: [], // [row, Cust Obj]
   _endOfTheRowCustomer: null,
   _spriteimage: null,
   _miscImage: null,
@@ -178,7 +178,7 @@ var Customers = {
           (LevelManager.row_rbound[row] - LevelManager.row_lbound[row]) / 3
       ) {
         var randomrow = Math.floor(Math.random() * 6);
-        if (randomrow == row) {
+        if (randomrow === row) {
           this._bonus.visible = true;
           this._bonus.row = row;
           this._bonus.xpos = customerxpos;
@@ -197,7 +197,7 @@ var Customers = {
   checkBonusCollision: function (row, xpos) {
     if (
       this._bonus.visible &&
-      this._bonus.row == row &&
+      this._bonus.row === row &&
       xpos <= this._bonus.xpos + this._spritewidth
     ) {
       this._bonus.visible = false;
@@ -229,7 +229,7 @@ var Customers = {
   getFirstCustomerPos: function (row) {
     /// there is a bug somewhere that cause an execption if the second condition is not checked
     if (
-      this._customerxpos[row] != -1 &&
+      this._customerxpos[row] !== -1 &&
       this._customersList[row][this._customerxpos[row]]
     )
       return this._customersList[row][this._customerxpos[row]].xpos;
@@ -237,7 +237,7 @@ var Customers = {
 
   beerCollisionDetected: function (row) {
     // only validate the collision if the customer is in wait state
-    if (this._customersList[row][this._customerxpos[row]].state == 0) {
+    if (this._customersList[row][this._customerxpos[row]].state === 0) {
       // change the customer status
       this._customersList[row][this._customerxpos[row]].catchBeer();
       return true;
@@ -270,7 +270,7 @@ var Customers = {
 
         if (
           !this.oneReachEndOfRow &&
-          GameState.getState() == GameState.STATE_PLAY
+          GameState.getState() === GameState.STATE_PLAY
         ) {
           cust.update();
 
@@ -283,7 +283,7 @@ var Customers = {
           } else {
             if (
               cust.xpos > this._maxpos[rowcount] &&
-              cust.state == cust.STATE_WAIT
+              cust.state === cust.STATE_WAIT
             ) {
               this._customerxpos[rowcount] = i;
               this._maxpos[rowcount] = cust.xpos;
@@ -291,7 +291,7 @@ var Customers = {
           }
         }
 
-        if (cust.EndOfRow && this.oneReachEndOfRow == false) {
+        if (cust.EndOfRow && this.oneReachEndOfRow === false) {
           this.oneReachEndOfRow = true;
           this._endOfTheRowCustomer = cust;
           LevelManager.lifeLost();
@@ -310,7 +310,7 @@ var Customers = {
           this._spriteheight,
         );
 
-        if (cust.state != cust.STATE_WAIT) {
+        if (cust.state !== cust.STATE_WAIT) {
           context.drawImage(
             this._spriteimage,
             cust.sprite2,

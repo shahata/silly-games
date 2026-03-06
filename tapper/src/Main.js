@@ -68,7 +68,7 @@ var Game = {
 
     SoundMngr.play(SoundMngr.GETREADYTOSERVE, false);
     setTimeout(() => {
-      if (GameState.getState() == GameState.STATE_READY) {
+      if (GameState.getState() === GameState.STATE_READY) {
         GameState.changeState(GameState.STATE_PLAY);
         SoundMngr.play(SoundMngr.OH_SUZANNA, true);
       }
@@ -114,15 +114,15 @@ var Game = {
       default:
         {
           LevelManager.drawLevelBackground(this._frameBuffer);
-          if (Customers.draw(this._frameBuffer) != 0) {
+          if (Customers.draw(this._frameBuffer) !== 0) {
             Game.lost();
           }
-          if (Beerglass.draw(this._frameBuffer) != 0) {
+          if (Beerglass.draw(this._frameBuffer) !== 0) {
             Game.lost();
           }
           this._keyPressAllowed = Player.draw(this._frameBuffer);
           LevelManager.drawGameHUD(this._frameBuffer);
-          if (GameState.getState() == GameState.STATE_GAMEOVER) {
+          if (GameState.getState() === GameState.STATE_GAMEOVER) {
             LevelManager.displayGameOver(this._frameBuffer);
           }
         }
@@ -139,35 +139,35 @@ var Game = {
     switch (e.keyCode) {
       case 38: {
         // UP arrow
-        if (GameState.getState() == GameState.STATE_PLAY)
+        if (GameState.getState() === GameState.STATE_PLAY)
           Player.move(Player.UP);
         prevenEvent = true;
         break;
       }
       case 40: {
         // DOWN arrow
-        if (GameState.getState() == GameState.STATE_PLAY)
+        if (GameState.getState() === GameState.STATE_PLAY)
           Player.move(Player.DOWN);
         prevenEvent = true;
         break;
       }
       case 37: {
         // LEFT arrow
-        if (GameState.getState() == GameState.STATE_PLAY)
+        if (GameState.getState() === GameState.STATE_PLAY)
           Player.move(Player.LEFT);
         prevenEvent = true;
         break;
       }
       case 39: {
         // RIGHT arrow
-        if (GameState.getState() == GameState.STATE_PLAY)
+        if (GameState.getState() === GameState.STATE_PLAY)
           Player.move(Player.RIGHT);
         prevenEvent = true;
         break;
       }
       case 32: {
         // SPACE
-        if (GameState.getState() == GameState.STATE_PLAY)
+        if (GameState.getState() === GameState.STATE_PLAY)
           Player.move(Player.FIRE);
         prevenEvent = true;
         break;
@@ -222,21 +222,21 @@ var Game = {
       }
       case 37: {
         // LEFT arrow
-        if (GameState.getState() == GameState.STATE_PLAY)
+        if (GameState.getState() === GameState.STATE_PLAY)
           Player.move(Player.NONE);
         prevenEvent = true;
         break;
       }
       case 39: {
         // RIGHT arrow
-        if (GameState.getState() == GameState.STATE_PLAY)
+        if (GameState.getState() === GameState.STATE_PLAY)
           Player.move(Player.NONE);
         prevenEvent = true;
         break;
       }
       case 32: {
         // SPACE
-        if (GameState.getState() == GameState.STATE_PLAY)
+        if (GameState.getState() === GameState.STATE_PLAY)
           Player.move(Player.NONE);
         prevenEvent = true;
         break;

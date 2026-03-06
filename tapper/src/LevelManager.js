@@ -62,12 +62,11 @@ var LevelManager = {
   },
 
   addCustomer: function () {
-    if (GameState.getState() == GameState.STATE_PLAY) {
+    if (GameState.getState() === GameState.STATE_PLAY) {
       // if less than 1 customer, we add diff * 1 customer per row
       if (Customers.isAnyCustomer() < 2) {
-        //this._difficulty++;
 
-        if (this._wave++ == this._difficulty * 2) this._difficulty++;
+        if (this._wave++ === this._difficulty * 2) this._difficulty++;
 
         for (var i = 1; i <= this._difficulty; i++) {
           Customers.add(1, i, Customers.CUST_GREEN_HAT_COWBOY); // row, pos, type
@@ -80,7 +79,7 @@ var LevelManager = {
       else {
         var randomrow = Math.floor(Math.random() * 5);
 
-        if (randomrow != 0 && randomrow != this._lastrow) {
+        if (randomrow !== 0 && randomrow !== this._lastrow) {
           var randomcusttype = Math.floor(
             Math.random() * Customers.MAX_CUSTOMER_TYPE,
           );

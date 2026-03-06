@@ -67,14 +67,6 @@ export function Minefield(rows, columns, mines) {
     });
   }
 
-  function loadGame(load) {
-    game = load.game.map(function (row) {
-      return row.map(function (cell) {
-        return angular.extend(new Cell(cell.coord, onCellRevealed), cell);
-      });
-    });
-  }
-
   function gameOver(state) {
     self.state = state;
     revealAll();
@@ -103,7 +95,7 @@ export function Minefield(rows, columns, mines) {
       });
     }
 
-    var won = allCells(game).every(function (cell) {
+    var won = allCells().every(function (cell) {
       return cell.revealed || cell.mine;
     });
     if (won) {

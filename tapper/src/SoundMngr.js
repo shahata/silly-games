@@ -17,7 +17,7 @@ var SoundMngr = {
   COLLECT_TIP: 13,
   TIP_APPEAR: 14,
 
-  _audio_channels: new Array(),
+  _audio_channels: [],
 
   init: function () {},
 

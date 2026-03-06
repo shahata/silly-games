@@ -5,8 +5,10 @@ export function makeMove(data, row, column) {
   ];
   const result = options.find(x => data[x.row] && data[x.row][x.column] === null);
   if (result) {
-    data[result.row][result.column] = data[row][column];
-    data[row][column] = null;
+    const newData = data.map(r => [...r]);
+    newData[result.row][result.column] = data[row][column];
+    newData[row][column] = null;
+    return newData;
   }
   return data;
 }

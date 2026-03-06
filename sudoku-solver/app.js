@@ -271,4 +271,4 @@ class MainController {
 
 MainController.$inject = ["$timeout"];
 
-angular.module("sodukuApp", []).controller("MainController", MainController);
+angular.module("sudokuApp", []).controller("MainController", MainController);

@@ -14,20 +14,27 @@ export function getCurrentGuessIndex(data) {
 }
 
 export function fillSlot(data, color) {
-  const guess = data.guesses[getCurrentGuessIndex(data)];
+  const guessIndex = getCurrentGuessIndex(data);
+  const guess = data.guesses[guessIndex];
   if (guess && guess.indexOf(color) === -1) {
     const i = guess.indexOf(undefined);
-    guess.splice(i, 1, color);
+    const newGuesses = data.guesses.map((g, idx) =>
+      idx === guessIndex ? g.map((v, j) => j === i ? color : v) : g
+    );
+    return { ...data, guesses: newGuesses };
   }
-  return { ...data };
+  return data;
 }
 
 export function emptySlot(data, guess, slot) {
   const current = getCurrentGuessIndex(data);
   if (current === guess) {
-    data.guesses[guess][slot] = undefined;
+    const newGuesses = data.guesses.map((g, idx) =>
+      idx === guess ? g.map((v, j) => j === slot ? undefined : v) : g
+    );
+    return { ...data, guesses: newGuesses };
   }
-  return { ...data };
+  return data;
 }
 
 export function getGuesses(data) {

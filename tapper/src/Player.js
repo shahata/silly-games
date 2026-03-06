@@ -133,10 +133,10 @@ var Player = {
     if (this.fpscount++ > this.leg_anim_timing && this._game_play) {
       if (this._player_goleft) {
         this._player_action =
-          this._player_action == this.STAND_L1 ? this.STAND_L2 : this.STAND_L1;
+          this._player_action === this.STAND_L1 ? this.STAND_L2 : this.STAND_L1;
       } else {
         this._player_action =
-          this._player_action == this.STAND_R1 ? this.STAND_R2 : this.STAND_R1;
+          this._player_action === this.STAND_R1 ? this.STAND_R2 : this.STAND_R1;
       }
       this.fpscount = 0;
     }
@@ -145,9 +145,9 @@ var Player = {
   drawTapper: function (context) {
     for (var rownum = 1; rownum < 5; rownum++) {
       if (
-        this._currentrow != rownum ||
+        this._currentrow !== rownum ||
         !this._tapper_serving ||
-        this._goState != 0
+        this._goState !== 0
       ) {
         // Draw the tapper (free one)
         context.drawImage(
@@ -194,7 +194,7 @@ var Player = {
       );
     }
 
-    if (this._tapperState == this.TAPPER_2) {
+    if (this._tapperState === this.TAPPER_2) {
       // Draw the bartender (up)
       context.drawImage(
         this._spriteimage,
@@ -282,7 +282,7 @@ var Player = {
     // if lastrow !=0 means the player changed row
     // and we need to draw the small fancy animation
     // !! this is done here to ensure it's played and finished before next move
-    if (this._lastrow != 0) {
+    if (this._lastrow !== 0) {
       // Draw the go animation
       context.drawImage(
         this._spriteimage,
@@ -405,25 +405,22 @@ var Player = {
   },
 
   move: function (direction) {
-    //this._tapper_serving = false;
     this._player_running = false;
 
     switch (direction) {
       case this.UP: {
         // cancel any ongoing serving
-        //this._servingcounter = 0;
         this._tapper_serving = false;
 
         this._lastrow = this._currentrow;
         this._currentrow -= 1;
-        if (this._currentrow == 0) this._currentrow = 4;
+        if (this._currentrow === 0) this._currentrow = 4;
         // to manage the "going out" animation
         this._goState = this.GO1;
         this._lastplayer_xpos = this._player_xpos;
         // set new default position on the new row
         this._player_xpos = this._row_xpos[this._currentrow];
         this._player_ypos = this._row_ypos[this._currentrow];
-        //this._player_running = false;
 
         SoundMngr.play(SoundMngr.BARMAN_ZIP_UP);
 
@@ -431,19 +428,17 @@ var Player = {
       }
       case this.DOWN: {
         // cancel any ongoing serving
-        //this._servingcounter = 0;
         this._tapper_serving = false;
 
         this._lastrow = this._currentrow;
         this._currentrow += 1;
-        if (this._currentrow == 5) this._currentrow = 1;
+        if (this._currentrow === 5) this._currentrow = 1;
         // to manage the "going out" animation
         this._goState = this.GO1;
         this._lastplayer_xpos = this._player_xpos;
         // set new default position on the new row
         this._player_xpos = this._row_xpos[this._currentrow];
         this._player_ypos = this._row_ypos[this._currentrow];
-        //this._player_running = false;
 
         SoundMngr.play(SoundMngr.BARMAN_ZIP_DOWN);
 
@@ -452,10 +447,8 @@ var Player = {
 
       case this.LEFT: {
         // cancel any ongoing serving
-        //this._servingcounter = 0;
         this._tapper_serving = false;
 
-        //this._player_running = false;
         if (
           this._player_goleft &&
           this._player_xpos > this._row_lbound[this._currentrow]
@@ -477,10 +470,8 @@ var Player = {
 
       case this.RIGHT: {
         // cancel any ongoing serving
-        //this._servingcounter = 0;
         this._tapper_serving = false;
 
-        //this._player_running = false;
         if (
           !this._player_goleft &&
           this._player_xpos < this._row_rbound[this._currentrow]
@@ -500,8 +491,7 @@ var Player = {
 
       case this.FIRE: {
         // if not near the tapper, move it first :)
-        if (this._player_xpos != this._row_rbound[this._currentrow]) {
-          // break;
+        if (this._player_xpos !== this._row_rbound[this._currentrow]) {
           this._lastrow = this._currentrow;
           // to manage the "going out" animation
           this._goState = this.GO1;
@@ -512,7 +502,7 @@ var Player = {
         }
 
         // reset the counter if we were not previously serving a beer
-        if (this._tapper_serving == false) this._servingcounter = 0;
+        if (this._tapper_serving === false) this._servingcounter = 0;
 
         this._tapper_serving = true;
 
@@ -543,15 +533,13 @@ var Player = {
         if (this._tapper_serving) {
           this._tapperState = this.TAPPER_2;
 
-          if (this._servingcounter == this.SERVING_MAX) {
+          if (this._servingcounter === this.SERVING_MAX) {
             this._servingcounter = 0;
-            //launch a beer !
             Beerglass.add(
               this._currentrow,
               this._player_xpos - this._spritewidth,
               Beerglass.FULL_MUG,
             );
-            //console.log("Beer Served !");
             this._tapper_serving = false;
             // and obviously, when we finished serving we are looking to the rigth
             this._player_goleft = false;
@@ -562,7 +550,6 @@ var Player = {
         // manage other events
         else {
           // go back for the standing position
-          //this._player_running = false;
           if (this._player_goleft) this._player_action = this.STAND_L1;
           else this._player_action = this.STAND_R1;
 

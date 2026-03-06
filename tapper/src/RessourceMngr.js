@@ -74,7 +74,7 @@ var RessourceMngr = {
 
   checkLoadStatus: function () {
     //console.log ("%d/%d", RessourceMngr.loadCount, RessourceMngr.ressourceCount);
-    if (RessourceMngr.loadCount == RessourceMngr.ressourceCount) {
+    if (RessourceMngr.loadCount === RessourceMngr.ressourceCount) {
       // callback function when loaded is finished
       RessourceMngr._loadedCallBack();
     } else {
@@ -94,7 +94,7 @@ var RessourceMngr = {
   },
 
   preloadImages: function (/* Array */ images) {
-    this.imageList = new Array();
+    this.imageList = [];
     for (var i = 0; i < images.length; i++) {
       var newImage = new Image();
       this.imageList.push(images[i].name);

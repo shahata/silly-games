@@ -20,10 +20,10 @@ function Glass(row, default_xpos, default_ypos, type) {
     broken: false,
 
     update: function () {
-      if (type == Beerglass.FULL_MUG) {
+      if (type === Beerglass.FULL_MUG) {
         if (this.fpscount++ > this.fpsmax) {
           this.sprite =
-            this.sprite == Beerglass.SPRITE_FULL_1
+            this.sprite === Beerglass.SPRITE_FULL_1
               ? Beerglass.SPRITE_FULL_2
               : Beerglass.SPRITE_FULL_1;
           this.fpscount = 0;
@@ -74,9 +74,9 @@ var Beerglass = {
   // define the ypos position of our beer
   //_row_ypos:				[null,  88, 184, 280, 376],
 
-  _glasses_full: new Array(), // [row, Glass Obj]
+  _glasses_full: [], // [row, Glass Obj]
 
-  _glasses_empty: new Array(), // [row, Glass Obj]
+  _glasses_empty: [], // [row, Glass Obj]
 
   _spriteimage: null,
 
@@ -121,7 +121,7 @@ var Beerglass = {
     var glass = new Glass(row, xpos, LevelManager.row_ypos[row] + 8, type);
 
     // add it to the corresponding array
-    if (type == Beerglass.FULL_MUG) this._glasses_full[row].push(glass);
+    if (type === Beerglass.FULL_MUG) this._glasses_full[row].push(glass);
     else this._glasses_empty[row].push(glass);
   },
 
@@ -131,7 +131,6 @@ var Beerglass = {
 		
 		---										*/
   stop: function () {
-    //this._game_play = false;
   },
 
   /* ---
@@ -160,10 +159,9 @@ var Beerglass = {
 		---										*/
   checkPlayerCollision: function (glass, row) {
     if (
-      Player._currentrow == row &&
+      Player._currentrow === row &&
       glass.xpos + this._spritewidth >= Player._player_xpos
     ) {
-      //console.log("Waou.. you catch an empty mug !");
 
       SoundMngr.play(SoundMngr.GRAB_MUG, false);
 
@@ -216,7 +214,6 @@ var Beerglass = {
     // we copy the array, since we will maybe remove some glasses
     glassArrayCopy = this._glasses_full[rowcount].slice();
 
-    //console.log("drawing %d beers on row %d  !", this._glasses_full[rowcount].length, rowcount);
     for (var i = this._glasses_full[rowcount].length; i--; ) {
       // ----------  draw the beers ! ----------------------//
 
@@ -224,14 +221,13 @@ var Beerglass = {
 
       if (
         !this.isOneFullGlassBroken &&
-        GameState.getState() == GameState.STATE_PLAY
+        GameState.getState() === GameState.STATE_PLAY
       ) {
         glass.update();
 
         if (glass.broken) {
           if (!this.isOneFullGlassBroken) {
             this.isOneFullGlassBroken = true;
-            //this._brokenGlass = glass;
             LevelManager.lifeLost();
             ret = rowcount;
           }
@@ -292,14 +288,13 @@ var Beerglass = {
 
       if (
         !this.isOneEmptyGlassBroken &&
-        GameState.getState() == GameState.STATE_PLAY
+        GameState.getState() === GameState.STATE_PLAY
       ) {
         glass.update();
 
         if (glass.broken) {
           if (!this.isOneEmptyGlassBroken) {
             this.isOneEmptyGlassBroken = true;
-            //this._brokenGlass = glass;
             LevelManager.lifeLost();
             ret = rowcount;
           }
