@@ -24,7 +24,7 @@ import youLoseSound from "../sounds/you_lose.mp3";
 import collectTipSound from "../sounds/collect_tip.mp3";
 import tipAppearSound from "../sounds/tip_appear.mp3";
 
-const g_imageData = [
+const IMAGE_DATA = [
   { name: "game_title", src: gameTitleImage },
   { name: "pregame", src: pregameImage },
   { name: "level-1", src: level1Image },
@@ -35,7 +35,7 @@ const g_imageData = [
   { name: "misc", src: miscImage },
 ];
 
-const g_soundData = [
+const SOUND_DATA = [
   { name: "zip_up", src: zipUpSound, channel: 4 }, // 0
   { name: "zip_down", src: zipDownSound, channel: 4 }, // 1
   { name: "oh_suzanna", src: ohSuzannaSound, channel: 1 }, // 2
@@ -57,76 +57,85 @@ const g_soundData = [
   { name: "tip_appear", src: tipAppearSound, channel: 1 }, // 14
 ];
 
-const RessourceMngr = {
-  imageList: null,
+const LOGO_WIDTH = 234;
+const LOGO_HEIGHT = 104;
+const LOADING_CHECK_INTERVAL_MS = 100;
 
-  loadCount: 0,
+class ResourceManager {
+  #imageList = {};
+  #loadCount = 0;
+  #loadingScreenLogo = null;
+  #resourceCount = 0;
+  #loadedCallback;
 
-  loadingscreenLogo: null,
-
-  loadingTitleName: loadingTitleImage,
-  logoWidth: 234,
-  logoHeight: 104,
-
-  ressourceCount: 0,
-
-  _loadedCallBack: undefined,
-
-  checkLoadStatus: function () {
-    //console.log ("%d/%d", RessourceMngr.loadCount, RessourceMngr.ressourceCount);
-    if (RessourceMngr.loadCount === RessourceMngr.ressourceCount) {
-      // callback function when loaded is finished
-      RessourceMngr._loadedCallBack();
-    } else {
-      setTimeout(() => RessourceMngr.checkLoadStatus(), 100);
+  #checkLoadStatus() {
+    if (this.#loadCount === this.#resourceCount) {
+      this.#loadedCallback();
+      return;
     }
-  },
 
-  loadAllRessources: function (loadCallBack) {
-    RessourceMngr.ressourceCount = RessourceMngr.preloadImages(g_imageData);
-    RessourceMngr.ressourceCount += RessourceMngr.preLoadSounds(g_soundData);
-    RessourceMngr._loadedCallBack = loadCallBack;
-    setTimeout(() => RessourceMngr.checkLoadStatus(), 100);
-  },
+    setTimeout(() => this.#checkLoadStatus(), LOADING_CHECK_INTERVAL_MS);
+  }
 
-  ressourceLoaded: function () {
-    RessourceMngr.loadCount++;
-  },
+  #resourceLoaded = () => {
+    this.#loadCount += 1;
+  };
 
-  preloadImages: function (/* Array */ images) {
-    this.imageList = [];
+  loadAllResources(loadCallback) {
+    this.#loadCount = 0;
+    this.#resourceCount = this.preloadImages(IMAGE_DATA);
+    this.#resourceCount += this.preloadSounds(SOUND_DATA);
+    this.#loadedCallback = loadCallback;
+    setTimeout(() => this.#checkLoadStatus(), LOADING_CHECK_INTERVAL_MS);
+  }
+
+  loadAllRessources(loadCallback) {
+    this.loadAllResources(loadCallback);
+  }
+
+  preloadImages(images) {
+    this.#imageList = {};
+
     for (let i = 0; i < images.length; i++) {
-      let newImage = new Image();
-      this.imageList.push(images[i].name);
+      const newImage = new Image();
+      newImage.addEventListener("load", this.#resourceLoaded);
       newImage.src = images[i].src;
-      newImage.onLoad = RessourceMngr.ressourceLoaded();
-      this.imageList[images[i].name] = newImage;
+      this.#imageList[images[i].name] = newImage;
     }
+
     return images.length;
-  },
+  }
 
-  preLoadSounds: function (soundData) {
+  preloadSounds(soundData) {
     for (let i = 0; i < soundData.length; ++i) {
-      SoundMngr.load(i, soundData[i], RessourceMngr.ressourceLoaded);
+      SoundMngr.load(i, soundData[i], this.#resourceLoaded);
     }
-    return soundData.length;
-  },
 
-  displayLoadingScreen: function (context) {
-    this.loadingscreenLogo = new Image();
-    this.loadingscreenLogo.src = this.loadingTitleName;
+    return soundData.length;
+  }
+
+  preLoadSounds(soundData) {
+    return this.preloadSounds(soundData);
+  }
+
+  displayLoadingScreen(context) {
+    if (!this.#loadingScreenLogo) {
+      this.#loadingScreenLogo = new Image();
+      this.#loadingScreenLogo.src = loadingTitleImage;
+    }
 
     context.fillStyle = "black";
     context.fillRect(0, 0, context.canvas.width, context.canvas.height);
     context.fill();
     context.drawImage(
-      this.loadingscreenLogo,
-      (context.canvas.width - this.logoWidth) / 2,
-      (context.canvas.height - this.logoHeight) / 2,
+      this.#loadingScreenLogo,
+      (context.canvas.width - LOGO_WIDTH) / 2,
+      (context.canvas.height - LOGO_HEIGHT) / 2,
     );
 
-    let percent = RessourceMngr.loadCount / RessourceMngr.ressourceCount;
-    let width = Math.floor(percent * context.canvas.width);
+    const percent =
+      this.#resourceCount > 0 ? this.#loadCount / this.#resourceCount : 0;
+    const width = Math.floor(percent * context.canvas.width);
 
     context.strokeStyle = "gray";
     context.strokeRect(0, 299, context.canvas.width, 20);
@@ -137,11 +146,15 @@ const RessourceMngr = {
     context.font = "bold 14px Courier";
     context.textBaseline = "top";
     context.fillText("Loading...", 218, 300);
-  },
+  }
 
-  getImageRessource: function (name) {
-    return this.imageList[name];
-  },
-};
+  getImageResource(name) {
+    return this.#imageList[name];
+  }
 
-export default RessourceMngr;
+  getImageRessource(name) {
+    return this.getImageResource(name);
+  }
+}
+
+export default new ResourceManager();

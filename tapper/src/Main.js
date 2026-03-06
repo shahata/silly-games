@@ -1,16 +1,30 @@
-import Player from "./Player.js";
+import Player, { DOWN, FIRE, LEFT, NONE, RIGHT, UP } from "./Player.js";
 import Customers from "./Customers.js";
 import Beerglass from "./Beerglass.js";
 import LevelManager from "./LevelManager.js";
-import SoundMngr from "./SoundMngr.js";
+import SoundMngr, {
+  GET_READY_TO_SERVE,
+  LAUGHING,
+  OH_SUZANNA,
+  YOU_LOSE,
+} from "./SoundMngr.js";
 import System from "./System.js";
-import RessourceMngr from "./RessourceMngr.js";
-import GameState from "./GameState.js";
+import ResourceManager from "./RessourceMngr.js";
+import GameState, {
+  FPS,
+  STATE_GAME_OVER,
+  STATE_LIFE_LOST,
+  STATE_LOADING,
+  STATE_MENU,
+  STATE_PLAY,
+  STATE_READY,
+} from "./GameState.js";
 
-const Game = {
-  _keyPressAllowed: true,
-  _frameBuffer: null,
-  initialize: function () {
+class GameRunner {
+  #isKeyPressAllowed = true;
+  #frameBuffer = null;
+
+  initialize() {
     if (!System.initVideo("tapperJS", 512, 480, false, 1.0)) {
       alert(
         "Sorry but no beer for you, your browser does not support html 5 canvas. Please try with another one!",
@@ -18,216 +32,192 @@ const Game = {
       return;
     }
 
-    this._frameBuffer = System.getFrameBuffer();
-
+    this.#frameBuffer = System.getFrameBuffer();
     SoundMngr.init();
+    GameState.changeState(STATE_LOADING);
 
-    GameState.changeState(GameState.STATE_LOADING);
+    setInterval(() => {
+      this.onUpdateFrame();
+    }, 1000 / FPS);
 
-    setInterval(function () {
-      Game.onUpdateFrame();
-    }, 1000 / GameState.FPS);
+    ResourceManager.loadAllResources(() => this.loaded());
+  }
 
-    RessourceMngr.loadAllRessources(Game.loaded);
-  },
-
-  loaded: function () {
+  loaded() {
     LevelManager.init();
     Player.init();
     Beerglass.init();
     Customers.init();
 
-    document.addEventListener("keydown", (e) => Game.onkeypress(e));
-    document.addEventListener("keyup", (e) => Game.onkeyrelease(e));
+    document.addEventListener("keydown", (event) => this.onKeyPress(event));
+    document.addEventListener("keyup", (event) => this.onKeyRelease(event));
 
-    GameState.changeState(GameState.STATE_MENU);
+    GameState.changeState(STATE_MENU);
 
-    const newGameBtn = document.getElementById("tapper-new-game");
-
-    if (newGameBtn) {
-      newGameBtn.addEventListener("click", function () {
-        SoundMngr.stop(SoundMngr.OH_SUZANNA);
-        GameState.changeState(GameState.STATE_MENU);
+    const newGameButton = document.getElementById("tapper-new-game");
+    if (newGameButton) {
+      newGameButton.addEventListener("click", () => {
+        SoundMngr.stop(OH_SUZANNA);
+        GameState.changeState(STATE_MENU);
       });
     }
-  },
+  }
 
-  reset: function () {
-    GameState.changeState(GameState.STATE_READY);
+  reset() {
+    GameState.changeState(STATE_READY);
     Player.reset();
     Beerglass.reset();
     Customers.reset();
     LevelManager.reset();
 
-    SoundMngr.play(SoundMngr.GETREADYTOSERVE, false);
+    SoundMngr.play(GET_READY_TO_SERVE, false);
     setTimeout(() => {
-      if (GameState.getState() === GameState.STATE_READY) {
-        GameState.changeState(GameState.STATE_PLAY);
-        SoundMngr.play(SoundMngr.OH_SUZANNA, true);
+      if (GameState.state === STATE_READY) {
+        GameState.changeState(STATE_PLAY);
+        SoundMngr.play(OH_SUZANNA, true);
       }
     }, 2.5 * 1000);
-  },
+  }
 
-  lost: function () {
+  lost() {
     Player.lost();
     Beerglass.stop();
     Customers.stop();
 
-    SoundMngr.stop(SoundMngr.OH_SUZANNA);
+    SoundMngr.stop(OH_SUZANNA);
 
-    if (LevelManager._life <= 0) {
-      GameState.changeState(GameState.STATE_GAMEOVER);
-
-      SoundMngr.play(SoundMngr.YOU_LOSE, false);
+    if (LevelManager.life <= 0) {
+      GameState.changeState(STATE_GAME_OVER);
+      SoundMngr.play(YOU_LOSE, false);
     } else {
-      GameState.changeState(GameState.STATE_LIFELOST);
-
-      SoundMngr.play(SoundMngr.LAUGHING, false);
-
-      setTimeout(() => Game.reset(), 3 * 1000);
+      GameState.changeState(STATE_LIFE_LOST);
+      SoundMngr.play(LAUGHING, false);
+      setTimeout(() => this.reset(), 3 * 1000);
     }
-  },
+  }
 
-  onUpdateFrame: function () {
-    switch (GameState.getState()) {
-      case GameState.STATE_LOADING: {
-        RessourceMngr.displayLoadingScreen(this._frameBuffer);
+  onUpdateFrame() {
+    switch (GameState.state) {
+      case STATE_LOADING:
+        ResourceManager.displayLoadingScreen(this.#frameBuffer);
         break;
-      }
-
-      case GameState.STATE_MENU: {
-        LevelManager.displayGameTitle(this._frameBuffer);
+      case STATE_MENU:
+        LevelManager.displayGameTitle(this.#frameBuffer);
         break;
-      }
-
-      case GameState.STATE_READY: {
-        LevelManager.displayReadyToPlay(this._frameBuffer);
+      case STATE_READY:
+        LevelManager.displayReadyToPlay(this.#frameBuffer);
         break;
-      }
       default:
-        {
-          LevelManager.drawLevelBackground(this._frameBuffer);
-          if (Customers.draw(this._frameBuffer) !== 0) {
-            Game.lost();
-          }
-          if (Beerglass.draw(this._frameBuffer) !== 0) {
-            Game.lost();
-          }
-          this._keyPressAllowed = Player.draw(this._frameBuffer);
-          LevelManager.drawGameHUD(this._frameBuffer);
-          if (GameState.getState() === GameState.STATE_GAMEOVER) {
-            LevelManager.displayGameOver(this._frameBuffer);
-          }
+        LevelManager.drawLevelBackground(this.#frameBuffer);
+        if (Customers.draw(this.#frameBuffer) !== 0) {
+          this.lost();
+        }
+        if (Beerglass.draw(this.#frameBuffer) !== 0) {
+          this.lost();
+        }
+        this.#isKeyPressAllowed = Player.draw(this.#frameBuffer);
+        LevelManager.drawGameHUD(this.#frameBuffer);
+        if (GameState.state === STATE_GAME_OVER) {
+          LevelManager.displayGameOver(this.#frameBuffer);
         }
         break;
     }
+
     System.drawFrameBuffer();
-  },
+  }
 
-  onkeypress: function (e) {
+  onKeyPress(event) {
     let preventDefault = false;
+    if (!this.#isKeyPressAllowed) {
+      return;
+    }
 
-    if (!this._keyPressAllowed) return;
-
-    switch (e.key) {
-      case "ArrowUp": {
-        if (GameState.getState() === GameState.STATE_PLAY)
-          Player.move(Player.UP);
+    switch (event.key) {
+      case "ArrowUp":
+        if (GameState.state === STATE_PLAY) {
+          Player.move(UP);
+        }
         preventDefault = true;
         break;
-      }
-      case "ArrowDown": {
-        if (GameState.getState() === GameState.STATE_PLAY)
-          Player.move(Player.DOWN);
+      case "ArrowDown":
+        if (GameState.state === STATE_PLAY) {
+          Player.move(DOWN);
+        }
         preventDefault = true;
         break;
-      }
-      case "ArrowLeft": {
-        if (GameState.getState() === GameState.STATE_PLAY)
-          Player.move(Player.LEFT);
+      case "ArrowLeft":
+        if (GameState.state === STATE_PLAY) {
+          Player.move(LEFT);
+        }
         preventDefault = true;
         break;
-      }
-      case "ArrowRight": {
-        if (GameState.getState() === GameState.STATE_PLAY)
-          Player.move(Player.RIGHT);
+      case "ArrowRight":
+        if (GameState.state === STATE_PLAY) {
+          Player.move(RIGHT);
+        }
         preventDefault = true;
         break;
-      }
-      case " ": {
-        if (GameState.getState() === GameState.STATE_PLAY)
-          Player.move(Player.FIRE);
+      case " ":
+        if (GameState.state === STATE_PLAY) {
+          Player.move(FIRE);
+        }
         preventDefault = true;
         break;
-      }
-
-      case "Enter": {
-        switch (GameState.getState()) {
-          case GameState.STATE_MENU: {
+      case "Enter":
+        switch (GameState.state) {
+          case STATE_MENU:
             LevelManager.newGame();
-            Game.reset();
+            this.reset();
             break;
-          }
-
-          case GameState.STATE_GAMEOVER: {
-            GameState.changeState(GameState.STATE_MENU);
+          case STATE_GAME_OVER:
+            GameState.changeState(STATE_MENU);
             break;
-          }
-
           default:
             break;
         }
         preventDefault = true;
         break;
-      }
-
       default:
         break;
     }
-    if (preventDefault) {
-      e.preventDefault();
-      e.stopImmediatePropagation();
-    }
-  },
 
-  onkeyrelease: function (e) {
+    if (preventDefault) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }
+  }
+
+  onKeyRelease(event) {
     let preventDefault = false;
+    if (!this.#isKeyPressAllowed) {
+      return;
+    }
 
-    if (!this._keyPressAllowed) return;
-
-    switch (e.key) {
+    switch (event.key) {
       case "ArrowUp":
-      case "ArrowDown": {
+      case "ArrowDown":
         preventDefault = true;
         break;
-      }
-      case "ArrowLeft": {
-        if (GameState.getState() === GameState.STATE_PLAY)
-          Player.move(Player.NONE);
+      case "ArrowLeft":
+      case "ArrowRight":
+      case " ":
+        if (GameState.state === STATE_PLAY) {
+          Player.move(NONE);
+        }
         preventDefault = true;
         break;
-      }
-      case "ArrowRight": {
-        if (GameState.getState() === GameState.STATE_PLAY)
-          Player.move(Player.NONE);
-        preventDefault = true;
-        break;
-      }
-      case " ": {
-        if (GameState.getState() === GameState.STATE_PLAY)
-          Player.move(Player.NONE);
-        preventDefault = true;
-        break;
-      }
       default:
         break;
     }
+
     if (preventDefault) {
-      e.preventDefault();
-      e.stopImmediatePropagation();
+      event.preventDefault();
+      event.stopImmediatePropagation();
     }
-  },
-};
+  }
+}
+
+const Game = new GameRunner();
 
 window.onload = function () {
   Game.initialize();

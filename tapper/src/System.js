@@ -1,101 +1,90 @@
-const System = {
-  canvasSupported: false,
-  canvas: null,
-  context2D: null,
-  backBuffer: null,
-  backBufferContext2D: null,
-  wrapper: null,
+class SystemManager {
+  #canvasSupported = false;
+  #canvas = null;
+  #context2D = null;
+  #backBuffer = null;
+  #backBufferContext2D = null;
+  #wrapper = null;
 
-  double_buffering: false,
-  zoom_factor: 1,
-  game_width: 0,
-  game_height: 0,
-  game_width_zoom: 0,
-  game_height_zoom: 0,
+  #doubleBuffering = false;
+  #zoomFactor = 1;
+  #gameWidth = 0;
+  #gameHeight = 0;
+  #gameWidthZoom = 0;
+  #gameHeightZoom = 0;
 
-  initVideo: function (
-    wrapperid,
-    game_width,
-    game_height,
-    double_buffering,
-    zoom_factor,
-  ) {
-    this.game_width = game_width;
-    this.game_height = game_height;
+  initVideo(wrapperId, gameWidth, gameHeight, doubleBuffering, zoomFactor) {
+    this.#gameWidth = gameWidth;
+    this.#gameHeight = gameHeight;
 
-    this.double_buffering = double_buffering;
+    this.#doubleBuffering = doubleBuffering;
 
-    // zoom only work with the double buffering since we
-    // actually zoom the backbuffer before rendering it
-
-    if (this.double_buffering) {
-      this.zoom_factor = zoom_factor;
+    if (this.#doubleBuffering) {
+      this.#zoomFactor = zoomFactor;
     } else {
-      this.zoom_factor = 1;
+      this.#zoomFactor = 1;
     }
 
-    this.game_width_zoom = this.game_width * this.zoom_factor;
-    this.game_height_zoom = this.game_height * this.zoom_factor;
+    this.#gameWidthZoom = this.#gameWidth * this.#zoomFactor;
+    this.#gameHeightZoom = this.#gameHeight * this.#zoomFactor;
 
-    this.wrapper = document.getElementById(wrapperid);
+    this.#wrapper = document.getElementById(wrapperId);
 
-    this.canvas = document.createElement("canvas");
+    this.#canvas = document.createElement("canvas");
+    this.#canvas.setAttribute("width", `${this.#gameWidthZoom}px`);
+    this.#canvas.setAttribute("height", `${this.#gameHeightZoom}px`);
+    this.#canvas.setAttribute("border", "1px solid black");
+    this.#canvas.setAttribute("style", "background: #fff");
 
-    this.canvas.setAttribute("width", this.game_width_zoom + "px");
-    this.canvas.setAttribute("height", this.game_height_zoom + "px");
-    this.canvas.setAttribute("border", 1 + "px solid black");
-    this.canvas.setAttribute("style", 1 + "background: #fff");
+    this.#wrapper.appendChild(this.#canvas);
 
-    this.wrapper.appendChild(this.canvas);
+    if (this.#canvas.getContext) {
+      this.#canvasSupported = true;
+      this.#context2D = this.#canvas.getContext("2d");
 
-    if (this.canvas.getContext) {
-      this.canvasSupported = true;
-      this.context2D = this.canvas.getContext("2d");
-
-      // create the back buffer if we use double buffering
-      if (this.double_buffering) {
-        this.backBuffer = document.createElement("canvas");
-        this.backBuffer.width = this.game_width;
-        this.backBuffer.height = this.game_height;
-        this.backBufferContext2D = this.backBuffer.getContext("2d");
+      if (this.#doubleBuffering) {
+        this.#backBuffer = document.createElement("canvas");
+        this.#backBuffer.width = this.#gameWidth;
+        this.#backBuffer.height = this.#gameHeight;
+        this.#backBufferContext2D = this.#backBuffer.getContext("2d");
       }
-      this.canvasSupported = true;
     } else {
-      this.canvasSupported = false;
+      this.#canvasSupported = false;
     }
 
-    return this.canvasSupported;
-  },
+    return this.#canvasSupported;
+  }
 
-  getFrameBuffer: function () {
-    if (this.double_buffering) {
-      return this.backBufferContext2D;
-    } else {
-      return this.context2D;
+  getFrameBuffer() {
+    if (this.#doubleBuffering) {
+      return this.#backBufferContext2D;
     }
-  },
 
-  drawFrameBuffer: function () {
-    if (this.double_buffering) {
-      this.context2D.drawImage(
-        this.backBuffer,
-        0,
-        0,
-        this.backBuffer.width,
-        this.backBuffer.height,
-        0,
-        0,
-        this.game_width_zoom,
-        this.game_height_zoom,
-      );
+    return this.#context2D;
+  }
+
+  drawFrameBuffer() {
+    if (!this.#doubleBuffering) {
+      return;
     }
-    // else nothing to be done, as we directly render stuff on "context2D"
-  },
 
-  random: function (min, max) {
-    let ran = Math.floor(Math.random() * (max - min + 1));
-    return ran + min;
-  },
-};
+    this.#context2D.drawImage(
+      this.#backBuffer,
+      0,
+      0,
+      this.#backBuffer.width,
+      this.#backBuffer.height,
+      0,
+      0,
+      this.#gameWidthZoom,
+      this.#gameHeightZoom,
+    );
+  }
 
-export default System;
+  random(min, max) {
+    const randomValue = Math.floor(Math.random() * (max - min + 1));
+    return randomValue + min;
+  }
+}
+
+export default new SystemManager();

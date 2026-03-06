@@ -1,75 +1,80 @@
-const SoundMngr = {
-  BARMAN_ZIP_UP: 0,
-  BARMAN_ZIP_DOWN: 1,
-  OH_SUZANNA: 2,
-  GRAB_MUG: 3,
-  THROW_MUG: 4,
-  MUG_FILL1: 5,
-  MUG_FILL2: 6,
-  FULL_MUG: 7,
-  POP_OUT: 8,
-  OUT_DOOR: 9,
-  LAUGHING: 10,
-  GETREADYTOSERVE: 11,
-  YOU_LOSE: 12,
-  COLLECT_TIP: 13,
-  TIP_APPEAR: 14,
+export const BARMAN_ZIP_UP = 0;
+export const BARMAN_ZIP_DOWN = 1;
+export const OH_SUZANNA = 2;
+export const GRAB_MUG = 3;
+export const THROW_MUG = 4;
+export const MUG_FILL_1 = 5;
+export const MUG_FILL_2 = 6;
+export const FULL_MUG = 7;
+export const POP_OUT = 8;
+export const OUT_DOOR = 9;
+export const LAUGHING = 10;
+export const GET_READY_TO_SERVE = 11;
+export const YOU_LOSE = 12;
+export const COLLECT_TIP = 13;
+export const TIP_APPEAR = 14;
 
-  _enabled: true,
-  _audio_channels: [],
+class SoundManager {
+  #enabled = true;
+  #audioChannels = [];
 
-  init() {},
+  init() {}
 
-  load(sound_id, sound, loadCallBack) {
-    const soundclip = document.createElement("audio");
+  load(soundId, sound, loadCallback) {
+    const soundClip = document.createElement("audio");
 
-    soundclip.src = sound.src;
-    soundclip.autobuffer = true;
-    soundclip.preload = "auto";
+    soundClip.src = sound.src;
+    soundClip.autobuffer = true;
+    soundClip.preload = "auto";
 
-    soundclip.addEventListener(
+    soundClip.addEventListener(
       "canplaythrough",
       function handler() {
         this.removeEventListener("canplaythrough", handler, false);
-        loadCallBack();
+        loadCallback();
       },
       false,
     );
-    soundclip.load();
+    soundClip.load();
 
-    this._audio_channels[sound_id] = [soundclip];
+    this.#audioChannels[soundId] = [soundClip];
     if (sound.channel > 1) {
       for (let channel = 1; channel < sound.channel; channel++) {
-        this._audio_channels[sound_id].push(soundclip.cloneNode(true));
+        this.#audioChannels[soundId].push(soundClip.cloneNode(true));
       }
     }
-  },
+  }
 
-  stop(sound_id) {
-    if (this._enabled) {
-      const sound = this._audio_channels[sound_id];
-      for (let i = sound.length; i--; ) {
-        sound[i].pause();
+  stop(soundId) {
+    if (!this.#enabled || !this.#audioChannels[soundId]) {
+      return;
+    }
+
+    const sound = this.#audioChannels[soundId];
+    for (let i = sound.length; i--; ) {
+      sound[i].pause();
+    }
+  }
+
+  play(soundId, loop = false) {
+    if (!this.#enabled || !this.#audioChannels[soundId]) {
+      return;
+    }
+
+    let freeChannel = 0;
+    const clip = this.#audioChannels[soundId];
+
+    for (let i = clip.length; i--; ) {
+      if (clip[i].paused || clip[i].ended) {
+        freeChannel = i;
+        break;
       }
     }
-  },
 
-  play(sound_id, loop) {
-    if (this._enabled) {
-      let free_channel = 0;
-      const clip = this._audio_channels[sound_id];
+    clip[freeChannel].currentTime = 0;
+    clip[freeChannel].loop = loop;
+    clip[freeChannel].play();
+  }
+}
 
-      for (let i = clip.length; i--; ) {
-        if (clip[i].paused || clip[i].ended) {
-          free_channel = i;
-          break;
-        }
-      }
-      clip[free_channel].currentTime = 0;
-      clip[free_channel].loop = loop;
-      clip[free_channel].play();
-    }
-  },
-};
-
-export default SoundMngr;
+export default new SoundManager();

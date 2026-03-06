@@ -1,251 +1,255 @@
-import Customers from "./Customers.js";
-import SoundMngr from "./SoundMngr.js";
-import RessourceMngr from "./RessourceMngr.js";
-import GameState from "./GameState.js";
+import Customers, {
+  CUST_BLACK_GUY,
+  CUST_GRAY_HAT_COWBOY,
+  CUST_GREEN_HAT_COWBOY,
+  CUST_WOMAN,
+  MAX_CUSTOMER_TYPE,
+} from "./Customers.js";
+import SoundMngr, { POP_OUT } from "./SoundMngr.js";
+import ResourceManager from "./RessourceMngr.js";
+import GameState, { STATE_PLAY } from "./GameState.js";
 
-const LevelManager = {
-  NUM_LEVEL: 1,
-  MAX_LIFE: 3,
-  TIME_COUNTER_MAX: 60, // every max counter we increase the difficulty
+export const NUM_LEVEL = 1;
+export const MAX_LIFE = 3;
+const TIME_STEP_SECONDS = 3;
 
-  row_lbound: [null, 120, 88, 56, 24],
-  row_rbound: [null, 304, 334, 368, 400],
-  row_ypos: [null, 80, 176, 272, 368],
+const ROW_LEFT_BOUND = [null, 120, 88, 56, 24];
+const ROW_RIGHT_BOUND = [null, 304, 334, 368, 400];
+const ROW_Y_POS = [null, 80, 176, 272, 368];
 
-  _imageLevel: [2],
-  _currentLevel: 1,
-  _score: 0,
-  _life: 0,
-  _difficulty: 1,
-  _wave: 1, // to manage the "wave of incoming customer
-  _lastrow: -1,
-  _timecounter: 0,
-  _time_step: 3, // secondes
-  _fontImage: null,
-  _miscImage: null,
-  _gameTitleImage: null,
-  _readyToPlayImage: null,
-  _gameTitlelogoWidth: 416,
-  _gameTitlelogoHeigth: 160,
-  _copyright1: "Based on the Original Tapper Game",
-  _copyright2: "(c) 1983 Bally Midway MFG",
-  _gameOver: "GAME OVER !",
+const GAME_TITLE_LOGO_WIDTH = 416;
+const GAME_TITLE_LOGO_HEIGHT = 160;
+const COPYRIGHT_1 = "Based on the Original Tapper Game";
+const COPYRIGHT_2 = "(c) 1983 Bally Midway MFG";
+const GAME_OVER_TEXT = "GAME OVER !";
 
-  LIFE_ICON_OFF: 0, // offset of the life icon
-  ICON_SIZE: 16, // sprite size of the font
-  FONT_Y_OFF: 0, // y offset of the font
-  FONT_NUM_OFF: 0, // numerical offset
-  FONT_SIZE: 16, // sprite size of the font
-  _SCORE_XPOS: 100,
-  _SCORE_YPOS: 8,
-  _LIFE_YPOS: 24,
-  _DIFF_XPOS: 376,
+const LIFE_ICON_OFFSET = 0;
+const ICON_SIZE = 16;
+const FONT_Y_OFFSET = 0;
+const FONT_NUM_OFFSET = 0;
+const FONT_SIZE = 16;
+const SCORE_X_POS = 100;
+const SCORE_Y_POS = 8;
+const LIFE_Y_POS = 24;
+const DIFFICULTY_X_POS = 376;
 
-  // SCORE TABLE :
-  SCORE_BONUS: 1500,
-  SCORE_EMPTY_BEER: 100,
-  SCORE_CUSTOMER: 50,
+export const SCORE_BONUS = 1500;
+export const SCORE_EMPTY_BEER = 100;
+export const SCORE_CUSTOMER = 50;
 
-  init: function () {
-    this._gameTitleImage = RessourceMngr.getImageRessource("game_title");
-    this._readyToPlayImage = RessourceMngr.getImageRessource("pregame");
-    this._imageLevel[1] = RessourceMngr.getImageRessource("level-1");
-    this._fontImage = RessourceMngr.getImageRessource("font");
-    this._miscImage = RessourceMngr.getImageRessource("misc");
+class LevelManagerClass {
+  rowLeftBound = ROW_LEFT_BOUND;
+  rowRightBound = ROW_RIGHT_BOUND;
+  rowYPos = ROW_Y_POS;
 
-    this._currentLevel = 1;
-    this._score = 0;
-    this._life = this.MAX_LIFE;
-    this._difficulty = 1;
-    this._wave = 1;
-    this._timecounter = 0;
-  },
+  #imageLevel = [2];
+  #currentLevel = 1;
+  #score = 0;
+  life = 0;
+  #difficulty = 1;
+  #wave = 1;
+  #lastRow = -1;
+  #fontImage = null;
+  #miscImage = null;
+  #gameTitleImage = null;
+  #readyToPlayImage = null;
 
-  addCustomer: function () {
-    if (GameState.getState() === GameState.STATE_PLAY) {
-      // if less than 1 customer, we add diff * 1 customer per row
-      if (Customers.isAnyCustomer() < 2) {
+  init() {
+    this.#gameTitleImage = ResourceManager.getImageResource("game_title");
+    this.#readyToPlayImage = ResourceManager.getImageResource("pregame");
+    this.#imageLevel[1] = ResourceManager.getImageResource("level-1");
+    this.#fontImage = ResourceManager.getImageResource("font");
+    this.#miscImage = ResourceManager.getImageResource("misc");
 
-        if (this._wave++ === this._difficulty * 2) this._difficulty++;
+    this.#currentLevel = 1;
+    this.#score = 0;
+    this.life = MAX_LIFE;
+    this.#difficulty = 1;
+    this.#wave = 1;
+  }
 
-        for (let i = 1; i <= this._difficulty; i++) {
-          Customers.add(1, i, Customers.CUST_GREEN_HAT_COWBOY); // row, pos, type
-          Customers.add(2, i, Customers.CUST_WOMEM);
-          Customers.add(3, i, Customers.CUST_BLACK_GUY);
-          Customers.add(4, i, Customers.CUST_GRAY_HAT_COWBOY);
-          SoundMngr.play(SoundMngr.POP_OUT, false);
-        }
-      } // 1 random customer
-      else {
-        let randomrow = Math.floor(Math.random() * 5);
-
-        if (randomrow !== 0 && randomrow !== this._lastrow) {
-          let randomcusttype = Math.floor(
-            Math.random() * Customers.MAX_CUSTOMER_TYPE,
-          );
-          Customers.add(randomrow, 1, randomcusttype); // row, pos, type
-          SoundMngr.play(SoundMngr.POP_OUT, false);
-          this._lastrow = randomrow;
-        }
-      }
-      setTimeout(() => LevelManager.addCustomer(), this._time_step * 1000);
+  addCustomer() {
+    if (GameState.state !== STATE_PLAY) {
+      return;
     }
-  },
 
-  addScore: function (points) {
-    this._score += points;
-  },
-  lifeLost: function (type) {
-    this._life -= 1;
-  },
+    if (Customers.isAnyCustomer() < 2) {
+      if (this.#wave++ === this.#difficulty * 2) {
+        this.#difficulty += 1;
+      }
 
-  displayScore: function (context) {
-    let scoreText = "" + this._score;
+      for (let i = 1; i <= this.#difficulty; i++) {
+        Customers.add(1, i, CUST_GREEN_HAT_COWBOY);
+        Customers.add(2, i, CUST_WOMAN);
+        Customers.add(3, i, CUST_BLACK_GUY);
+        Customers.add(4, i, CUST_GRAY_HAT_COWBOY);
+        SoundMngr.play(POP_OUT, false);
+      }
+    } else {
+      const randomRow = Math.floor(Math.random() * 5);
 
-    let xpos = this._SCORE_XPOS;
+      if (randomRow !== 0 && randomRow !== this.#lastRow) {
+        const randomCustomerType = Math.floor(
+          Math.random() * MAX_CUSTOMER_TYPE,
+        );
+        Customers.add(randomRow, 1, randomCustomerType);
+        SoundMngr.play(POP_OUT, false);
+        this.#lastRow = randomRow;
+      }
+    }
 
-    let offset;
+    setTimeout(() => this.addCustomer(), TIME_STEP_SECONDS * 1000);
+  }
+
+  addScore(points) {
+    this.#score += points;
+  }
+
+  lifeLost() {
+    this.life -= 1;
+  }
+
+  displayScore(context) {
+    const scoreText = `${this.#score}`;
+    let xPos = SCORE_X_POS;
 
     for (let i = scoreText.length; i--; ) {
-      offset = scoreText.charAt(i) * this.FONT_SIZE + this.FONT_NUM_OFF;
+      const offset = scoreText.charAt(i) * FONT_SIZE + FONT_NUM_OFFSET;
 
       context.drawImage(
-        this._fontImage,
+        this.#fontImage,
         offset,
-        this.FONT_Y_OFF,
-        this.FONT_SIZE,
-        this.FONT_SIZE,
-        xpos,
-        this._SCORE_YPOS,
-        this.FONT_SIZE,
-        this.FONT_SIZE,
+        FONT_Y_OFFSET,
+        FONT_SIZE,
+        FONT_SIZE,
+        xPos,
+        SCORE_Y_POS,
+        FONT_SIZE,
+        FONT_SIZE,
       );
-      xpos -= this.FONT_SIZE;
+      xPos -= FONT_SIZE;
     }
-  },
+  }
 
-  displayDifficulty: function (context) {
-    let diffText = "" + this._difficulty;
-    let xpos = this._DIFF_XPOS; // aligned on the score x pos
-    let offset;
+  displayDifficulty(context) {
+    const difficultyText = `${this.#difficulty}`;
+    let xPos = DIFFICULTY_X_POS;
 
-    for (let i = diffText.length; i--; ) {
-      offset = diffText.charAt(i) * this.FONT_SIZE + this.FONT_NUM_OFF;
+    for (let i = difficultyText.length; i--; ) {
+      const offset = difficultyText.charAt(i) * FONT_SIZE + FONT_NUM_OFFSET;
       context.drawImage(
-        this._fontImage,
+        this.#fontImage,
         offset,
-        this.FONT_Y_OFF,
-        this.FONT_SIZE,
-        this.FONT_SIZE,
-        xpos,
-        this._SCORE_YPOS, // aligned on the score y pos
-        this.FONT_SIZE,
-        this.FONT_SIZE,
+        FONT_Y_OFFSET,
+        FONT_SIZE,
+        FONT_SIZE,
+        xPos,
+        SCORE_Y_POS,
+        FONT_SIZE,
+        FONT_SIZE,
       );
 
-      xpos -= this.FONT_SIZE;
+      xPos -= FONT_SIZE;
     }
-  },
+  }
 
-  displayLife: function (context) {
-    let xpos = this._SCORE_XPOS; // aligned on the score x pos
-    if (this._life <= 0) return; // should never happen
-    for (let i = this._life; i--; ) {
+  displayLife(context) {
+    if (this.life <= 0) {
+      return;
+    }
+
+    let xPos = SCORE_X_POS;
+    for (let i = this.life; i--; ) {
       context.drawImage(
-        this._miscImage,
-        this.LIFE_ICON_OFF,
+        this.#miscImage,
+        LIFE_ICON_OFFSET,
         0,
-        this.ICON_SIZE,
-        this.ICON_SIZE,
-        xpos,
-        this._LIFE_YPOS,
-        this.ICON_SIZE,
-        this.ICON_SIZE,
+        ICON_SIZE,
+        ICON_SIZE,
+        xPos,
+        LIFE_Y_POS,
+        ICON_SIZE,
+        ICON_SIZE,
       );
-      xpos -= this.FONT_SIZE;
+      xPos -= FONT_SIZE;
     }
-  },
+  }
 
-  displayGameTitle: function (context) {
+  displayGameTitle(context) {
     context.fillStyle = "rgb(0,0,0)";
     context.fillRect(0, 0, context.canvas.width, context.canvas.height);
     context.fill();
 
     context.drawImage(
-      this._gameTitleImage,
-      (context.canvas.width - this._gameTitlelogoWidth) / 2,
-      280 - this._gameTitlelogoHeigth,
+      this.#gameTitleImage,
+      (context.canvas.width - GAME_TITLE_LOGO_WIDTH) / 2,
+      280 - GAME_TITLE_LOGO_HEIGHT,
     );
 
     context.fillStyle = "rgb(255,255,255)";
     context.font = "bold 14px Courier";
     context.textBaseline = "top";
 
-    // display some copyright text
-    context.fillText(this._copyright1, 122, 290);
-    context.fillText(this._copyright2, 154, 310);
-
+    context.fillText(COPYRIGHT_1, 122, 290);
+    context.fillText(COPYRIGHT_2, 154, 310);
     context.fillText("Press [ENTER] to play", 172, 400);
-  },
+  }
 
-  displayReadyToPlay: function (context) {
-    context.drawImage(this._readyToPlayImage, 0, 0);
-  },
+  displayReadyToPlay(context) {
+    context.drawImage(this.#readyToPlayImage, 0, 0);
+  }
 
-  displayGameOver: function (context) {
-    // Display the "Game Over" message
+  displayGameOver(context) {
     context.fillStyle = "rgb(0,0,0)";
     context.fillRect(
       (context.canvas.width - 180) / 2,
       (context.canvas.height - 32) / 2,
       180,
       32,
-    ); // h, w
+    );
     context.fill();
 
     context.fillStyle = "rgb(255,255,255)";
     context.font = "bold 14px Courier";
     context.textBaseline = "top";
 
-    // display some copyright text
     context.fillText(
-      this._gameOver,
+      GAME_OVER_TEXT,
       (context.canvas.width - 180) / 2 + 48,
       (context.canvas.height - 32) / 2 + 8,
     );
-  },
+  }
 
-  reset: function () {
-    for (let i = 1; i <= this._difficulty; i++) {
-      Customers.add(1, i, Customers.CUST_GREEN_HAT_COWBOY); // row, pos, type
-      Customers.add(2, i, Customers.CUST_WOMEM);
-      Customers.add(3, i, Customers.CUST_BLACK_GUY);
-      Customers.add(4, i, Customers.CUST_GRAY_HAT_COWBOY);
+  reset() {
+    for (let i = 1; i <= this.#difficulty; i++) {
+      Customers.add(1, i, CUST_GREEN_HAT_COWBOY);
+      Customers.add(2, i, CUST_WOMAN);
+      Customers.add(3, i, CUST_BLACK_GUY);
+      Customers.add(4, i, CUST_GRAY_HAT_COWBOY);
     }
-    this._lastrow = -1;
-    setTimeout(() => LevelManager.addCustomer(), this._time_step * 1000);
-  },
+    this.#lastRow = -1;
+    setTimeout(() => this.addCustomer(), TIME_STEP_SECONDS * 1000);
+  }
 
-  newGame: function () {
-    this._currentLevel = 1;
-    this._score = 0;
-    this._life = this.MAX_LIFE;
-    this._difficulty = 1;
-    this._wave = 1;
-    this._timecounter = 0;
-    this._lastrow = -1;
-  },
+  newGame() {
+    this.#currentLevel = 1;
+    this.#score = 0;
+    this.life = MAX_LIFE;
+    this.#difficulty = 1;
+    this.#wave = 1;
+    this.#lastRow = -1;
+  }
 
-  drawGameHUD: function (context) {
-    LevelManager.displayScore(context);
-    LevelManager.displayLife(context);
-    LevelManager.displayDifficulty(context);
-  },
+  drawGameHUD(context) {
+    this.displayScore(context);
+    this.displayLife(context);
+    this.displayDifficulty(context);
+  }
 
-  drawLevelBackground: function (context) {
-    let bgimage = this._imageLevel[this._currentLevel];
-    context.drawImage(bgimage, 0, 0);
-  },
-};
+  drawLevelBackground(context) {
+    const backgroundImage = this.#imageLevel[this.#currentLevel];
+    context.drawImage(backgroundImage, 0, 0);
+  }
+}
 
-export default LevelManager;
+export default new LevelManagerClass();

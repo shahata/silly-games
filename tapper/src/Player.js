@@ -1,526 +1,481 @@
 import Customers from "./Customers.js";
-import Beerglass from "./Beerglass.js";
-import SoundMngr from "./SoundMngr.js";
-import RessourceMngr from "./RessourceMngr.js";
+import Beerglass, { FULL_MUG as BEERGLASS_FULL_MUG } from "./Beerglass.js";
+import SoundMngr, {
+  BARMAN_ZIP_DOWN,
+  BARMAN_ZIP_UP,
+  FULL_MUG as SOUND_FULL_MUG,
+  MUG_FILL_1,
+  MUG_FILL_2,
+  THROW_MUG,
+} from "./SoundMngr.js";
+import ResourceManager from "./RessourceMngr.js";
 
-const Player = {
-  STEP: 16,
-  LEFT: 0,
-  RIGHT: 1,
-  UP: 2,
-  DOWN: 3,
-  FIRE: 4,
-  NONE: 6,
+const STEP = 16;
+export const LEFT = 0;
+export const RIGHT = 1;
+export const UP = 2;
+export const DOWN = 3;
+export const FIRE = 4;
+export const NONE = 6;
 
-  STAND_L1: 0,
-  STAND_L2: 1,
-  STAND_R1: 8,
-  STAND_R2: 9,
-  RUN_UP_L1: 12,
-  RUN_UP_R1: 13,
-  RUN_DOWN_1: 14,
-  RUN_DOWN_2: 16,
-  RUN_DOWN_3: 18,
-  RUN_DOWN_4: 20,
+const STAND_L1 = 0;
+const STAND_L2 = 1;
+const STAND_R1 = 8;
+const STAND_R2 = 9;
+const RUN_UP_L1 = 12;
+const RUN_UP_R1 = 13;
+const RUN_DOWN_1 = 14;
+const RUN_DOWN_2 = 16;
+const RUN_DOWN_3 = 18;
+const RUN_DOWN_4 = 20;
 
-  RUN_DOWN_RIGHT_OFF: 8,
+const RUN_DOWN_RIGHT_OFFSET = 8;
 
-  TAPPER_1: 30, // free
-  TAPPER_2: 31, // hold
-  TAPPER_3: 32, // serve
+const TAPPER_1 = 30;
+const TAPPER_2 = 31;
+const TAPPER_3 = 32;
 
-  SERVE_UP_1_1: 33,
-  SERVE_UP_1_2: 34,
-  SERVE_DOWN_1: 35,
+const SERVE_UP_1_1 = 33;
+const SERVE_UP_1_2 = 34;
+const SERVE_DOWN_1 = 35;
 
-  SERVE_UP_2_1: 36,
-  SERVE_UP_2_2: 37,
-  SERVE_DOWN_2: 38,
+const SERVE_UP_2_1 = 36;
+const SERVE_UP_2_2 = 37;
+const SERVE_DOWN_2 = 38;
 
-  BEER_FILL: [null, 39, 40, 41, 42],
+const BEER_FILL = [null, 39, 40, 41, 42];
 
-  SERVING_MAX: 4,
+const SERVING_MAX = 4;
 
-  LOST_1: 43,
-  LOST_2: 44,
+const LOST_1 = 43;
+const LOST_2 = 44;
 
-  // ----- SPRITE TABLE (barman.png) Offset END ----///
-  GO1: 4,
-  GO2: 5,
-  GO3: 6,
-  GO4: 7,
+const GO_1 = 4;
+const GO_2 = 5;
+const GO_3 = 6;
+const GO_4 = 7;
 
-  // Global Player Variable,
-  _spritewidth: 32,
-  _spriteheight: 32,
-  _spriteshift: 5, // this variable is useless, it's just for me to remember (<<5 = * 32)
+const SPRITE_WIDTH = 32;
+const SPRITE_HEIGHT = 32;
+const SPRITE_SHIFT = 5;
 
-  // bartender sprites
-  _spriteimage: null,
+const ROW_X_POS = [null, 336, 368, 400, 432];
+const ROW_Y_POS = [null, 96, 192, 288, 384];
 
-  // some variable to manage animation
-  _goState: 0, // disapearing image
-  _legState: 0, // leg animation when running
-  _tapperState: 0, // to animate the beertender serving
-  _servingcounter: 0, // to animate the beer serving
+const ROW_LEFT_BOUND = [null, 128, 96, 64, 32];
+const ROW_RIGHT_BOUND = [null, 336, 368, 400, 432];
 
-  // hold the default pos when changing row
-  _row_xpos: [null, 336, 368, 400, 432],
-  _row_ypos: [null, 96, 192, 288, 384],
+const DEFAULT_ROW = 2;
+const DEFAULT_PLAYER_X = 336;
+const DEFAULT_PLAYER_Y = 192;
+const LEG_ANIMATION_TIMING = 20;
 
-  // define the row moving limit
-  _row_lbound: [null, 128, 96, 64, 32],
-  _row_rbound: [null, 336, 368, 400, 432],
+class PlayerManager {
+  #spriteImage = null;
+  #goState = 0;
+  #legState = 0;
+  #tapperState = 0;
+  #servingCounter = 0;
+  #playerAction = null;
+  #isGamePlay = false;
+  currentRow = DEFAULT_ROW;
+  #lastRow = 0;
+  #lastPlayerXPos = null;
+  #isPlayerGoingLeft = true;
+  #isPlayerRunning = false;
+  #isTapperServing = false;
+  playerXPos = DEFAULT_PLAYER_X;
+  #playerYPos = DEFAULT_PLAYER_Y;
+  #fpsCount = 0;
 
-  // current player sprite to be displayed
-  _player_action: null,
+  init() {
+    this.#spriteImage = ResourceManager.getImageResource("barman");
+  }
 
-  _game_play: false,
+  reset() {
+    this.currentRow = DEFAULT_ROW;
+    this.#lastRow = 0;
+    this.playerXPos = DEFAULT_PLAYER_X;
+    this.#playerYPos = DEFAULT_PLAYER_Y;
 
-  _currentrow: 2,
+    this.#playerAction = STAND_L1;
 
-  _lastrow: 0,
-  _lastplayer_xpos: null,
+    this.#goState = GO_1;
+    this.#legState = RUN_DOWN_1 - 2;
+    this.#tapperState = TAPPER_1;
 
-  _player_goleft: true,
-  _player_running: false,
-  _tapper_serving: false,
+    this.#isPlayerGoingLeft = true;
+    this.#isPlayerRunning = false;
+    this.#isGamePlay = true;
+    this.#isTapperServing = false;
+    this.#fpsCount = 0;
+  }
 
-  // default position (at end of the second row)
-  _player_xpos: 336,
-  _player_ypos: 192,
+  lost() {
+    this.#isPlayerRunning = false;
+    this.#isTapperServing = false;
+    this.#isGamePlay = false;
+    this.#playerAction = LOST_1;
+  }
 
-  fpscount: 0,
-  leg_anim_timing: 20,
-
-  init: function () {
-    this._spriteimage = RessourceMngr.getImageRessource("barman");
-  },
-
-  reset: function () {
-    // default position (at end of the second row)
-    this._currentrow = 2;
-    this._lastrow = 0;
-    this._player_xpos = 336;
-    this._player_ypos = 192;
-
-    this._player_action = 0;
-
-    // default state for each animation
-    this._goState = this.GO1;
-    this._legState = this.RUN_DOWN_1 - 2;
-    this._tapperState = this.TAPPER_1;
-
-    this._lastrow = 0;
-
-    this._player_goleft = true;
-
-    this._player_running = false;
-
-    this._game_play = true;
-
-    this._tapper_serving = false;
-  },
-
-  lost: function () {
-    this._player_running = false;
-    this._tapper_serving = false;
-    this._game_play = false;
-    this._player_action = this.LOST_1;
-  },
-
-  setAnimation: function () {
-    if (this.fpscount++ > this.leg_anim_timing && this._game_play) {
-      if (this._player_goleft) {
-        this._player_action =
-          this._player_action === this.STAND_L1 ? this.STAND_L2 : this.STAND_L1;
+  #setAnimation() {
+    if (this.#fpsCount++ > LEG_ANIMATION_TIMING && this.#isGamePlay) {
+      if (this.#isPlayerGoingLeft) {
+        this.#playerAction =
+          this.#playerAction === STAND_L1 ? STAND_L2 : STAND_L1;
       } else {
-        this._player_action =
-          this._player_action === this.STAND_R1 ? this.STAND_R2 : this.STAND_R1;
+        this.#playerAction =
+          this.#playerAction === STAND_R1 ? STAND_R2 : STAND_R1;
       }
-      this.fpscount = 0;
+      this.#fpsCount = 0;
     }
-  },
+  }
 
-  drawTapper: function (context) {
-    for (let rownum = 1; rownum < 5; rownum++) {
+  #drawTapper(context) {
+    for (let rowNumber = 1; rowNumber < 5; rowNumber++) {
       if (
-        this._currentrow !== rownum ||
-        !this._tapper_serving ||
-        this._goState !== 0
+        this.currentRow !== rowNumber ||
+        !this.#isTapperServing ||
+        this.#goState !== 0
       ) {
-        // Draw the tapper (free one)
         context.drawImage(
-          this._spriteimage,
-          this.TAPPER_1 << this._spriteshift,
+          this.#spriteImage,
+          TAPPER_1 << SPRITE_SHIFT,
           0,
-          this._spritewidth,
-          this._spriteheight,
-          this._row_rbound[rownum] + 12,
-          this._row_ypos[rownum] - 24,
-          this._spritewidth,
-          this._spriteheight,
+          SPRITE_WIDTH,
+          SPRITE_HEIGHT,
+          ROW_RIGHT_BOUND[rowNumber] + 12,
+          ROW_Y_POS[rowNumber] - 24,
+          SPRITE_WIDTH,
+          SPRITE_HEIGHT,
         );
       } else {
-        // Draw the tapper (hold, serve)
         context.drawImage(
-          this._spriteimage,
-          this._tapperState << this._spriteshift,
+          this.#spriteImage,
+          this.#tapperState << SPRITE_SHIFT,
           0,
-          this._spritewidth,
-          this._spriteheight,
-          this._row_rbound[rownum] + 12,
-          this._row_ypos[rownum] - 30,
-          this._spritewidth,
-          this._spriteheight,
+          SPRITE_WIDTH,
+          SPRITE_HEIGHT,
+          ROW_RIGHT_BOUND[rowNumber] + 12,
+          ROW_Y_POS[rowNumber] - 30,
+          SPRITE_WIDTH,
+          SPRITE_HEIGHT,
         );
       }
     }
-  },
+  }
 
-  drawServing: function (context /*2D Canvas context*/) {
-    // fill the glass :)
-    for (let i = 1, count = this._servingcounter + 1; i < count; i++) {
+  #drawServing(context) {
+    for (let i = 1, count = this.#servingCounter + 1; i < count; i++) {
       context.drawImage(
-        this._spriteimage,
-        this.BEER_FILL[i] << this._spriteshift,
+        this.#spriteImage,
+        BEER_FILL[i] << SPRITE_SHIFT,
         0,
-        this._spritewidth,
-        this._spriteheight,
-        this._player_xpos + 12,
-        this._player_ypos + 2,
-        this._spritewidth,
-        this._spriteheight,
+        SPRITE_WIDTH,
+        SPRITE_HEIGHT,
+        this.playerXPos + 12,
+        this.#playerYPos + 2,
+        SPRITE_WIDTH,
+        SPRITE_HEIGHT,
       );
     }
 
-    if (this._tapperState === this.TAPPER_2) {
-      // Draw the bartender (up)
+    if (this.#tapperState === TAPPER_2) {
       context.drawImage(
-        this._spriteimage,
-        this.SERVE_UP_1_1 << this._spriteshift,
+        this.#spriteImage,
+        SERVE_UP_1_1 << SPRITE_SHIFT,
         0,
-        this._spritewidth,
-        this._spriteheight,
-        this._player_xpos - 20,
-        this._player_ypos + 2,
-        this._spritewidth,
-        this._spriteheight,
+        SPRITE_WIDTH,
+        SPRITE_HEIGHT,
+        this.playerXPos - 20,
+        this.#playerYPos + 2,
+        SPRITE_WIDTH,
+        SPRITE_HEIGHT,
       );
 
-      // Draw the bartender (up part with the glass)
       context.drawImage(
-        this._spriteimage,
-        this.SERVE_UP_1_2 << this._spriteshift,
+        this.#spriteImage,
+        SERVE_UP_1_2 << SPRITE_SHIFT,
         0,
-        this._spritewidth,
-        this._spriteheight,
-        this._player_xpos + 12,
-        this._player_ypos + 2,
-        this._spritewidth,
-        this._spriteheight,
+        SPRITE_WIDTH,
+        SPRITE_HEIGHT,
+        this.playerXPos + 12,
+        this.#playerYPos + 2,
+        SPRITE_WIDTH,
+        SPRITE_HEIGHT,
       );
 
-      // draw second tile (down)
       context.drawImage(
-        this._spriteimage,
-        this.SERVE_DOWN_1 << this._spriteshift,
+        this.#spriteImage,
+        SERVE_DOWN_1 << SPRITE_SHIFT,
         0,
-        this._spritewidth,
-        this._spriteheight,
-        this._player_xpos - 20,
-        this._player_ypos + this._spriteheight + 2,
-        this._spritewidth,
-        this._spriteheight,
+        SPRITE_WIDTH,
+        SPRITE_HEIGHT,
+        this.playerXPos - 20,
+        this.#playerYPos + SPRITE_HEIGHT + 2,
+        SPRITE_WIDTH,
+        SPRITE_HEIGHT,
       );
     } else {
-      // Draw the bartender (up)
       context.drawImage(
-        this._spriteimage,
-        this.SERVE_UP_2_1 << this._spriteshift,
+        this.#spriteImage,
+        SERVE_UP_2_1 << SPRITE_SHIFT,
         0,
-        this._spritewidth,
-        this._spriteheight,
-        this._player_xpos - 20,
-        this._player_ypos + 2,
-        this._spritewidth,
-        this._spriteheight,
+        SPRITE_WIDTH,
+        SPRITE_HEIGHT,
+        this.playerXPos - 20,
+        this.#playerYPos + 2,
+        SPRITE_WIDTH,
+        SPRITE_HEIGHT,
       );
 
-      // Draw the bartender (up2)
       context.drawImage(
-        this._spriteimage,
-        this.SERVE_UP_2_2 << this._spriteshift,
+        this.#spriteImage,
+        SERVE_UP_2_2 << SPRITE_SHIFT,
         0,
-        this._spritewidth,
-        this._spriteheight,
-        this._player_xpos + 12,
-        this._player_ypos + 2,
-        this._spritewidth,
-        this._spriteheight,
+        SPRITE_WIDTH,
+        SPRITE_HEIGHT,
+        this.playerXPos + 12,
+        this.#playerYPos + 2,
+        SPRITE_WIDTH,
+        SPRITE_HEIGHT,
       );
 
-      // draw second tile (down)
       context.drawImage(
-        this._spriteimage,
-        this.SERVE_DOWN_2 << this._spriteshift,
+        this.#spriteImage,
+        SERVE_DOWN_2 << SPRITE_SHIFT,
         0,
-        this._spritewidth,
-        this._spriteheight,
-        this._player_xpos - 20,
-        this._player_ypos + this._spriteheight + 2,
-        this._spritewidth,
-        this._spriteheight,
+        SPRITE_WIDTH,
+        SPRITE_HEIGHT,
+        this.playerXPos - 20,
+        this.#playerYPos + SPRITE_HEIGHT + 2,
+        SPRITE_WIDTH,
+        SPRITE_HEIGHT,
       );
     }
-  },
+  }
 
-  draw: function (context /*2D Canvas context*/) {
-    // Draw the 4 tapper
-    Player.drawTapper(context);
+  draw(context) {
+    this.#drawTapper(context);
 
-    // if lastrow !=0 means the player changed row
-    // and we need to draw the small fancy animation
-    // !! this is done here to ensure it's played and finished before next move
-    if (this._lastrow !== 0) {
-      // Draw the go animation
+    if (this.#lastRow !== 0) {
       context.drawImage(
-        this._spriteimage,
-        this._goState << this._spriteshift,
+        this.#spriteImage,
+        this.#goState << SPRITE_SHIFT,
         0,
-        this._spritewidth,
-        this._spriteheight,
-        this._lastplayer_xpos,
-        this._row_ypos[this._lastrow],
-        this._spritewidth,
-        this._spriteheight,
+        SPRITE_WIDTH,
+        SPRITE_HEIGHT,
+        this.#lastPlayerXPos,
+        ROW_Y_POS[this.#lastRow],
+        SPRITE_WIDTH,
+        SPRITE_HEIGHT,
       );
-      this._goState += 1;
+      this.#goState += 1;
 
-      if (this._goState > this.GO4) {
-        this._goState = 0;
-        // small trick
-        this._lastrow = 0;
-
+      if (this.#goState > GO_4) {
+        this.#goState = 0;
+        this.#lastRow = 0;
         return true;
       }
       return false;
     }
 
-    if (this._tapper_serving) {
-      Player.drawServing(context);
+    if (this.#isTapperServing) {
+      this.#drawServing(context);
       return true;
     }
 
-    // Regular character drawing
-
     context.drawImage(
-      this._spriteimage,
-      this._player_action << this._spriteshift,
+      this.#spriteImage,
+      this.#playerAction << SPRITE_SHIFT,
       0,
-      this._spritewidth,
-      this._spriteheight,
-      this._player_xpos,
-      this._player_ypos,
-      this._spritewidth,
-      this._spriteheight,
+      SPRITE_WIDTH,
+      SPRITE_HEIGHT,
+      this.playerXPos,
+      this.#playerYPos,
+      SPRITE_WIDTH,
+      SPRITE_HEIGHT,
     );
 
-    // if not running display the regular legs
-    if (!this._player_running) {
-      // manage the standing leg animation
-      Player.setAnimation();
+    if (!this.#isPlayerRunning) {
+      this.#setAnimation();
 
-      // draw second tile (down)
-      // the bottom part is 2 tile next to the up one
       context.drawImage(
-        this._spriteimage,
-        (2 + this._player_action) << this._spriteshift,
+        this.#spriteImage,
+        (2 + this.#playerAction) << SPRITE_SHIFT,
         0,
-        this._spritewidth,
-        this._spriteheight,
-        this._player_xpos,
-        this._player_ypos + this._spriteheight,
-        this._spritewidth,
-        this._spriteheight,
+        SPRITE_WIDTH,
+        SPRITE_HEIGHT,
+        this.playerXPos,
+        this.#playerYPos + SPRITE_HEIGHT,
+        SPRITE_WIDTH,
+        SPRITE_HEIGHT,
       );
-    } // else display the running legs
-    else {
-      if (this._player_goleft) {
-        // draw second tile (down)
-        context.drawImage(
-          this._spriteimage,
-          this._legState << this._spriteshift,
-          0,
-          this._spritewidth,
-          this._spriteheight,
-          this._player_xpos,
-          this._player_ypos + this._spriteheight,
-          this._spritewidth,
-          this._spriteheight,
-        );
+    } else if (this.#isPlayerGoingLeft) {
+      context.drawImage(
+        this.#spriteImage,
+        this.#legState << SPRITE_SHIFT,
+        0,
+        SPRITE_WIDTH,
+        SPRITE_HEIGHT,
+        this.playerXPos,
+        this.#playerYPos + SPRITE_HEIGHT,
+        SPRITE_WIDTH,
+        SPRITE_HEIGHT,
+      );
 
-        // display the second leg title on the bottom right of the player
-        context.drawImage(
-          this._spriteimage,
-          (this._legState + 1) << this._spriteshift,
-          0,
-          this._spritewidth,
-          this._spriteheight,
-          this._player_xpos + this._spriteheight,
-          this._player_ypos + this._spriteheight,
-          this._spritewidth,
-          this._spriteheight,
-        );
-      } else {
-        // draw second tile (down)
-        context.drawImage(
-          this._spriteimage,
-          (this._legState + this.RUN_DOWN_RIGHT_OFF) << this._spriteshift,
-          0,
-          this._spritewidth,
-          this._spriteheight,
-          this._player_xpos,
-          this._player_ypos + this._spriteheight,
-          this._spritewidth,
-          this._spriteheight,
-        );
+      context.drawImage(
+        this.#spriteImage,
+        (this.#legState + 1) << SPRITE_SHIFT,
+        0,
+        SPRITE_WIDTH,
+        SPRITE_HEIGHT,
+        this.playerXPos + SPRITE_HEIGHT,
+        this.#playerYPos + SPRITE_HEIGHT,
+        SPRITE_WIDTH,
+        SPRITE_HEIGHT,
+      );
+    } else {
+      context.drawImage(
+        this.#spriteImage,
+        (this.#legState + RUN_DOWN_RIGHT_OFFSET) << SPRITE_SHIFT,
+        0,
+        SPRITE_WIDTH,
+        SPRITE_HEIGHT,
+        this.playerXPos,
+        this.#playerYPos + SPRITE_HEIGHT,
+        SPRITE_WIDTH,
+        SPRITE_HEIGHT,
+      );
 
-        // display the second leg title on the bottom right of the player
-        context.drawImage(
-          this._spriteimage,
-          (this._legState + 1 + this.RUN_DOWN_RIGHT_OFF) << this._spriteshift,
-          0,
-          this._spritewidth,
-          this._spriteheight,
-          this._player_xpos - this._spriteheight,
-          this._player_ypos + this._spriteheight,
-          this._spritewidth,
-          this._spriteheight,
-        );
-      }
+      context.drawImage(
+        this.#spriteImage,
+        (this.#legState + 1 + RUN_DOWN_RIGHT_OFFSET) << SPRITE_SHIFT,
+        0,
+        SPRITE_WIDTH,
+        SPRITE_HEIGHT,
+        this.playerXPos - SPRITE_HEIGHT,
+        this.#playerYPos + SPRITE_HEIGHT,
+        SPRITE_WIDTH,
+        SPRITE_HEIGHT,
+      );
     }
 
     return true;
-  },
+  }
 
-  move: function (direction) {
-    this._player_running = false;
+  move(direction) {
+    this.#isPlayerRunning = false;
 
     switch (direction) {
-      case this.UP: {
-        // cancel any ongoing serving
-        this._tapper_serving = false;
+      case UP: {
+        this.#isTapperServing = false;
+        this.#lastRow = this.currentRow;
+        this.currentRow -= 1;
 
-        this._lastrow = this._currentrow;
-        this._currentrow -= 1;
-        if (this._currentrow === 0) this._currentrow = 4;
-        // to manage the "going out" animation
-        this._goState = this.GO1;
-        this._lastplayer_xpos = this._player_xpos;
-        // set new default position on the new row
-        this._player_xpos = this._row_xpos[this._currentrow];
-        this._player_ypos = this._row_ypos[this._currentrow];
+        if (this.currentRow === 0) {
+          this.currentRow = 4;
+        }
 
-        SoundMngr.play(SoundMngr.BARMAN_ZIP_UP);
-
-        break;
-      }
-      case this.DOWN: {
-        // cancel any ongoing serving
-        this._tapper_serving = false;
-
-        this._lastrow = this._currentrow;
-        this._currentrow += 1;
-        if (this._currentrow === 5) this._currentrow = 1;
-        // to manage the "going out" animation
-        this._goState = this.GO1;
-        this._lastplayer_xpos = this._player_xpos;
-        // set new default position on the new row
-        this._player_xpos = this._row_xpos[this._currentrow];
-        this._player_ypos = this._row_ypos[this._currentrow];
-
-        SoundMngr.play(SoundMngr.BARMAN_ZIP_DOWN);
-
+        this.#goState = GO_1;
+        this.#lastPlayerXPos = this.playerXPos;
+        this.playerXPos = ROW_X_POS[this.currentRow];
+        this.#playerYPos = ROW_Y_POS[this.currentRow];
+        SoundMngr.play(BARMAN_ZIP_UP);
         break;
       }
 
-      case this.LEFT: {
-        // cancel any ongoing serving
-        this._tapper_serving = false;
+      case DOWN: {
+        this.#isTapperServing = false;
+        this.#lastRow = this.currentRow;
+        this.currentRow += 1;
+
+        if (this.currentRow === 5) {
+          this.currentRow = 1;
+        }
+
+        this.#goState = GO_1;
+        this.#lastPlayerXPos = this.playerXPos;
+        this.playerXPos = ROW_X_POS[this.currentRow];
+        this.#playerYPos = ROW_Y_POS[this.currentRow];
+        SoundMngr.play(BARMAN_ZIP_DOWN);
+        break;
+      }
+
+      case LEFT: {
+        this.#isTapperServing = false;
 
         if (
-          this._player_goleft &&
-          this._player_xpos > this._row_lbound[this._currentrow]
+          this.#isPlayerGoingLeft &&
+          this.playerXPos > ROW_LEFT_BOUND[this.currentRow]
         ) {
-          this._player_xpos -= this.STEP;
-          this._player_running = true;
-          this._player_action = this.RUN_UP_L1;
+          this.playerXPos -= STEP;
+          this.#isPlayerRunning = true;
+          this.#playerAction = RUN_UP_L1;
 
-          // synchronize bottom leg animation with the key press
-          this._legState += 2;
-          if (this._legState > this.RUN_DOWN_4)
-            this._legState = this.RUN_DOWN_1;
+          this.#legState += 2;
+          if (this.#legState > RUN_DOWN_4) {
+            this.#legState = RUN_DOWN_1;
+          }
 
-          Customers.checkBonusCollision(this._currentrow, this._player_xpos);
+          Customers.checkBonusCollision(this.currentRow, this.playerXPos);
         }
-        this._player_goleft = true;
+
+        this.#isPlayerGoingLeft = true;
         break;
       }
 
-      case this.RIGHT: {
-        // cancel any ongoing serving
-        this._tapper_serving = false;
+      case RIGHT: {
+        this.#isTapperServing = false;
 
         if (
-          !this._player_goleft &&
-          this._player_xpos < this._row_rbound[this._currentrow]
+          !this.#isPlayerGoingLeft &&
+          this.playerXPos < ROW_RIGHT_BOUND[this.currentRow]
         ) {
-          this._player_xpos += this.STEP;
-          this._player_running = true;
-          this._player_action = this.RUN_UP_R1;
+          this.playerXPos += STEP;
+          this.#isPlayerRunning = true;
+          this.#playerAction = RUN_UP_R1;
 
-          // synchronize bottom leg animation with the key press
-          this._legState += 2;
-          if (this._legState > this.RUN_DOWN_4)
-            this._legState = this.RUN_DOWN_1;
+          this.#legState += 2;
+          if (this.#legState > RUN_DOWN_4) {
+            this.#legState = RUN_DOWN_1;
+          }
         }
-        this._player_goleft = false;
+
+        this.#isPlayerGoingLeft = false;
         break;
       }
 
-      case this.FIRE: {
-        // if not near the tapper, move it first :)
-        if (this._player_xpos !== this._row_rbound[this._currentrow]) {
-          this._lastrow = this._currentrow;
-          // to manage the "going out" animation
-          this._goState = this.GO1;
-
-          this._lastplayer_xpos = this._player_xpos;
-          // set new default position on the new row
-          this._player_xpos = this._row_xpos[this._currentrow];
+      case FIRE: {
+        if (this.playerXPos !== ROW_RIGHT_BOUND[this.currentRow]) {
+          this.#lastRow = this.currentRow;
+          this.#goState = GO_1;
+          this.#lastPlayerXPos = this.playerXPos;
+          this.playerXPos = ROW_X_POS[this.currentRow];
         }
 
-        // reset the counter if we were not previously serving a beer
-        if (this._tapper_serving === false) this._servingcounter = 0;
+        if (!this.#isTapperServing) {
+          this.#servingCounter = 0;
+        }
 
-        this._tapper_serving = true;
+        this.#isTapperServing = true;
+        this.#tapperState = TAPPER_3;
 
-        this._tapperState = this.TAPPER_3;
+        if (this.#servingCounter < SERVING_MAX) {
+          this.#servingCounter += 1;
 
-        if (this._servingcounter < this.SERVING_MAX) {
-          this._servingcounter += 1;
-
-          switch (this._servingcounter) {
+          switch (this.#servingCounter) {
             case 1:
-              SoundMngr.play(SoundMngr.MUG_FILL1);
+              SoundMngr.play(MUG_FILL_1);
               break;
             case 2:
             case 3:
-              SoundMngr.play(SoundMngr.MUG_FILL2);
+              SoundMngr.play(MUG_FILL_2);
               break;
-            case this.SERVING_MAX:
-              SoundMngr.play(SoundMngr.FULL_MUG);
+            case SERVING_MAX:
+              SoundMngr.play(SOUND_FULL_MUG);
+              break;
+            default:
               break;
           }
         }
@@ -528,33 +483,25 @@ const Player = {
         break;
       }
 
-      case this.NONE: {
-        // Tapper hold/serve
-        if (this._tapper_serving) {
-          this._tapperState = this.TAPPER_2;
+      case NONE: {
+        if (this.#isTapperServing) {
+          this.#tapperState = TAPPER_2;
 
-          if (this._servingcounter === this.SERVING_MAX) {
-            this._servingcounter = 0;
+          if (this.#servingCounter === SERVING_MAX) {
+            this.#servingCounter = 0;
             Beerglass.add(
-              this._currentrow,
-              this._player_xpos - this._spritewidth,
-              Beerglass.FULL_MUG,
+              this.currentRow,
+              this.playerXPos - SPRITE_WIDTH,
+              BEERGLASS_FULL_MUG,
             );
-            this._tapper_serving = false;
-            // and obviously, when we finished serving we are looking to the rigth
-            this._player_goleft = false;
-            this._player_action = this.STAND_R1;
-            SoundMngr.play(SoundMngr.THROW_MUG);
+            this.#isTapperServing = false;
+            this.#isPlayerGoingLeft = false;
+            this.#playerAction = STAND_R1;
+            SoundMngr.play(THROW_MUG);
           }
-        }
-        // manage other events
-        else {
-          // go back for the standing position
-          if (this._player_goleft) this._player_action = this.STAND_L1;
-          else this._player_action = this.STAND_R1;
-
-          // reset the running animation
-          this._legState = this.RUN_DOWN_1 - 2;
+        } else {
+          this.#playerAction = this.#isPlayerGoingLeft ? STAND_L1 : STAND_R1;
+          this.#legState = RUN_DOWN_1 - 2;
         }
 
         break;
@@ -563,7 +510,7 @@ const Player = {
       default:
         break;
     }
-  },
-};
+  }
+}
 
-export default Player;
+export default new PlayerManager();
