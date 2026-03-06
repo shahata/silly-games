@@ -108,13 +108,13 @@ class BeerglassManager {
   stop() {}
 
   #checkCustomerCollision(glass, row) {
-    const firstCustomerPos = Customers.getFirstCustomerPos(row);
-    if (firstCustomerPos === undefined) {
+    const firstCustomerPosition = Customers.getFirstCustomerPosition(row);
+    if (firstCustomerPosition === undefined) {
       return false;
     }
 
-    const customerPos = firstCustomerPos + 24;
-    if (glass.xPosition <= customerPos) {
+    const customerPosition = firstCustomerPosition + 24;
+    if (glass.xPosition <= customerPosition) {
       return Customers.beerCollisionDetected(row);
     }
 

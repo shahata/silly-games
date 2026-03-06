@@ -59,11 +59,11 @@ const SPRITE_WIDTH = 32;
 const SPRITE_HEIGHT = 32;
 const SPRITE_SHIFT = 5;
 
-const ROW_X_POS = [null, 336, 368, 400, 432];
-const ROW_Y_POS = [null, 96, 192, 288, 384];
+const ROW_X_POSITIONS = [null, 336, 368, 400, 432];
+const ROW_Y_POSITIONS = [null, 96, 192, 288, 384];
 
-const ROW_LEFT_BOUND = [null, 128, 96, 64, 32];
-const ROW_RIGHT_BOUND = [null, 336, 368, 400, 432];
+const ROW_LEFT_BOUNDS = [null, 128, 96, 64, 32];
+const ROW_RIGHT_BOUNDS = [null, 336, 368, 400, 432];
 
 const DEFAULT_ROW = 2;
 const DEFAULT_PLAYER_X = 336;
@@ -85,7 +85,7 @@ class PlayerManager {
   #isPlayerRunning = false;
   #isTapperServing = false;
   playerXPosition = DEFAULT_PLAYER_X;
-  #playerYPos = DEFAULT_PLAYER_Y;
+  #playerYPosition = DEFAULT_PLAYER_Y;
   #fpsCount = 0;
 
   init() {
@@ -96,7 +96,7 @@ class PlayerManager {
     this.currentRow = DEFAULT_ROW;
     this.#lastRow = 0;
     this.playerXPosition = DEFAULT_PLAYER_X;
-    this.#playerYPos = DEFAULT_PLAYER_Y;
+    this.#playerYPosition = DEFAULT_PLAYER_Y;
 
     this.#playerAction = STAND_L1;
 
@@ -144,8 +144,8 @@ class PlayerManager {
           0,
           SPRITE_WIDTH,
           SPRITE_HEIGHT,
-          ROW_RIGHT_BOUND[rowNumber] + 12,
-          ROW_Y_POS[rowNumber] - 24,
+          ROW_RIGHT_BOUNDS[rowNumber] + 12,
+          ROW_Y_POSITIONS[rowNumber] - 24,
           SPRITE_WIDTH,
           SPRITE_HEIGHT,
         );
@@ -156,8 +156,8 @@ class PlayerManager {
           0,
           SPRITE_WIDTH,
           SPRITE_HEIGHT,
-          ROW_RIGHT_BOUND[rowNumber] + 12,
-          ROW_Y_POS[rowNumber] - 30,
+          ROW_RIGHT_BOUNDS[rowNumber] + 12,
+          ROW_Y_POSITIONS[rowNumber] - 30,
           SPRITE_WIDTH,
           SPRITE_HEIGHT,
         );
@@ -174,7 +174,7 @@ class PlayerManager {
         SPRITE_WIDTH,
         SPRITE_HEIGHT,
         this.playerXPosition + 12,
-        this.#playerYPos + 2,
+        this.#playerYPosition + 2,
         SPRITE_WIDTH,
         SPRITE_HEIGHT,
       );
@@ -188,7 +188,7 @@ class PlayerManager {
         SPRITE_WIDTH,
         SPRITE_HEIGHT,
         this.playerXPosition - 20,
-        this.#playerYPos + 2,
+        this.#playerYPosition + 2,
         SPRITE_WIDTH,
         SPRITE_HEIGHT,
       );
@@ -200,7 +200,7 @@ class PlayerManager {
         SPRITE_WIDTH,
         SPRITE_HEIGHT,
         this.playerXPosition + 12,
-        this.#playerYPos + 2,
+        this.#playerYPosition + 2,
         SPRITE_WIDTH,
         SPRITE_HEIGHT,
       );
@@ -212,7 +212,7 @@ class PlayerManager {
         SPRITE_WIDTH,
         SPRITE_HEIGHT,
         this.playerXPosition - 20,
-        this.#playerYPos + SPRITE_HEIGHT + 2,
+        this.#playerYPosition + SPRITE_HEIGHT + 2,
         SPRITE_WIDTH,
         SPRITE_HEIGHT,
       );
@@ -224,7 +224,7 @@ class PlayerManager {
         SPRITE_WIDTH,
         SPRITE_HEIGHT,
         this.playerXPosition - 20,
-        this.#playerYPos + 2,
+        this.#playerYPosition + 2,
         SPRITE_WIDTH,
         SPRITE_HEIGHT,
       );
@@ -236,7 +236,7 @@ class PlayerManager {
         SPRITE_WIDTH,
         SPRITE_HEIGHT,
         this.playerXPosition + 12,
-        this.#playerYPos + 2,
+        this.#playerYPosition + 2,
         SPRITE_WIDTH,
         SPRITE_HEIGHT,
       );
@@ -248,7 +248,7 @@ class PlayerManager {
         SPRITE_WIDTH,
         SPRITE_HEIGHT,
         this.playerXPosition - 20,
-        this.#playerYPos + SPRITE_HEIGHT + 2,
+        this.#playerYPosition + SPRITE_HEIGHT + 2,
         SPRITE_WIDTH,
         SPRITE_HEIGHT,
       );
@@ -266,7 +266,7 @@ class PlayerManager {
         SPRITE_WIDTH,
         SPRITE_HEIGHT,
         this.#lastPlayerXPosition,
-        ROW_Y_POS[this.#lastRow],
+        ROW_Y_POSITIONS[this.#lastRow],
         SPRITE_WIDTH,
         SPRITE_HEIGHT,
       );
@@ -292,7 +292,7 @@ class PlayerManager {
       SPRITE_WIDTH,
       SPRITE_HEIGHT,
       this.playerXPosition,
-      this.#playerYPos,
+      this.#playerYPosition,
       SPRITE_WIDTH,
       SPRITE_HEIGHT,
     );
@@ -307,7 +307,7 @@ class PlayerManager {
         SPRITE_WIDTH,
         SPRITE_HEIGHT,
         this.playerXPosition,
-        this.#playerYPos + SPRITE_HEIGHT,
+        this.#playerYPosition + SPRITE_HEIGHT,
         SPRITE_WIDTH,
         SPRITE_HEIGHT,
       );
@@ -319,7 +319,7 @@ class PlayerManager {
         SPRITE_WIDTH,
         SPRITE_HEIGHT,
         this.playerXPosition,
-        this.#playerYPos + SPRITE_HEIGHT,
+        this.#playerYPosition + SPRITE_HEIGHT,
         SPRITE_WIDTH,
         SPRITE_HEIGHT,
       );
@@ -331,7 +331,7 @@ class PlayerManager {
         SPRITE_WIDTH,
         SPRITE_HEIGHT,
         this.playerXPosition + SPRITE_HEIGHT,
-        this.#playerYPos + SPRITE_HEIGHT,
+        this.#playerYPosition + SPRITE_HEIGHT,
         SPRITE_WIDTH,
         SPRITE_HEIGHT,
       );
@@ -343,7 +343,7 @@ class PlayerManager {
         SPRITE_WIDTH,
         SPRITE_HEIGHT,
         this.playerXPosition,
-        this.#playerYPos + SPRITE_HEIGHT,
+        this.#playerYPosition + SPRITE_HEIGHT,
         SPRITE_WIDTH,
         SPRITE_HEIGHT,
       );
@@ -355,7 +355,7 @@ class PlayerManager {
         SPRITE_WIDTH,
         SPRITE_HEIGHT,
         this.playerXPosition - SPRITE_HEIGHT,
-        this.#playerYPos + SPRITE_HEIGHT,
+        this.#playerYPosition + SPRITE_HEIGHT,
         SPRITE_WIDTH,
         SPRITE_HEIGHT,
       );
@@ -379,8 +379,8 @@ class PlayerManager {
 
         this.#goState = GO_1;
         this.#lastPlayerXPosition = this.playerXPosition;
-        this.playerXPosition = ROW_X_POS[this.currentRow];
-        this.#playerYPos = ROW_Y_POS[this.currentRow];
+        this.playerXPosition = ROW_X_POSITIONS[this.currentRow];
+        this.#playerYPosition = ROW_Y_POSITIONS[this.currentRow];
         SoundManager.play(BARMAN_ZIP_UP);
         break;
       }
@@ -396,8 +396,8 @@ class PlayerManager {
 
         this.#goState = GO_1;
         this.#lastPlayerXPosition = this.playerXPosition;
-        this.playerXPosition = ROW_X_POS[this.currentRow];
-        this.#playerYPos = ROW_Y_POS[this.currentRow];
+        this.playerXPosition = ROW_X_POSITIONS[this.currentRow];
+        this.#playerYPosition = ROW_Y_POSITIONS[this.currentRow];
         SoundManager.play(BARMAN_ZIP_DOWN);
         break;
       }
@@ -407,7 +407,7 @@ class PlayerManager {
 
         if (
           this.#isPlayerGoingLeft &&
-          this.playerXPosition > ROW_LEFT_BOUND[this.currentRow]
+          this.playerXPosition > ROW_LEFT_BOUNDS[this.currentRow]
         ) {
           this.playerXPosition -= STEP;
           this.#isPlayerRunning = true;
@@ -430,7 +430,7 @@ class PlayerManager {
 
         if (
           !this.#isPlayerGoingLeft &&
-          this.playerXPosition < ROW_RIGHT_BOUND[this.currentRow]
+          this.playerXPosition < ROW_RIGHT_BOUNDS[this.currentRow]
         ) {
           this.playerXPosition += STEP;
           this.#isPlayerRunning = true;
@@ -447,11 +447,11 @@ class PlayerManager {
       }
 
       case FIRE: {
-        if (this.playerXPosition !== ROW_RIGHT_BOUND[this.currentRow]) {
+        if (this.playerXPosition !== ROW_RIGHT_BOUNDS[this.currentRow]) {
           this.#lastRow = this.currentRow;
           this.#goState = GO_1;
           this.#lastPlayerXPosition = this.playerXPosition;
-          this.playerXPosition = ROW_X_POS[this.currentRow];
+          this.playerXPosition = ROW_X_POSITIONS[this.currentRow];
         }
 
         if (!this.#isTapperServing) {

@@ -13,9 +13,9 @@ export const NUM_LEVEL = 1;
 export const MAX_LIFE = 3;
 const TIME_STEP_SECONDS = 3;
 
-const ROW_LEFT_BOUND = [null, 120, 88, 56, 24];
-const ROW_RIGHT_BOUND = [null, 304, 334, 368, 400];
-const ROW_Y_POS = [null, 80, 176, 272, 368];
+const ROW_LEFT_BOUNDS = [null, 120, 88, 56, 24];
+const ROW_RIGHT_BOUNDS = [null, 304, 334, 368, 400];
+const ROW_Y_POSITIONS = [null, 80, 176, 272, 368];
 
 const GAME_TITLE_LOGO_WIDTH = 416;
 const GAME_TITLE_LOGO_HEIGHT = 160;
@@ -28,19 +28,19 @@ const ICON_SIZE = 16;
 const FONT_Y_OFFSET = 0;
 const FONT_NUM_OFFSET = 0;
 const FONT_SIZE = 16;
-const SCORE_X_POS = 100;
-const SCORE_Y_POS = 8;
-const LIFE_Y_POS = 24;
-const DIFFICULTY_X_POS = 376;
+const SCORE_X_POSITION = 100;
+const SCORE_Y_POSITION = 8;
+const LIFE_Y_POSITION = 24;
+const DIFFICULTY_X_POSITION = 376;
 
 export const SCORE_BONUS = 1500;
 export const SCORE_EMPTY_BEER = 100;
 export const SCORE_CUSTOMER = 50;
 
 class LevelManagerClass {
-  rowLeftBounds = ROW_LEFT_BOUND;
-  rowRightBounds = ROW_RIGHT_BOUND;
-  rowYPositions = ROW_Y_POS;
+  rowLeftBounds = ROW_LEFT_BOUNDS;
+  rowRightBounds = ROW_RIGHT_BOUNDS;
+  rowYPositions = ROW_Y_POSITIONS;
 
   #imageLevel = [2];
   #currentLevel = 1;
@@ -111,7 +111,7 @@ class LevelManagerClass {
 
   displayScore(context) {
     const scoreText = `${this.#score}`;
-    let xPos = SCORE_X_POS;
+    let xPosition = SCORE_X_POSITION;
 
     for (let i = scoreText.length; i--; ) {
       const offset = scoreText.charAt(i) * FONT_SIZE + FONT_NUM_OFFSET;
@@ -122,18 +122,18 @@ class LevelManagerClass {
         FONT_Y_OFFSET,
         FONT_SIZE,
         FONT_SIZE,
-        xPos,
-        SCORE_Y_POS,
+        xPosition,
+        SCORE_Y_POSITION,
         FONT_SIZE,
         FONT_SIZE,
       );
-      xPos -= FONT_SIZE;
+      xPosition -= FONT_SIZE;
     }
   }
 
   displayDifficulty(context) {
     const difficultyText = `${this.#difficulty}`;
-    let xPos = DIFFICULTY_X_POS;
+    let xPosition = DIFFICULTY_X_POSITION;
 
     for (let i = difficultyText.length; i--; ) {
       const offset = difficultyText.charAt(i) * FONT_SIZE + FONT_NUM_OFFSET;
@@ -143,13 +143,13 @@ class LevelManagerClass {
         FONT_Y_OFFSET,
         FONT_SIZE,
         FONT_SIZE,
-        xPos,
-        SCORE_Y_POS,
+        xPosition,
+        SCORE_Y_POSITION,
         FONT_SIZE,
         FONT_SIZE,
       );
 
-      xPos -= FONT_SIZE;
+      xPosition -= FONT_SIZE;
     }
   }
 
@@ -158,7 +158,7 @@ class LevelManagerClass {
       return;
     }
 
-    let xPos = SCORE_X_POS;
+    let xPosition = SCORE_X_POSITION;
     for (let i = this.lives; i--; ) {
       context.drawImage(
         this.#miscImage,
@@ -166,12 +166,12 @@ class LevelManagerClass {
         0,
         ICON_SIZE,
         ICON_SIZE,
-        xPos,
-        LIFE_Y_POS,
+        xPosition,
+        LIFE_Y_POSITION,
         ICON_SIZE,
         ICON_SIZE,
       );
-      xPos -= FONT_SIZE;
+      xPosition -= FONT_SIZE;
     }
   }
 

@@ -143,8 +143,8 @@ class Customer {
 }
 
 class CustomersManager {
-  #customerXPos = [5];
-  #maxPos = [5];
+  #leadingCustomerIndexByRow = [5];
+  #maxCustomerPositionByRow = [5];
   #customersList = [];
   #endOfRowCustomer = null;
   #spriteImage = null;
@@ -167,7 +167,7 @@ class CustomersManager {
   reset() {
     for (let count = 1; count < 5; count++) {
       this.#customersList[count] = [];
-      this.#customerXPos[count] = -1;
+      this.#leadingCustomerIndexByRow[count] = -1;
     }
     this.#oneReachedEndOfRow = false;
     this.#endOfRowCustomer = false;
@@ -243,19 +243,20 @@ class CustomersManager {
 
   stop() {}
 
-  getFirstCustomerPos(row) {
+  getFirstCustomerPosition(row) {
     if (
-      this.#customerXPos[row] !== -1 &&
-      this.#customersList[row][this.#customerXPos[row]]
+      this.#leadingCustomerIndexByRow[row] !== -1 &&
+      this.#customersList[row][this.#leadingCustomerIndexByRow[row]]
     ) {
-      return this.#customersList[row][this.#customerXPos[row]].xPosition;
+      return this.#customersList[row][this.#leadingCustomerIndexByRow[row]]
+        .xPosition;
     }
 
     return undefined;
   }
 
   beerCollisionDetected(row) {
-    const customerIndex = this.#customerXPos[row];
+    const customerIndex = this.#leadingCustomerIndexByRow[row];
     const customer = this.#customersList[row][customerIndex];
 
     if (!customer) {
@@ -282,8 +283,8 @@ class CustomersManager {
   draw(context) {
     let ret = 0;
 
-    this.#customerXPos = [-1, -1, -1, -1, -1];
-    this.#maxPos = [0, 0, 0, 0, 0];
+    this.#leadingCustomerIndexByRow = [-1, -1, -1, -1, -1];
+    this.#maxCustomerPositionByRow = [0, 0, 0, 0, 0];
 
     for (let rowCount = 1; rowCount < 5; rowCount++) {
       const customerArrayCopy = this.#customersList[rowCount].slice();
@@ -304,11 +305,11 @@ class CustomersManager {
           }
 
           if (
-            customer.xPosition > this.#maxPos[rowCount] &&
+            customer.xPosition > this.#maxCustomerPositionByRow[rowCount] &&
             customer.state === CUSTOMER_STATE_WAIT
           ) {
-            this.#customerXPos[rowCount] = i;
-            this.#maxPos[rowCount] = customer.xPosition;
+            this.#leadingCustomerIndexByRow[rowCount] = i;
+            this.#maxCustomerPositionByRow[rowCount] = customer.xPosition;
           }
         }
 
