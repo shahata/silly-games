@@ -38,14 +38,14 @@ export const SCORE_EMPTY_BEER = 100;
 export const SCORE_CUSTOMER = 50;
 
 class LevelManagerClass {
-  rowLeftBound = ROW_LEFT_BOUND;
-  rowRightBound = ROW_RIGHT_BOUND;
-  rowYPos = ROW_Y_POS;
+  rowLeftBounds = ROW_LEFT_BOUND;
+  rowRightBounds = ROW_RIGHT_BOUND;
+  rowYPositions = ROW_Y_POS;
 
   #imageLevel = [2];
   #currentLevel = 1;
   #score = 0;
-  life = 0;
+  lives = 0;
   #difficulty = 1;
   #wave = 1;
   #lastRow = -1;
@@ -63,7 +63,7 @@ class LevelManagerClass {
 
     this.#currentLevel = 1;
     this.#score = 0;
-    this.life = MAX_LIFE;
+    this.lives = MAX_LIFE;
     this.#difficulty = 1;
     this.#wave = 1;
   }
@@ -106,7 +106,7 @@ class LevelManagerClass {
   }
 
   lifeLost() {
-    this.life -= 1;
+    this.lives -= 1;
   }
 
   displayScore(context) {
@@ -154,12 +154,12 @@ class LevelManagerClass {
   }
 
   displayLife(context) {
-    if (this.life <= 0) {
+    if (this.lives <= 0) {
       return;
     }
 
     let xPos = SCORE_X_POS;
-    for (let i = this.life; i--; ) {
+    for (let i = this.lives; i--; ) {
       context.drawImage(
         this.#miscImage,
         LIFE_ICON_OFFSET,
@@ -234,7 +234,7 @@ class LevelManagerClass {
   newGame() {
     this.#currentLevel = 1;
     this.#score = 0;
-    this.life = MAX_LIFE;
+    this.lives = MAX_LIFE;
     this.#difficulty = 1;
     this.#wave = 1;
     this.#lastRow = -1;

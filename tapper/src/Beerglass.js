@@ -21,8 +21,8 @@ const SPRITE_HEIGHT = 32;
 
 class Glass {
   sprite = SPRITE_FULL_1;
-  xPos;
-  yPos;
+  xPosition;
+  yPosition;
   #row;
   #type;
   #leftBound;
@@ -31,13 +31,13 @@ class Glass {
   #fpsMax = FPS >> 1;
   broken = false;
 
-  constructor(row, defaultXPos, defaultYPos, type) {
-    this.xPos = defaultXPos;
-    this.yPos = defaultYPos;
+  constructor(row, defaultXPosition, defaultYPosition, type) {
+    this.xPosition = defaultXPosition;
+    this.yPosition = defaultYPosition;
     this.#row = row;
     this.#type = type;
-    this.#leftBound = LevelManager.rowLeftBound[row] - 4;
-    this.#rightBound = LevelManager.rowRightBound[row] + 16;
+    this.#leftBound = LevelManager.rowLeftBounds[row] - 4;
+    this.#rightBound = LevelManager.rowRightBounds[row] + 16;
   }
 
   update() {
@@ -48,8 +48,8 @@ class Glass {
         this.#fpsCount = 0;
       }
 
-      if (this.xPos > this.#leftBound) {
-        this.xPos -= STEP;
+      if (this.xPosition > this.#leftBound) {
+        this.xPosition -= STEP;
       } else {
         this.broken = true;
         this.sprite = SPRITE_BROKEN;
@@ -57,13 +57,13 @@ class Glass {
     } else {
       this.sprite = SPRITE_EMPTY_1;
 
-      if (this.xPos < this.#rightBound) {
-        this.xPos += CUSTOMER_STEP;
+      if (this.xPosition < this.#rightBound) {
+        this.xPosition += CUSTOMER_STEP;
       } else {
         this.broken = true;
         this.sprite = SPRITE_FALLING;
-        this.xPos += 16;
-        this.yPos += SPRITE_HEIGHT;
+        this.xPosition += 16;
+        this.yPosition += SPRITE_HEIGHT;
       }
     }
   }
@@ -90,8 +90,13 @@ class BeerglassManager {
     this.#isOneEmptyGlassBroken = false;
   }
 
-  add(row, xPos, type) {
-    const glass = new Glass(row, xPos, LevelManager.rowYPos[row] + 8, type);
+  add(row, xPosition, type) {
+    const glass = new Glass(
+      row,
+      xPosition,
+      LevelManager.rowYPositions[row] + 8,
+      type,
+    );
 
     if (type === FULL_MUG) {
       this.#glassesFull[row].push(glass);
@@ -109,7 +114,7 @@ class BeerglassManager {
     }
 
     const customerPos = firstCustomerPos + 24;
-    if (glass.xPos <= customerPos) {
+    if (glass.xPosition <= customerPos) {
       return Customers.beerCollisionDetected(row);
     }
 
@@ -119,7 +124,7 @@ class BeerglassManager {
   #checkPlayerCollision(glass, row) {
     if (
       Player.currentRow === row &&
-      glass.xPos + SPRITE_WIDTH >= Player.playerXPos
+      glass.xPosition + SPRITE_WIDTH >= Player.playerXPosition
     ) {
       SoundManager.play(GRAB_MUG, false);
       LevelManager.addScore(SCORE_EMPTY_BEER);
@@ -180,8 +185,8 @@ class BeerglassManager {
           0,
           SPRITE_WIDTH,
           SPRITE_HEIGHT,
-          glass.xPos,
-          glass.yPos,
+          glass.xPosition,
+          glass.yPosition,
           SPRITE_WIDTH,
           SPRITE_HEIGHT,
         );
@@ -228,8 +233,8 @@ class BeerglassManager {
           0,
           SPRITE_WIDTH,
           SPRITE_HEIGHT,
-          glass.xPos,
-          glass.yPos,
+          glass.xPosition,
+          glass.yPosition,
           SPRITE_WIDTH,
           SPRITE_HEIGHT,
         );

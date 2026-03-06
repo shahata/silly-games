@@ -47,30 +47,30 @@ class Customer {
   state = CUSTOMER_STATE_WAIT;
   type;
   sprite = 0;
-  sprite2 = 0;
+  secondarySprite = 0;
   #movingPattern;
   #animationCounter = -1;
-  xPos;
-  yPos;
-  yPos2;
+  xPosition;
+  yPosition;
+  secondaryYPosition;
   row;
   #leftBound;
   #rightBound;
   #fpsCount = 0;
   #fpsMax = FPS >> 3;
-  #newXPos = 0;
+  #targetXPosition = 0;
   endOfRow = false;
   isOut = false;
 
-  constructor(row, defaultXPos, movingPattern, type, position) {
+  constructor(row, defaultXPosition, movingPattern, type, position) {
     this.type = type;
     this.#movingPattern = movingPattern;
-    this.xPos = defaultXPos + (position - 1) * SPRITE_WIDTH;
-    this.yPos = LevelManager.rowYPos[row];
-    this.yPos2 = LevelManager.rowYPos[row];
+    this.xPosition = defaultXPosition + (position - 1) * SPRITE_WIDTH;
+    this.yPosition = LevelManager.rowYPositions[row];
+    this.secondaryYPosition = LevelManager.rowYPositions[row];
     this.row = row;
-    this.#leftBound = LevelManager.rowLeftBound[row];
-    this.#rightBound = LevelManager.rowRightBound[row];
+    this.#leftBound = LevelManager.rowLeftBounds[row];
+    this.#rightBound = LevelManager.rowRightBounds[row];
   }
 
   update() {
@@ -86,8 +86,8 @@ class Customer {
         }
 
         if (this.#movingPattern[this.#animationCounter] < 2) {
-          if (this.xPos < this.#rightBound) {
-            this.xPos += STEP;
+          if (this.xPosition < this.#rightBound) {
+            this.xPosition += STEP;
           } else {
             this.endOfRow = true;
           }
@@ -96,16 +96,16 @@ class Customer {
       }
 
       case CUSTOMER_STATE_CATCH: {
-        this.xPos -= STEP * 2;
-        if (this.xPos < this.#leftBound) {
+        this.xPosition -= STEP * 2;
+        if (this.xPosition < this.#leftBound) {
           this.isOut = true;
-        } else if (this.xPos < this.#newXPos) {
+        } else if (this.xPosition < this.#targetXPosition) {
           this.#fpsCount = 0;
           this.#animationCounter = 0;
           this.state = CUSTOMER_STATE_DRINK;
           this.sprite = DRINKING_BEER_1 << 5;
-          this.sprite2 = DRINKING_BEER_2 << 5;
-          this.yPos2 = this.yPos;
+          this.secondarySprite = DRINKING_BEER_2 << 5;
+          this.secondaryYPosition = this.yPosition;
         }
         break;
       }
@@ -121,8 +121,8 @@ class Customer {
           this.#animationCounter = -1;
           this.#fpsCount = 0;
           this.sprite = this.#movingPattern[0] << 5;
-          Beerglass.add(this.row, this.xPos + SPRITE_WIDTH, EMPTY_MUG);
-          Customers.checkBonus(this.row, this.xPos);
+          Beerglass.add(this.row, this.xPosition + SPRITE_WIDTH, EMPTY_MUG);
+          Customers.checkBonus(this.row, this.xPosition);
         }
         break;
       }
@@ -133,11 +133,12 @@ class Customer {
   }
 
   catchBeer() {
-    this.#newXPos = this.xPos - ((this.#rightBound - this.#leftBound) / 5) * 2;
+    this.#targetXPosition =
+      this.xPosition - ((this.#rightBound - this.#leftBound) / 5) * 2;
     this.state = CUSTOMER_STATE_CATCH;
     this.sprite = HOLDING_BEER_1 << 5;
-    this.sprite2 = HOLDING_BEER_2 << 5;
-    this.yPos2 = this.yPos + 8;
+    this.secondarySprite = HOLDING_BEER_2 << 5;
+    this.secondaryYPosition = this.yPosition + 8;
   }
 }
 
@@ -154,8 +155,8 @@ class CustomersManager {
     visible: false,
     timeoutReached: true,
     row: 1,
-    xPos: 100,
-    yPos: 0,
+    xPosition: 100,
+    yPosition: 0,
   };
 
   init() {
@@ -176,7 +177,7 @@ class CustomersManager {
   add(row, pos, type) {
     const customer = new Customer(
       row,
-      LevelManager.rowLeftBound[row],
+      LevelManager.rowLeftBounds[row],
       MOVING_PATTERN_ARRAY[row],
       type,
       pos,
@@ -185,19 +186,20 @@ class CustomersManager {
     this.#customersList[row].push(customer);
   }
 
-  checkBonus(row, customerXPos) {
+  checkBonus(row, customerXPosition) {
     if (!this.#bonus.visible && this.#bonus.timeoutReached) {
       if (
-        customerXPos <
-        LevelManager.rowLeftBound[row] +
-          (LevelManager.rowRightBound[row] - LevelManager.rowLeftBound[row]) / 3
+        customerXPosition <
+        LevelManager.rowLeftBounds[row] +
+          (LevelManager.rowRightBounds[row] - LevelManager.rowLeftBounds[row]) /
+            3
       ) {
         const randomRow = Math.floor(Math.random() * 6);
         if (randomRow === row) {
           this.#bonus.visible = true;
           this.#bonus.row = row;
-          this.#bonus.xPos = customerXPos;
-          this.#bonus.yPos = LevelManager.rowYPos[row] + 16;
+          this.#bonus.xPosition = customerXPosition;
+          this.#bonus.yPosition = LevelManager.rowYPositions[row] + 16;
           this.#bonus.timeoutReached = false;
 
           setTimeout(() => {
@@ -211,11 +213,11 @@ class CustomersManager {
     }
   }
 
-  checkBonusCollision(row, xPos) {
+  checkBonusCollision(row, xPosition) {
     if (
       this.#bonus.visible &&
       this.#bonus.row === row &&
-      xPos <= this.#bonus.xPos + SPRITE_WIDTH
+      xPosition <= this.#bonus.xPosition + SPRITE_WIDTH
     ) {
       this.#bonus.visible = false;
       LevelManager.addScore(SCORE_BONUS);
@@ -231,8 +233,8 @@ class CustomersManager {
         0,
         SPRITE_WIDTH,
         SPRITE_HEIGHT,
-        this.#bonus.xPos,
-        this.#bonus.yPos,
+        this.#bonus.xPosition,
+        this.#bonus.yPosition,
         SPRITE_WIDTH,
         SPRITE_HEIGHT,
       );
@@ -246,7 +248,7 @@ class CustomersManager {
       this.#customerXPos[row] !== -1 &&
       this.#customersList[row][this.#customerXPos[row]]
     ) {
-      return this.#customersList[row][this.#customerXPos[row]].xPos;
+      return this.#customersList[row][this.#customerXPos[row]].xPosition;
     }
 
     return undefined;
@@ -302,11 +304,11 @@ class CustomersManager {
           }
 
           if (
-            customer.xPos > this.#maxPos[rowCount] &&
+            customer.xPosition > this.#maxPos[rowCount] &&
             customer.state === CUSTOMER_STATE_WAIT
           ) {
             this.#customerXPos[rowCount] = i;
-            this.#maxPos[rowCount] = customer.xPos;
+            this.#maxPos[rowCount] = customer.xPosition;
           }
         }
 
@@ -323,8 +325,8 @@ class CustomersManager {
           CUSTOMER_Y_OFFSET[customer.type],
           SPRITE_WIDTH,
           SPRITE_HEIGHT,
-          customer.xPos,
-          customer.yPos,
+          customer.xPosition,
+          customer.yPosition,
           SPRITE_WIDTH,
           SPRITE_HEIGHT,
         );
@@ -332,12 +334,12 @@ class CustomersManager {
         if (customer.state !== CUSTOMER_STATE_WAIT) {
           context.drawImage(
             this.#spriteImage,
-            customer.sprite2,
+            customer.secondarySprite,
             CUSTOMER_Y_OFFSET[customer.type],
             SPRITE_WIDTH,
             SPRITE_HEIGHT,
-            customer.xPos + 32,
-            customer.yPos2,
+            customer.xPosition + 32,
+            customer.secondaryYPosition,
             SPRITE_WIDTH,
             SPRITE_HEIGHT,
           );

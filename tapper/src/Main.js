@@ -86,7 +86,7 @@ class GameRunner {
 
     SoundManager.stop(OH_SUZANNA);
 
-    if (LevelManager.life <= 0) {
+    if (LevelManager.lives <= 0) {
       GameState.changeState(STATE_GAME_OVER);
       SoundManager.play(YOU_LOSE, false);
     } else {
