@@ -1,4 +1,4 @@
-import SoundMngr from "./SoundMngr.js";
+import SoundManager from "./SoundMngr.js";
 import loadingTitleImage from "../images/loading_title.png";
 import gameTitleImage from "../images/game_title.png";
 import pregameImage from "../images/pregame.png";
@@ -108,7 +108,7 @@ class ResourceManager {
 
   preloadSounds(soundData) {
     for (let i = 0; i < soundData.length; ++i) {
-      SoundMngr.load(i, soundData[i], this.#resourceLoaded);
+      SoundManager.load(i, soundData[i], this.#resourceLoaded);
     }
 
     return soundData.length;

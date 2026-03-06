@@ -1,6 +1,10 @@
 import Beerglass, { EMPTY_MUG } from "./Beerglass.js";
 import LevelManager, { SCORE_BONUS, SCORE_CUSTOMER } from "./LevelManager.js";
-import SoundMngr, { COLLECT_TIP, OUT_DOOR, TIP_APPEAR } from "./SoundMngr.js";
+import SoundManager, {
+  COLLECT_TIP,
+  OUT_DOOR,
+  TIP_APPEAR,
+} from "./SoundMngr.js";
 import ResourceManager from "./RessourceMngr.js";
 import GameState, { FPS, STATE_PLAY } from "./GameState.js";
 
@@ -201,7 +205,7 @@ class CustomersManager {
             this.#bonus.timeoutReached = true;
           }, BONUS_TIMEOUT_MS);
 
-          SoundMngr.play(TIP_APPEAR, false);
+          SoundManager.play(TIP_APPEAR, false);
         }
       }
     }
@@ -215,7 +219,7 @@ class CustomersManager {
     ) {
       this.#bonus.visible = false;
       LevelManager.addScore(SCORE_BONUS);
-      SoundMngr.play(COLLECT_TIP, false);
+      SoundManager.play(COLLECT_TIP, false);
     }
   }
 
@@ -292,7 +296,7 @@ class CustomersManager {
           if (customer.isOut) {
             customerArrayCopy.splice(i, 1);
             copyFlag = true;
-            SoundMngr.play(OUT_DOOR, false);
+            SoundManager.play(OUT_DOOR, false);
             LevelManager.addScore(SCORE_CUSTOMER);
             continue;
           }

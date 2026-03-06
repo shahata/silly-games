@@ -2,7 +2,7 @@ import Player, { DOWN, FIRE, LEFT, NONE, RIGHT, UP } from "./Player.js";
 import Customers from "./Customers.js";
 import Beerglass from "./Beerglass.js";
 import LevelManager from "./LevelManager.js";
-import SoundMngr, {
+import SoundManager, {
   GET_READY_TO_SERVE,
   LAUGHING,
   OH_SUZANNA,
@@ -33,7 +33,7 @@ class GameRunner {
     }
 
     this.#frameBuffer = System.getFrameBuffer();
-    SoundMngr.init();
+    SoundManager.init();
     GameState.changeState(STATE_LOADING);
 
     setInterval(() => {
@@ -57,7 +57,7 @@ class GameRunner {
     const newGameButton = document.getElementById("tapper-new-game");
     if (newGameButton) {
       newGameButton.addEventListener("click", () => {
-        SoundMngr.stop(OH_SUZANNA);
+        SoundManager.stop(OH_SUZANNA);
         GameState.changeState(STATE_MENU);
       });
     }
@@ -70,11 +70,11 @@ class GameRunner {
     Customers.reset();
     LevelManager.reset();
 
-    SoundMngr.play(GET_READY_TO_SERVE, false);
+    SoundManager.play(GET_READY_TO_SERVE, false);
     setTimeout(() => {
       if (GameState.state === STATE_READY) {
         GameState.changeState(STATE_PLAY);
-        SoundMngr.play(OH_SUZANNA, true);
+        SoundManager.play(OH_SUZANNA, true);
       }
     }, 2.5 * 1000);
   }
@@ -84,14 +84,14 @@ class GameRunner {
     Beerglass.stop();
     Customers.stop();
 
-    SoundMngr.stop(OH_SUZANNA);
+    SoundManager.stop(OH_SUZANNA);
 
     if (LevelManager.life <= 0) {
       GameState.changeState(STATE_GAME_OVER);
-      SoundMngr.play(YOU_LOSE, false);
+      SoundManager.play(YOU_LOSE, false);
     } else {
       GameState.changeState(STATE_LIFE_LOST);
-      SoundMngr.play(LAUGHING, false);
+      SoundManager.play(LAUGHING, false);
       setTimeout(() => this.reset(), 3 * 1000);
     }
   }

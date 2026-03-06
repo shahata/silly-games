@@ -5,7 +5,7 @@ import Customers, {
   CUST_WOMAN,
   MAX_CUSTOMER_TYPE,
 } from "./Customers.js";
-import SoundMngr, { POP_OUT } from "./SoundMngr.js";
+import SoundManager, { POP_OUT } from "./SoundMngr.js";
 import ResourceManager from "./RessourceMngr.js";
 import GameState, { STATE_PLAY } from "./GameState.js";
 
@@ -83,7 +83,7 @@ class LevelManagerClass {
         Customers.add(2, i, CUST_WOMAN);
         Customers.add(3, i, CUST_BLACK_GUY);
         Customers.add(4, i, CUST_GRAY_HAT_COWBOY);
-        SoundMngr.play(POP_OUT, false);
+        SoundManager.play(POP_OUT, false);
       }
     } else {
       const randomRow = Math.floor(Math.random() * 5);
@@ -93,7 +93,7 @@ class LevelManagerClass {
           Math.random() * MAX_CUSTOMER_TYPE,
         );
         Customers.add(randomRow, 1, randomCustomerType);
-        SoundMngr.play(POP_OUT, false);
+        SoundManager.play(POP_OUT, false);
         this.#lastRow = randomRow;
       }
     }

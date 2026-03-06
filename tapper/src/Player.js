@@ -1,6 +1,6 @@
 import Customers from "./Customers.js";
 import Beerglass, { FULL_MUG as BEERGLASS_FULL_MUG } from "./Beerglass.js";
-import SoundMngr, {
+import SoundManager, {
   BARMAN_ZIP_DOWN,
   BARMAN_ZIP_UP,
   FULL_MUG as SOUND_FULL_MUG,
@@ -381,7 +381,7 @@ class PlayerManager {
         this.#lastPlayerXPos = this.playerXPos;
         this.playerXPos = ROW_X_POS[this.currentRow];
         this.#playerYPos = ROW_Y_POS[this.currentRow];
-        SoundMngr.play(BARMAN_ZIP_UP);
+        SoundManager.play(BARMAN_ZIP_UP);
         break;
       }
 
@@ -398,7 +398,7 @@ class PlayerManager {
         this.#lastPlayerXPos = this.playerXPos;
         this.playerXPos = ROW_X_POS[this.currentRow];
         this.#playerYPos = ROW_Y_POS[this.currentRow];
-        SoundMngr.play(BARMAN_ZIP_DOWN);
+        SoundManager.play(BARMAN_ZIP_DOWN);
         break;
       }
 
@@ -466,14 +466,14 @@ class PlayerManager {
 
           switch (this.#servingCounter) {
             case 1:
-              SoundMngr.play(MUG_FILL_1);
+              SoundManager.play(MUG_FILL_1);
               break;
             case 2:
             case 3:
-              SoundMngr.play(MUG_FILL_2);
+              SoundManager.play(MUG_FILL_2);
               break;
             case SERVING_MAX:
-              SoundMngr.play(SOUND_FULL_MUG);
+              SoundManager.play(SOUND_FULL_MUG);
               break;
             default:
               break;
@@ -497,7 +497,7 @@ class PlayerManager {
             this.#isTapperServing = false;
             this.#isPlayerGoingLeft = false;
             this.#playerAction = STAND_R1;
-            SoundMngr.play(THROW_MUG);
+            SoundManager.play(THROW_MUG);
           }
         } else {
           this.#playerAction = this.#isPlayerGoingLeft ? STAND_L1 : STAND_R1;
