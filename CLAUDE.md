@@ -23,13 +23,14 @@ The games use a mix of frameworks — there is no single standard:
 
 - **15-puzzle** — React (class components), game logic in `src/game.js` as pure functions
 - **bulls-and-cows** — React (functional components + hooks), uses lodash for shuffle, game logic in `src/game.js`
-- **memory-game** — AngularJS 1.x (loaded from CDN), ES6 class-based game logic in `scripts/memory-game.js`
-- **minesweeper** — AngularJS 1.x (loaded from CDN), service-based architecture with separate files for cell, minefield, mine-planter, game-state under `scripts/services/`
+- **memory-game** — AngularJS 1.x (loaded from CDN), game logic in `src/game.js`, controller in `src/app.js`
+- **minesweeper** — AngularJS 1.x (loaded from CDN), game logic in `src/game.js` (cell, minefield, game-state), controller in `src/app.js`
 - **sudoku-solver** — AngularJS 1.x (loaded from CDN), monolithic single-file `app.js`, solves 16x16 variant
 - **tapper** — Vanilla JS with Canvas 2D API, sprite-based arcade game with state machine, sound manager, and resource loader
 
 ### Key Patterns
 
 - React games separate pure game logic (`game.js`) from UI components (`App.jsx`)
-- AngularJS games load Angular from CDN and use `type="module"` scripts — they are NOT bundled through the Vite React plugin
+- AngularJS games follow the same pattern: game logic in `src/game.js`, controller/app in `src/app.js`, styles in `src/app.css`
+- AngularJS games load Angular from CDN and use `type="module"` scripts — CSS is imported via JS (Vite-bundled), not linked in HTML
 - The Vite config uses `base: "/silly-games/"` for GitHub Pages path prefix

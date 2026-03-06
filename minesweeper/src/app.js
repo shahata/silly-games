@@ -1,5 +1,5 @@
-import gameState from "../services/game-state.js";
-import Minefield from "../services/minefield.js";
+import { Minefield, gameState } from "./game.js";
+import "./app.css";
 
 function MinesweeperCtrl($scope) {
   $scope.parameters = {
@@ -39,4 +39,24 @@ function MinesweeperCtrl($scope) {
 
 MinesweeperCtrl.$inject = ["$scope"];
 
-export default MinesweeperCtrl;
+function onContextmenu($parse) {
+  return {
+    restrict: "A",
+    link: function (scope, element, attrs) {
+      var fn = $parse(attrs.onContextmenu);
+      element.on("contextmenu", function (e) {
+        scope.$apply(function () {
+          e.preventDefault();
+          fn(scope, { $event: e });
+        });
+      });
+    },
+  };
+}
+
+onContextmenu.$inject = ["$parse"];
+
+angular
+  .module("minesweeperApp", [])
+  .controller("MinesweeperCtrl", MinesweeperCtrl)
+  .directive("onContextmenu", onContextmenu);

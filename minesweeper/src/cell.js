@@ -1,4 +1,4 @@
-function Cell(coord, onCellRevealed) {
+export function Cell(coord, onCellRevealed) {
   return {
     count: 0,
     mine: false,
@@ -30,5 +30,3 @@ function Cell(coord, onCellRevealed) {
     },
   };
 }
-
-export default Cell;

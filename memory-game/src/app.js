@@ -1,5 +1,5 @@
-import MemoryGame from "./memory-game.js";
-import "../styles/main.css";
+import { MemoryGame } from "./game.js";
+import "./app.css";
 
 function GameController() {
   var tileNames = [

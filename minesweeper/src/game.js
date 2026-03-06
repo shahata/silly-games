@@ -1,8 +1,33 @@
-import minePlanter from "./mine-planter.js";
-import Cell from "./cell.js";
-import gameState from "./game-state.js";
+import { Cell } from "./cell.js";
 
-function Minefield(rows, columns, mines) {
+function random(max) {
+  return Math.floor(Math.random() * max);
+}
+
+function minePlanter(rows, columns, mines) {
+  function coordExists(arr, coord) {
+    return arr.some(function (value) {
+      return angular.equals(value, coord);
+    });
+  }
+
+  var mineArr = [];
+  while (mineArr.length !== mines) {
+    var coord = { row: random(rows), column: random(columns) };
+    if (!coordExists(mineArr, coord)) {
+      mineArr.push(coord);
+    }
+  }
+  return mineArr;
+}
+
+export const gameState = {
+  LOST: "lost",
+  WON: "won",
+  PLAYING: "playing",
+};
+
+export function Minefield(rows, columns, mines) {
   var game,
     self = this;
 

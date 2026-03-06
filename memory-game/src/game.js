@@ -29,7 +29,7 @@ function makeGrid(tileNames) {
   return grid;
 }
 
-function MemoryGame(tileNames) {
+export function MemoryGame(tileNames) {
   var currentPair = [];
   this.grid = makeGrid(tileNames);
   this.message = "Click on a tile.";
@@ -64,5 +64,3 @@ function MemoryGame(tileNames) {
     }
   };
 }
-
-export default MemoryGame;

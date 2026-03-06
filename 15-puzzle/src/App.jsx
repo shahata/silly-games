@@ -27,7 +27,7 @@ class Game extends Component {
 
   render() {
     return (
-      <div>
+      <div className="App">
         <span
           className="NewGame"
           role="img"
@@ -73,14 +73,4 @@ class Game extends Component {
   }
 }
 
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <Game />
-      </div>
-    );
-  }
-}
-
-export default App;
+export default Game;

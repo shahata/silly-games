@@ -1,3 +1,5 @@
+import "./app.css";
+
 var TABLE_WIDTH = 16;
 var BOX_WIDTH = 4;
 var BOX_HEIGHT = 4;
