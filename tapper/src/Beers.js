@@ -1,5 +1,5 @@
 import Player from "./Player.js";
-import Customers, { STEP as CUSTOMER_STEP } from "./Customers.js";
+import Customers from "./Customers.js";
 import LevelManager, { SCORE_EMPTY_BEER } from "./LevelManager.js";
 import SoundManager, { GRAB_MUG } from "./SoundManager.js";
 import ResourceManager from "./ResourceManager.js";
@@ -11,7 +11,8 @@ const SPRITE_EMPTY_1 = 64;
 const SPRITE_FALLING = 96;
 const SPRITE_BROKEN = 128;
 
-const STEP = 4;
+const STEP_FULL = 4;
+const STEP_EMPTY = 1;
 
 export const FULL_MUG = 0;
 export const EMPTY_MUG = 1;
@@ -49,7 +50,7 @@ class Glass {
       }
 
       if (this.xPosition > this.#leftBound) {
-        this.xPosition -= STEP;
+        this.xPosition -= STEP_FULL;
       } else {
         this.broken = true;
         this.sprite = SPRITE_BROKEN;
@@ -58,7 +59,7 @@ class Glass {
       this.sprite = SPRITE_EMPTY_1;
 
       if (this.xPosition < this.#rightBound) {
-        this.xPosition += CUSTOMER_STEP;
+        this.xPosition += STEP_EMPTY;
       } else {
         this.broken = true;
         this.sprite = SPRITE_FALLING;
@@ -69,7 +70,7 @@ class Glass {
   }
 }
 
-class BeerglassManager {
+class Beers {
   #isOneFullGlassBroken = false;
   #isOneEmptyGlassBroken = false;
   #glassesFull = [];
@@ -77,7 +78,7 @@ class BeerglassManager {
   #spriteImage = null;
 
   init() {
-    this.#spriteImage = ResourceManager.getImageResource("beerglass");
+    this.#spriteImage = ResourceManager.getImageResource("beer_glass");
   }
 
   reset() {
@@ -249,4 +250,4 @@ class BeerglassManager {
   }
 }
 
-export default new BeerglassManager();
+export default new Beers();

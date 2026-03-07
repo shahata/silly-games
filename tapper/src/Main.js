@@ -1,11 +1,11 @@
 import Player, { DOWN, FIRE, LEFT, NONE, RIGHT, UP } from "./Player.js";
 import Customers from "./Customers.js";
-import Beerglass from "./Beerglass.js";
+import Beers from "./Beers.js";
 import LevelManager from "./LevelManager.js";
 import SoundManager, {
   GET_READY_TO_SERVE,
   LAUGHING,
-  OH_SUZANNA,
+  OH_SUSANNA,
   YOU_LOSE,
 } from "./SoundManager.js";
 import System from "./System.js";
@@ -46,7 +46,7 @@ class GameRunner {
   loaded() {
     LevelManager.init();
     Player.init();
-    Beerglass.init();
+    Beers.init();
     Customers.init();
 
     document.addEventListener("keydown", (event) => this.onKeyPress(event));
@@ -57,7 +57,7 @@ class GameRunner {
     const newGameButton = document.getElementById("tapper-new-game");
     if (newGameButton) {
       newGameButton.addEventListener("click", () => {
-        SoundManager.stop(OH_SUZANNA);
+        SoundManager.stop(OH_SUSANNA);
         GameState.changeState(STATE_MENU);
       });
     }
@@ -66,7 +66,7 @@ class GameRunner {
   reset() {
     GameState.changeState(STATE_READY);
     Player.reset();
-    Beerglass.reset();
+    Beers.reset();
     Customers.reset();
     LevelManager.reset();
 
@@ -74,17 +74,17 @@ class GameRunner {
     setTimeout(() => {
       if (GameState.state === STATE_READY) {
         GameState.changeState(STATE_PLAY);
-        SoundManager.play(OH_SUZANNA, true);
+        SoundManager.play(OH_SUSANNA, true);
       }
     }, 2.5 * 1000);
   }
 
   lost() {
     Player.lost();
-    Beerglass.stop();
+    Beers.stop();
     Customers.stop();
 
-    SoundManager.stop(OH_SUZANNA);
+    SoundManager.stop(OH_SUSANNA);
 
     if (LevelManager.lives <= 0) {
       GameState.changeState(STATE_GAME_OVER);
@@ -112,7 +112,7 @@ class GameRunner {
         if (Customers.draw(this.#frameBuffer) !== 0) {
           this.lost();
         }
-        if (Beerglass.draw(this.#frameBuffer) !== 0) {
+        if (Beers.draw(this.#frameBuffer) !== 0) {
           this.lost();
         }
         this.#isKeyPressAllowed = Player.draw(this.#frameBuffer);

@@ -1,5 +1,5 @@
 import Customers from "./Customers.js";
-import Beerglass, { FULL_MUG as BEERGLASS_FULL_MUG } from "./Beerglass.js";
+import Beers, { FULL_MUG as BEERS_FULL_MUG } from "./Beers.js";
 import SoundManager, {
   BARMAN_ZIP_DOWN,
   BARMAN_ZIP_UP,
@@ -70,7 +70,7 @@ const DEFAULT_PLAYER_X = 336;
 const DEFAULT_PLAYER_Y = 192;
 const LEG_ANIMATION_TIMING = 20;
 
-class PlayerManager {
+class Player {
   #spriteImage = null;
   #goState = 0;
   #legState = 0;
@@ -489,10 +489,10 @@ class PlayerManager {
 
           if (this.#servingCounter === SERVING_MAX) {
             this.#servingCounter = 0;
-            Beerglass.add(
+            Beers.add(
               this.currentRow,
               this.playerXPosition - SPRITE_WIDTH,
-              BEERGLASS_FULL_MUG,
+              BEERS_FULL_MUG,
             );
             this.#isTapperServing = false;
             this.#isPlayerGoingLeft = false;
@@ -513,4 +513,4 @@ class PlayerManager {
   }
 }
 
-export default new PlayerManager();
+export default new Player();

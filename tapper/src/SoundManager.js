@@ -1,6 +1,6 @@
 export const BARMAN_ZIP_UP = 0;
 export const BARMAN_ZIP_DOWN = 1;
-export const OH_SUZANNA = 2;
+export const OH_SUSANNA = 2;
 export const GRAB_MUG = 3;
 export const THROW_MUG = 4;
 export const MUG_FILL_1 = 5;

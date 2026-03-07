@@ -7,7 +7,7 @@ export const STATE_READY = 4;
 export const STATE_LOADING = 5;
 export const STATE_PAUSE = 6;
 
-class GameStateManager {
+class GameState {
   state;
 
   changeState(newState) {
@@ -15,4 +15,4 @@ class GameStateManager {
   }
 }
 
-export default new GameStateManager();
+export default new GameState();

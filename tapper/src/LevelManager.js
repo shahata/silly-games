@@ -37,7 +37,7 @@ export const SCORE_BONUS = 1500;
 export const SCORE_EMPTY_BEER = 100;
 export const SCORE_CUSTOMER = 50;
 
-class LevelManagerClass {
+class LevelManager {
   rowLeftBounds = ROW_LEFT_BOUNDS;
   rowRightBounds = ROW_RIGHT_BOUNDS;
   rowYPositions = ROW_Y_POSITIONS;
@@ -252,4 +252,4 @@ class LevelManagerClass {
   }
 }
 
-export default new LevelManagerClass();
+export default new LevelManager();

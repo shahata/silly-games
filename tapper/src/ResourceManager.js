@@ -4,13 +4,13 @@ import gameTitleImage from "../images/game_title.png";
 import pregameImage from "../images/pregame.png";
 import level1Image from "../images/level-1.png";
 import barmanImage from "../images/barman.png";
-import beerglassImage from "../images/beerglass.png";
+import beerGlassImage from "../images/beer_glass.png";
 import customersImage from "../images/customers.png";
 import fontImage from "../images/font.png";
 import miscImage from "../images/misc.png";
 import zipUpSound from "../sounds/zip_up.mp3";
 import zipDownSound from "../sounds/zip_down.mp3";
-import ohSuzannaSound from "../sounds/oh_suzanna.mp3";
+import ohSusannaSound from "../sounds/oh_susanna.mp3";
 import grabMugSound from "../sounds/grab_mug.mp3";
 import throwMugSound from "../sounds/throw_mug.mp3";
 import mugFill1Sound from "../sounds/mug_fill1.mp3";
@@ -29,7 +29,7 @@ const IMAGE_DATA = [
   { name: "pregame", src: pregameImage },
   { name: "level-1", src: level1Image },
   { name: "barman", src: barmanImage },
-  { name: "beerglass", src: beerglassImage },
+  { name: "beer_glass", src: beerGlassImage },
   { name: "customers", src: customersImage },
   { name: "font", src: fontImage },
   { name: "misc", src: miscImage },
@@ -38,7 +38,7 @@ const IMAGE_DATA = [
 const SOUND_DATA = [
   { name: "zip_up", src: zipUpSound, channel: 4 }, // 0
   { name: "zip_down", src: zipDownSound, channel: 4 }, // 1
-  { name: "oh_suzanna", src: ohSuzannaSound, channel: 1 }, // 2
+  { name: "oh_susanna", src: ohSusannaSound, channel: 1 }, // 2
   { name: "grab_mug", src: grabMugSound, channel: 2 }, // 3
   { name: "throw_mug", src: throwMugSound, channel: 4 }, // 4
   { name: "mug_fill1", src: mugFill1Sound, channel: 2 }, // 5

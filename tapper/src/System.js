@@ -1,4 +1,4 @@
-class SystemManager {
+class System {
   #canvasSupported = false;
   #canvas = null;
   #context2D = null;
@@ -87,4 +87,4 @@ class SystemManager {
   }
 }
 
-export default new SystemManager();
+export default new System();
