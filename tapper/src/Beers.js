@@ -14,9 +14,6 @@ const SPRITE_BROKEN = 128;
 const STEP_FULL = 4;
 const STEP_EMPTY = 1;
 
-export const FULL_MUG = 0;
-export const EMPTY_MUG = 1;
-
 const SPRITE_WIDTH = 32;
 const SPRITE_HEIGHT = 32;
 
@@ -25,24 +22,24 @@ class Glass {
   xPosition;
   yPosition;
   #row;
-  #type;
+  #isFull;
   #leftBound;
   #rightBound;
   #fpsCount = 0;
   #fpsMax = FPS >> 1;
   broken = false;
 
-  constructor(row, defaultXPosition, defaultYPosition, type) {
+  constructor(row, defaultXPosition, defaultYPosition, isFull) {
     this.xPosition = defaultXPosition;
     this.yPosition = defaultYPosition;
     this.#row = row;
-    this.#type = type;
+    this.#isFull = isFull;
     this.#leftBound = LevelManager.rowLeftBounds[row] - 4;
     this.#rightBound = LevelManager.rowRightBounds[row] + 16;
   }
 
   update() {
-    if (this.#type === FULL_MUG) {
+    if (this.#isFull) {
       if (this.#fpsCount++ > this.#fpsMax) {
         this.sprite =
           this.sprite === SPRITE_FULL_1 ? SPRITE_FULL_2 : SPRITE_FULL_1;
@@ -91,15 +88,15 @@ class Beers {
     this.#isOneEmptyGlassBroken = false;
   }
 
-  add(row, xPosition, type) {
+  add(row, xPosition, isFull) {
     const glass = new Glass(
       row,
       xPosition,
       LevelManager.rowYPositions[row] + 8,
-      type,
+      isFull,
     );
 
-    if (type === FULL_MUG) {
+    if (isFull) {
       this.#glassesFull[row].push(glass);
     } else {
       this.#glassesEmpty[row].push(glass);

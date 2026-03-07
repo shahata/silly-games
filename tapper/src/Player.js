@@ -1,5 +1,5 @@
 import Customers from "./Customers.js";
-import Beers, { FULL_MUG as BEERS_FULL_MUG } from "./Beers.js";
+import Beers from "./Beers.js";
 import SoundManager, {
   BARMAN_ZIP_DOWN,
   BARMAN_ZIP_UP,
@@ -492,7 +492,7 @@ class Player {
             Beers.add(
               this.currentRow,
               this.playerXPosition - SPRITE_WIDTH,
-              BEERS_FULL_MUG,
+              true,
             );
             this.#isTapperServing = false;
             this.#isPlayerGoingLeft = false;

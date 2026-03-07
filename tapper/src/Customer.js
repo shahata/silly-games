@@ -1,4 +1,4 @@
-import Beers, { EMPTY_MUG } from "./Beers.js";
+import Beers from "./Beers.js";
 import LevelManager from "./LevelManager.js";
 import { FPS } from "./GameState.js";
 import customers from "./Customers.js";
@@ -156,7 +156,7 @@ export default class Customer {
           this.#animationCounter = -1;
           this.#fpsCount = 0;
           this.sprite = this.#movingPattern[0] << 5;
-          Beers.add(this.row, this.xPosition + SPRITE_WIDTH, EMPTY_MUG);
+          Beers.add(this.row, this.xPosition + SPRITE_WIDTH, false);
           customers.checkBonus(this.row, this.xPosition);
         }
         break;
