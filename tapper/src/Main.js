@@ -25,21 +25,10 @@ class GameRunner {
   #frameBuffer = null;
 
   initialize() {
-    if (!System.initVideo("tapperJS", 512, 480, false, 1.0)) {
-      alert(
-        "Sorry but no beer for you, your browser does not support html 5 canvas. Please try with another one!",
-      );
-      return;
-    }
-
-    this.#frameBuffer = System.getFrameBuffer();
+    this.#frameBuffer = System.initVideo("tapperJS", 512, 480);
     SoundManager.init();
     GameState.changeState(STATE_LOADING);
-
-    setInterval(() => {
-      this.onUpdateFrame();
-    }, 1000 / FPS);
-
+    setInterval(() => this.onUpdateFrame(), 1000 / FPS);
     ResourceManager.loadAllResources(() => this.loaded());
   }
 
