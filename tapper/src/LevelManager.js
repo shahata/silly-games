@@ -3,12 +3,16 @@ import SoundManager, { POP_OUT } from "./SoundManager.js";
 import ResourceManager from "./ResourceManager.js";
 import GameState, { STATE_PLAY } from "./GameState.js";
 
+export const ROW_LEFT_BOUNDS = [null, 120, 88, 56, 24];
+export const ROW_RIGHT_BOUNDS = [null, 304, 334, 368, 400];
+export const ROW_Y_POSITIONS = [null, 80, 176, 272, 368];
+
+export const SCORE_BONUS = 1500;
+export const SCORE_EMPTY_BEER = 100;
+export const SCORE_CUSTOMER = 50;
+
 const MAX_LIFE = 3;
 const TIME_STEP_SECONDS = 3;
-
-const ROW_LEFT_BOUNDS = [null, 120, 88, 56, 24];
-const ROW_RIGHT_BOUNDS = [null, 304, 334, 368, 400];
-const ROW_Y_POSITIONS = [null, 80, 176, 272, 368];
 
 const GAME_TITLE_LOGO_WIDTH = 416;
 const GAME_TITLE_LOGO_HEIGHT = 160;
@@ -32,17 +36,9 @@ const CUSTOMER_BLACK_GUY = 2;
 const CUSTOMER_GRAY_HAT_COWBOY = 3;
 const MAX_CUSTOMER_TYPE = 4;
 
-export const SCORE_BONUS = 1500;
-export const SCORE_EMPTY_BEER = 100;
-export const SCORE_CUSTOMER = 50;
-
 class LevelManager {
-  rowLeftBounds = ROW_LEFT_BOUNDS;
-  rowRightBounds = ROW_RIGHT_BOUNDS;
-  rowYPositions = ROW_Y_POSITIONS;
-
   #score = 0;
-  lives = 0;
+  #lives = 0;
   #difficulty = 1;
   #wave = 1;
   #lastRow = -1;
@@ -58,23 +54,17 @@ class LevelManager {
     this.#backgroundImage = ResourceManager.getImageResource("background");
     this.#fontImage = ResourceManager.getImageResource("font");
     this.#miscImage = ResourceManager.getImageResource("misc");
-
     this.#score = 0;
-    this.lives = MAX_LIFE;
+    this.#lives = MAX_LIFE;
     this.#difficulty = 1;
     this.#wave = 1;
   }
 
   addCustomer() {
-    if (GameState.state !== STATE_PLAY) {
-      return;
-    }
+    if (GameState.state !== STATE_PLAY) return;
 
     if (Customers.isAnyCustomer() < 2) {
-      if (this.#wave++ === this.#difficulty * 2) {
-        this.#difficulty += 1;
-      }
-
+      if (this.#wave++ === this.#difficulty * 2) this.#difficulty++;
       for (let i = 1; i <= this.#difficulty; i++) {
         Customers.add(1, i, CUSTOMER_GREEN_HAT_COWBOY);
         Customers.add(2, i, CUSTOMER_WOMAN);
@@ -84,7 +74,6 @@ class LevelManager {
       }
     } else {
       const randomRow = Math.floor(Math.random() * 5);
-
       if (randomRow !== 0 && randomRow !== this.#lastRow) {
         const randomCustomerType = Math.floor(
           Math.random() * MAX_CUSTOMER_TYPE,
@@ -103,60 +92,39 @@ class LevelManager {
   }
 
   lifeLost() {
-    this.lives -= 1;
+    return --this.#lives;
+  }
+
+  #displayText(context, text, xPosition) {
+    for (let i = text.length; i--; ) {
+      context.drawImage(
+        this.#fontImage,
+        text.charAt(i) * FONT_SIZE + FONT_NUM_OFFSET,
+        FONT_Y_OFFSET,
+        FONT_SIZE,
+        FONT_SIZE,
+        xPosition,
+        SCORE_Y_POSITION,
+        FONT_SIZE,
+        FONT_SIZE,
+      );
+      xPosition -= FONT_SIZE;
+    }
   }
 
   displayScore(context) {
-    const scoreText = `${this.#score}`;
-    let xPosition = SCORE_X_POSITION;
-
-    for (let i = scoreText.length; i--; ) {
-      const offset = scoreText.charAt(i) * FONT_SIZE + FONT_NUM_OFFSET;
-
-      context.drawImage(
-        this.#fontImage,
-        offset,
-        FONT_Y_OFFSET,
-        FONT_SIZE,
-        FONT_SIZE,
-        xPosition,
-        SCORE_Y_POSITION,
-        FONT_SIZE,
-        FONT_SIZE,
-      );
-      xPosition -= FONT_SIZE;
-    }
+    this.#displayText(context, `${this.#score}`, SCORE_X_POSITION);
   }
 
   displayDifficulty(context) {
-    const difficultyText = `${this.#difficulty}`;
-    let xPosition = DIFFICULTY_X_POSITION;
-
-    for (let i = difficultyText.length; i--; ) {
-      const offset = difficultyText.charAt(i) * FONT_SIZE + FONT_NUM_OFFSET;
-      context.drawImage(
-        this.#fontImage,
-        offset,
-        FONT_Y_OFFSET,
-        FONT_SIZE,
-        FONT_SIZE,
-        xPosition,
-        SCORE_Y_POSITION,
-        FONT_SIZE,
-        FONT_SIZE,
-      );
-
-      xPosition -= FONT_SIZE;
-    }
+    this.#displayText(context, `${this.#difficulty}`, DIFFICULTY_X_POSITION);
   }
 
   displayLife(context) {
-    if (this.lives <= 0) {
-      return;
-    }
+    if (this.#lives <= 0) return;
 
     let xPosition = SCORE_X_POSITION;
-    for (let i = this.lives; i--; ) {
+    for (let i = this.#lives; i--; ) {
       context.drawImage(
         this.#miscImage,
         LIFE_ICON_OFFSET,
@@ -230,7 +198,7 @@ class LevelManager {
 
   newGame() {
     this.#score = 0;
-    this.lives = MAX_LIFE;
+    this.#lives = MAX_LIFE;
     this.#difficulty = 1;
     this.#wave = 1;
     this.#lastRow = -1;

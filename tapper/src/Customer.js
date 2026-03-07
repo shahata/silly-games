@@ -1,5 +1,9 @@
 import Beers from "./Beers.js";
-import LevelManager from "./LevelManager.js";
+import {
+  ROW_LEFT_BOUNDS,
+  ROW_RIGHT_BOUNDS,
+  ROW_Y_POSITIONS,
+} from "./LevelManager.js";
 import { FPS } from "./GameState.js";
 import customers from "./Customers.js";
 
@@ -62,10 +66,10 @@ export default class Customer {
   constructor(row, type, position) {
     this.type = type;
     this.#movingPattern = MOVING_PATTERN_BY_ROW[row];
-    this.#leftBound = LevelManager.rowLeftBounds[row];
-    this.#rightBound = LevelManager.rowRightBounds[row];
+    this.#leftBound = ROW_LEFT_BOUNDS[row];
+    this.#rightBound = ROW_RIGHT_BOUNDS[row];
     this.xPosition = this.#leftBound + (position - 1) * SPRITE_WIDTH;
-    this.yPosition = LevelManager.rowYPositions[row];
+    this.yPosition = ROW_Y_POSITIONS[row];
     this.secondaryYPosition = this.yPosition;
     this.row = row;
   }

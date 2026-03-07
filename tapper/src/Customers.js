@@ -1,5 +1,11 @@
 import Customer from "./Customer.js";
-import LevelManager, { SCORE_BONUS, SCORE_CUSTOMER } from "./LevelManager.js";
+import LevelManager, {
+  SCORE_BONUS,
+  SCORE_CUSTOMER,
+  ROW_LEFT_BOUNDS,
+  ROW_RIGHT_BOUNDS,
+  ROW_Y_POSITIONS,
+} from "./LevelManager.js";
 import SoundManager, {
   COLLECT_TIP,
   OUT_DOOR,
@@ -52,16 +58,15 @@ class Customers {
     if (!this.#bonus.visible && this.#bonus.timeoutReached) {
       if (
         customerXPosition <
-        LevelManager.rowLeftBounds[row] +
-          (LevelManager.rowRightBounds[row] - LevelManager.rowLeftBounds[row]) /
-            3
+        ROW_LEFT_BOUNDS[row] +
+          (ROW_RIGHT_BOUNDS[row] - ROW_LEFT_BOUNDS[row]) / 3
       ) {
         const randomRow = Math.floor(Math.random() * 6);
         if (randomRow === row) {
           this.#bonus.visible = true;
           this.#bonus.row = row;
           this.#bonus.xPosition = customerXPosition;
-          this.#bonus.yPosition = LevelManager.rowYPositions[row] + 16;
+          this.#bonus.yPosition = ROW_Y_POSITIONS[row] + 16;
           this.#bonus.timeoutReached = false;
 
           setTimeout(() => {
@@ -147,7 +152,6 @@ class Customers {
 
         if (customer.endOfRow && !this.#oneReachedEndOfRow) {
           this.#oneReachedEndOfRow = true;
-          LevelManager.lifeLost();
           lost = true;
         }
 

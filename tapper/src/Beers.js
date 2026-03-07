@@ -1,9 +1,14 @@
 import Player from "./Player.js";
 import Customers from "./Customers.js";
-import LevelManager, { SCORE_EMPTY_BEER } from "./LevelManager.js";
+import LevelManager, {
+  ROW_LEFT_BOUNDS,
+  ROW_RIGHT_BOUNDS,
+  ROW_Y_POSITIONS,
+  SCORE_EMPTY_BEER,
+} from "./LevelManager.js";
 import SoundManager, { GRAB_MUG } from "./SoundManager.js";
 import ResourceManager from "./ResourceManager.js";
-import GameState, { FPS, STATE_PLAY } from "./GameState.js";
+import GameState, { STATE_PLAY } from "./GameState.js";
 
 const SPRITE_FULL_1 = 0;
 const SPRITE_FULL_2 = 32;
@@ -20,51 +25,39 @@ const SPRITE_HEIGHT = 32;
 class Glass {
   #sprite = SPRITE_FULL_1;
   xPosition;
-  yPosition;
-  #isFull;
-  #leftBound;
-  #rightBound;
+  isFull;
   #fpsCount = 0;
-  #fpsMax = FPS >> 1;
-  broken = false;
+  #row;
 
   constructor(row, xPosition, isFull) {
+    this.#row = row;
     this.xPosition = xPosition;
-    this.yPosition = LevelManager.rowYPositions[row] + 8;
-    this.#isFull = isFull;
-    this.#leftBound = LevelManager.rowLeftBounds[row] - 4;
-    this.#rightBound = LevelManager.rowRightBounds[row] + 16;
+    this.isFull = isFull;
   }
 
   update() {
-    if (this.#isFull) {
-      if (this.#fpsCount++ > this.#fpsMax) {
-        this.#sprite =
-          this.#sprite === SPRITE_FULL_1 ? SPRITE_FULL_2 : SPRITE_FULL_1;
-        this.#fpsCount = 0;
-      }
-
-      if (this.xPosition > this.#leftBound) {
+    if (this.isFull) {
+      if (this.xPosition > ROW_LEFT_BOUNDS[this.#row]) {
+        this.#sprite = this.#fpsCount++ & 8 ? SPRITE_FULL_1 : SPRITE_FULL_2;
         this.xPosition -= STEP_FULL;
       } else {
-        this.broken = true;
         this.#sprite = SPRITE_BROKEN;
+        return true;
       }
     } else {
-      this.#sprite = SPRITE_EMPTY_1;
-
-      if (this.xPosition < this.#rightBound) {
+      if (this.xPosition < ROW_RIGHT_BOUNDS[this.#row] + SPRITE_WIDTH) {
+        this.#sprite = SPRITE_EMPTY_1;
         this.xPosition += STEP_EMPTY;
       } else {
-        this.broken = true;
         this.#sprite = SPRITE_FALLING;
-        this.xPosition += 16;
-        this.yPosition += SPRITE_HEIGHT;
+        return true;
       }
     }
   }
 
   draw(context, spriteImage) {
+    let yPosition = ROW_Y_POSITIONS[this.#row] + 8;
+    if (this.#sprite === SPRITE_FALLING) yPosition += SPRITE_HEIGHT;
     context.drawImage(
       spriteImage,
       this.#sprite,
@@ -72,7 +65,7 @@ class Glass {
       SPRITE_WIDTH,
       SPRITE_HEIGHT,
       this.xPosition,
-      this.yPosition,
+      yPosition,
       SPRITE_WIDTH,
       SPRITE_HEIGHT,
     );
@@ -80,10 +73,7 @@ class Glass {
 }
 
 class Beers {
-  #isOneFullGlassBroken = false;
-  #isOneEmptyGlassBroken = false;
-  #glassesFull = [];
-  #glassesEmpty = [];
+  #glasses = [];
   #spriteImage = null;
 
   init() {
@@ -91,19 +81,11 @@ class Beers {
   }
 
   reset() {
-    for (let row = 1; row <= 4; row++) {
-      this.#glassesFull[row] = [];
-      this.#glassesEmpty[row] = [];
-    }
-
-    this.#isOneFullGlassBroken = false;
-    this.#isOneEmptyGlassBroken = false;
+    for (let row = 1; row <= 4; row++) this.#glasses[row] = [];
   }
 
   add(row, xPosition, isFull) {
-    const glass = new Glass(row, xPosition, isFull);
-    const glassArray = isFull ? this.#glassesFull : this.#glassesEmpty;
-    glassArray[row].push(glass);
+    this.#glasses[row].push(new Glass(row, xPosition, isFull));
   }
 
   #checkCustomerCollision(glass, row) {
@@ -116,10 +98,7 @@ class Beers {
   }
 
   #checkPlayerCollision(glass, row) {
-    if (
-      Player.currentRow === row &&
-      glass.xPosition + SPRITE_WIDTH >= Player.playerXPosition
-    ) {
+    if (glass.xPosition + SPRITE_WIDTH >= Player.xPosition) {
       SoundManager.play(GRAB_MUG);
       LevelManager.addScore(SCORE_EMPTY_BEER);
       return true;
@@ -128,88 +107,24 @@ class Beers {
   }
 
   draw(context) {
-    let lost = false;
     for (let row = 1; row <= 4; row++) {
-      lost ||= this.#drawFullMug(context, row);
-      lost ||= this.#drawEmptyMug(context, row);
-    }
-    return lost;
-  }
-
-  #drawFullMug(context, rowCount) {
-    let lost = false;
-    const glassArrayCopy = this.#glassesFull[rowCount].slice();
-    let copyFlag = false;
-
-    for (let i = this.#glassesFull[rowCount].length; i--; ) {
-      const glass = this.#glassesFull[rowCount][i];
-      let collision = false;
-
-      if (!this.#isOneFullGlassBroken && GameState.state === STATE_PLAY) {
-        glass.update();
-
-        if (glass.broken) {
-          if (!this.#isOneFullGlassBroken) {
-            this.#isOneFullGlassBroken = true;
-            LevelManager.lifeLost();
-            lost = true;
+      for (let i = this.#glasses[row].length; i--; i >= 0) {
+        const glass = this.#glasses[row][i];
+        if (GameState.state === STATE_PLAY) {
+          let collision = false;
+          if (glass.update()) {
+            return true;
+          } else if (glass.isFull) {
+            collision = this.#checkCustomerCollision(glass, row);
+          } else if (Player.currentRow === row) {
+            collision = this.#checkPlayerCollision(glass, row);
           }
-        } else {
-          collision = this.#checkCustomerCollision(glass, rowCount);
+          if (collision) this.#glasses[row].splice(i, 1);
         }
-      }
-
-      if (collision) {
-        glassArrayCopy.splice(i, 1);
-        copyFlag = true;
-      } else {
         glass.draw(context, this.#spriteImage);
       }
     }
-
-    if (copyFlag) {
-      this.#glassesFull[rowCount] = glassArrayCopy.slice();
-    }
-
-    return lost;
-  }
-
-  #drawEmptyMug(context, rowCount) {
-    let lost = false;
-    const glassArrayCopy = this.#glassesEmpty[rowCount].slice();
-    let copyFlag = false;
-
-    for (let i = this.#glassesEmpty[rowCount].length; i--; ) {
-      const glass = this.#glassesEmpty[rowCount][i];
-      let collision = false;
-
-      if (!this.#isOneEmptyGlassBroken && GameState.state === STATE_PLAY) {
-        glass.update();
-
-        if (glass.broken) {
-          if (!this.#isOneEmptyGlassBroken) {
-            this.#isOneEmptyGlassBroken = true;
-            LevelManager.lifeLost();
-            lost = true;
-          }
-        } else {
-          collision = this.#checkPlayerCollision(glass, rowCount);
-        }
-      }
-
-      if (collision) {
-        glassArrayCopy.splice(i, 1);
-        copyFlag = true;
-      } else {
-        glass.draw(context, this.#spriteImage);
-      }
-    }
-
-    if (copyFlag) {
-      this.#glassesEmpty[rowCount] = glassArrayCopy.slice();
-    }
-
-    return lost;
+    return false;
   }
 }
 

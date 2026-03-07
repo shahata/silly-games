@@ -11,13 +11,13 @@ import SoundManager, {
 import ResourceManager from "./ResourceManager.js";
 import GameState, { STATE_PLAY } from "./GameState.js";
 
-const STEP = 16;
 export const LEFT = 0;
 export const RIGHT = 1;
 export const UP = 2;
 export const DOWN = 3;
 export const FIRE = 4;
 export const NONE = 6;
+const STEP = 16;
 
 const STAND_L1 = 0;
 const STAND_L2 = 1;
@@ -62,7 +62,6 @@ const SPRITE_SHIFT = 5;
 
 const ROW_X_POSITIONS = [null, 336, 368, 400, 432];
 const ROW_Y_POSITIONS = [null, 96, 192, 288, 384];
-
 const ROW_LEFT_BOUNDS = [null, 128, 96, 64, 32];
 const ROW_RIGHT_BOUNDS = [null, 336, 368, 400, 432];
 
@@ -79,12 +78,12 @@ class Player {
   #isGamePlay = false;
   currentRow = DEFAULT_ROW;
   #lastRow = 0;
-  #lastPlayerXPosition = null;
-  #isPlayerGoingLeft = true;
-  #isPlayerRunning = false;
-  #isTapperServing = false;
-  playerXPosition = ROW_X_POSITIONS[this.currentRow];
-  #playerYPosition = ROW_Y_POSITIONS[this.currentRow];
+  #lastXPosition = null;
+  #isGoingLeft = true;
+  #isRunning = false;
+  #isServing = false;
+  xPosition = ROW_X_POSITIONS[this.currentRow];
+  #yPosition = ROW_Y_POSITIONS[this.currentRow];
   #fpsCount = 0;
 
   init() {
@@ -94,8 +93,8 @@ class Player {
   reset() {
     this.currentRow = DEFAULT_ROW;
     this.#lastRow = 0;
-    this.playerXPosition = ROW_X_POSITIONS[this.currentRow];
-    this.#playerYPosition = ROW_Y_POSITIONS[this.currentRow];
+    this.xPosition = ROW_X_POSITIONS[this.currentRow];
+    this.#yPosition = ROW_Y_POSITIONS[this.currentRow];
 
     this.#playerAction = STAND_L1;
 
@@ -103,23 +102,23 @@ class Player {
     this.#legState = RUN_DOWN_1 - 2;
     this.#tapperState = TAPPER_1;
 
-    this.#isPlayerGoingLeft = true;
-    this.#isPlayerRunning = false;
+    this.#isGoingLeft = true;
+    this.#isRunning = false;
     this.#isGamePlay = true;
-    this.#isTapperServing = false;
+    this.#isServing = false;
     this.#fpsCount = 0;
   }
 
   lost() {
-    this.#isPlayerRunning = false;
-    this.#isTapperServing = false;
+    this.#isRunning = false;
+    this.#isServing = false;
     this.#isGamePlay = false;
     this.#playerAction = LOST_1;
   }
 
   #setAnimation() {
     if (this.#fpsCount++ > LEG_ANIMATION_TIMING && this.#isGamePlay) {
-      if (this.#isPlayerGoingLeft) {
+      if (this.#isGoingLeft) {
         this.#playerAction =
           this.#playerAction === STAND_L1 ? STAND_L2 : STAND_L1;
       } else {
@@ -134,31 +133,21 @@ class Player {
     for (let rowNumber = 1; rowNumber <= 4; rowNumber++) {
       if (
         this.currentRow !== rowNumber ||
-        !this.#isTapperServing ||
+        !this.#isServing ||
         this.#goState !== 0
       ) {
-        context.drawImage(
-          this.#spriteImage,
-          TAPPER_1 << SPRITE_SHIFT,
-          0,
-          SPRITE_WIDTH,
-          SPRITE_HEIGHT,
+        this.drawSprite(
+          context,
+          TAPPER_1,
           ROW_RIGHT_BOUNDS[rowNumber] + 12,
           ROW_Y_POSITIONS[rowNumber] - 24,
-          SPRITE_WIDTH,
-          SPRITE_HEIGHT,
         );
       } else {
-        context.drawImage(
-          this.#spriteImage,
-          this.#tapperState << SPRITE_SHIFT,
-          0,
-          SPRITE_WIDTH,
-          SPRITE_HEIGHT,
+        this.drawSprite(
+          context,
+          this.#tapperState,
           ROW_RIGHT_BOUNDS[rowNumber] + 12,
           ROW_Y_POSITIONS[rowNumber] - 30,
-          SPRITE_WIDTH,
-          SPRITE_HEIGHT,
         );
       }
     }
@@ -183,8 +172,8 @@ class Player {
       this.drawSprite(
         context,
         BEER_FILL[i],
-        this.playerXPosition + 12,
-        this.#playerYPosition + 2,
+        this.xPosition + 12,
+        this.#yPosition + 2,
       );
     }
 
@@ -192,39 +181,39 @@ class Player {
       this.drawSprite(
         context,
         SERVE_UP_1_1,
-        this.playerXPosition - 20,
-        this.#playerYPosition + 2,
+        this.xPosition - 20,
+        this.#yPosition + 2,
       );
       this.drawSprite(
         context,
         SERVE_UP_1_2,
-        this.playerXPosition + 12,
-        this.#playerYPosition + 2,
+        this.xPosition + 12,
+        this.#yPosition + 2,
       );
       this.drawSprite(
         context,
         SERVE_DOWN_1,
-        this.playerXPosition - 20,
-        this.#playerYPosition + SPRITE_HEIGHT + 2,
+        this.xPosition - 20,
+        this.#yPosition + SPRITE_HEIGHT + 2,
       );
     } else {
       this.drawSprite(
         context,
         SERVE_UP_2_1,
-        this.playerXPosition - 20,
-        this.#playerYPosition + 2,
+        this.xPosition - 20,
+        this.#yPosition + 2,
       );
       this.drawSprite(
         context,
         SERVE_UP_2_2,
-        this.playerXPosition + 12,
-        this.#playerYPosition + 2,
+        this.xPosition + 12,
+        this.#yPosition + 2,
       );
       this.drawSprite(
         context,
         SERVE_DOWN_2,
-        this.playerXPosition - 20,
-        this.#playerYPosition + SPRITE_HEIGHT + 2,
+        this.xPosition - 20,
+        this.#yPosition + SPRITE_HEIGHT + 2,
       );
     }
   }
@@ -236,7 +225,7 @@ class Player {
       this.drawSprite(
         context,
         this.#goState,
-        this.#lastPlayerXPosition,
+        this.#lastXPosition,
         ROW_Y_POSITIONS[this.#lastRow],
       );
       this.#goState += 1;
@@ -249,7 +238,7 @@ class Player {
       return false;
     }
 
-    if (this.#isTapperServing) {
+    if (this.#isServing) {
       this.#drawServing(context);
       return true;
     }
@@ -257,43 +246,43 @@ class Player {
     this.drawSprite(
       context,
       this.#playerAction,
-      this.playerXPosition,
-      this.#playerYPosition,
+      this.xPosition,
+      this.#yPosition,
     );
 
-    if (!this.#isPlayerRunning) {
+    if (!this.#isRunning) {
       this.#setAnimation();
       this.drawSprite(
         context,
         2 + this.#playerAction,
-        this.playerXPosition,
-        this.#playerYPosition + SPRITE_HEIGHT,
+        this.xPosition,
+        this.#yPosition + SPRITE_HEIGHT,
       );
-    } else if (this.#isPlayerGoingLeft) {
+    } else if (this.#isGoingLeft) {
       this.drawSprite(
         context,
         this.#legState,
-        this.playerXPosition,
-        this.#playerYPosition + SPRITE_HEIGHT,
+        this.xPosition,
+        this.#yPosition + SPRITE_HEIGHT,
       );
       this.drawSprite(
         context,
         this.#legState + 1,
-        this.playerXPosition + SPRITE_HEIGHT,
-        this.#playerYPosition + SPRITE_HEIGHT,
+        this.xPosition + SPRITE_HEIGHT,
+        this.#yPosition + SPRITE_HEIGHT,
       );
     } else {
       this.drawSprite(
         context,
         this.#legState + RUN_DOWN_RIGHT_OFFSET,
-        this.playerXPosition,
-        this.#playerYPosition + SPRITE_HEIGHT,
+        this.xPosition,
+        this.#yPosition + SPRITE_HEIGHT,
       );
       this.drawSprite(
         context,
         this.#legState + 1 + RUN_DOWN_RIGHT_OFFSET,
-        this.playerXPosition - SPRITE_HEIGHT,
-        this.#playerYPosition + SPRITE_HEIGHT,
+        this.xPosition - SPRITE_HEIGHT,
+        this.#yPosition + SPRITE_HEIGHT,
       );
     }
 
@@ -302,48 +291,48 @@ class Player {
 
   move(direction) {
     if (GameState.state !== STATE_PLAY) return;
-    this.#isPlayerRunning = false;
+    this.#isRunning = false;
 
     switch (direction) {
       case UP: {
-        this.#isTapperServing = false;
+        this.#isServing = false;
         this.#lastRow = this.currentRow;
 
         if (this.currentRow === 1) this.currentRow = 4;
         else this.currentRow--;
 
         this.#goState = GO_1;
-        this.#lastPlayerXPosition = this.playerXPosition;
-        this.playerXPosition = ROW_X_POSITIONS[this.currentRow];
-        this.#playerYPosition = ROW_Y_POSITIONS[this.currentRow];
+        this.#lastXPosition = this.xPosition;
+        this.xPosition = ROW_X_POSITIONS[this.currentRow];
+        this.#yPosition = ROW_Y_POSITIONS[this.currentRow];
         SoundManager.play(BARMAN_ZIP_UP);
         break;
       }
 
       case DOWN: {
-        this.#isTapperServing = false;
+        this.#isServing = false;
         this.#lastRow = this.currentRow;
 
         if (this.currentRow === 4) this.currentRow = 1;
         else this.currentRow++;
 
         this.#goState = GO_1;
-        this.#lastPlayerXPosition = this.playerXPosition;
-        this.playerXPosition = ROW_X_POSITIONS[this.currentRow];
-        this.#playerYPosition = ROW_Y_POSITIONS[this.currentRow];
+        this.#lastXPosition = this.xPosition;
+        this.xPosition = ROW_X_POSITIONS[this.currentRow];
+        this.#yPosition = ROW_Y_POSITIONS[this.currentRow];
         SoundManager.play(BARMAN_ZIP_DOWN);
         break;
       }
 
       case LEFT: {
-        this.#isTapperServing = false;
+        this.#isServing = false;
 
         if (
-          this.#isPlayerGoingLeft &&
-          this.playerXPosition > ROW_LEFT_BOUNDS[this.currentRow]
+          this.#isGoingLeft &&
+          this.xPosition > ROW_LEFT_BOUNDS[this.currentRow]
         ) {
-          this.playerXPosition -= STEP;
-          this.#isPlayerRunning = true;
+          this.xPosition -= STEP;
+          this.#isRunning = true;
           this.#playerAction = RUN_UP_L1;
 
           this.#legState += 2;
@@ -351,22 +340,22 @@ class Player {
             this.#legState = RUN_DOWN_1;
           }
 
-          Customers.checkBonusCollision(this.currentRow, this.playerXPosition);
+          Customers.checkBonusCollision(this.currentRow, this.xPosition);
         }
 
-        this.#isPlayerGoingLeft = true;
+        this.#isGoingLeft = true;
         break;
       }
 
       case RIGHT: {
-        this.#isTapperServing = false;
+        this.#isServing = false;
 
         if (
-          !this.#isPlayerGoingLeft &&
-          this.playerXPosition < ROW_RIGHT_BOUNDS[this.currentRow]
+          !this.#isGoingLeft &&
+          this.xPosition < ROW_RIGHT_BOUNDS[this.currentRow]
         ) {
-          this.playerXPosition += STEP;
-          this.#isPlayerRunning = true;
+          this.xPosition += STEP;
+          this.#isRunning = true;
           this.#playerAction = RUN_UP_R1;
 
           this.#legState += 2;
@@ -375,23 +364,23 @@ class Player {
           }
         }
 
-        this.#isPlayerGoingLeft = false;
+        this.#isGoingLeft = false;
         break;
       }
 
       case FIRE: {
-        if (this.playerXPosition !== ROW_RIGHT_BOUNDS[this.currentRow]) {
+        if (this.xPosition !== ROW_RIGHT_BOUNDS[this.currentRow]) {
           this.#lastRow = this.currentRow;
           this.#goState = GO_1;
-          this.#lastPlayerXPosition = this.playerXPosition;
-          this.playerXPosition = ROW_X_POSITIONS[this.currentRow];
+          this.#lastXPosition = this.xPosition;
+          this.xPosition = ROW_X_POSITIONS[this.currentRow];
         }
 
-        if (!this.#isTapperServing) {
+        if (!this.#isServing) {
           this.#servingCounter = 0;
         }
 
-        this.#isTapperServing = true;
+        this.#isServing = true;
         this.#tapperState = TAPPER_3;
 
         if (this.#servingCounter < SERVING_MAX) {
@@ -417,23 +406,19 @@ class Player {
       }
 
       case NONE: {
-        if (this.#isTapperServing) {
+        if (this.#isServing) {
           this.#tapperState = TAPPER_2;
 
           if (this.#servingCounter === SERVING_MAX) {
             this.#servingCounter = 0;
-            Beers.add(
-              this.currentRow,
-              this.playerXPosition - SPRITE_WIDTH,
-              true,
-            );
-            this.#isTapperServing = false;
-            this.#isPlayerGoingLeft = false;
+            Beers.add(this.currentRow, this.xPosition - SPRITE_WIDTH, true);
+            this.#isServing = false;
+            this.#isGoingLeft = false;
             this.#playerAction = STAND_R1;
             SoundManager.play(THROW_MUG);
           }
         } else {
-          this.#playerAction = this.#isPlayerGoingLeft ? STAND_L1 : STAND_R1;
+          this.#playerAction = this.#isGoingLeft ? STAND_L1 : STAND_R1;
           this.#legState = RUN_DOWN_1 - 2;
         }
 

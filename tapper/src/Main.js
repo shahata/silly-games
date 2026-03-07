@@ -39,16 +39,13 @@ class Game {
 
     document.addEventListener("keydown", (event) => this.onKeyPress(event));
     document.addEventListener("keyup", (event) => this.onKeyRelease(event));
-
     GameState.changeState(STATE_MENU);
 
     const newGameButton = document.getElementById("tapper-new-game");
-    if (newGameButton) {
-      newGameButton.addEventListener("click", () => {
-        SoundManager.stop(OH_SUSANNA);
-        GameState.changeState(STATE_MENU);
-      });
-    }
+    newGameButton.addEventListener("click", () => {
+      SoundManager.stop(OH_SUSANNA);
+      GameState.changeState(STATE_MENU);
+    });
   }
 
   reset() {
@@ -57,7 +54,6 @@ class Game {
     Beers.reset();
     Customers.reset();
     LevelManager.reset();
-
     SoundManager.play(GET_READY);
     setTimeout(() => {
       if (GameState.state === STATE_READY) {
@@ -70,8 +66,7 @@ class Game {
   lost() {
     Player.lost();
     SoundManager.stop(OH_SUSANNA);
-
-    if (LevelManager.lives <= 0) {
+    if (LevelManager.lifeLost() <= 0) {
       GameState.changeState(STATE_GAME_OVER);
       SoundManager.play(YOU_LOSE);
     } else {
@@ -93,11 +88,13 @@ class Game {
         LevelManager.displayReadyToPlay(this.#frameBuffer);
         break;
       default:
-        let lost = false;
         LevelManager.drawLevelBackground(this.#frameBuffer);
-        lost ||= Customers.draw(this.#frameBuffer);
-        lost ||= Beers.draw(this.#frameBuffer);
-        if (lost) this.lost();
+        if (
+          Customers.draw(this.#frameBuffer) ||
+          Beers.draw(this.#frameBuffer)
+        ) {
+          this.lost();
+        }
 
         this.#isKeyPressAllowed = Player.draw(this.#frameBuffer);
         LevelManager.drawGameHUD(this.#frameBuffer);
@@ -106,15 +103,11 @@ class Game {
         }
         break;
     }
-
     System.drawFrameBuffer();
   }
 
   onKeyPress(event) {
-    if (!this.#isKeyPressAllowed) {
-      return;
-    }
-
+    if (!this.#isKeyPressAllowed) return;
     switch (event.key) {
       case "ArrowUp":
         Player.move(UP);
@@ -142,16 +135,12 @@ class Game {
       default:
         return;
     }
-
     event.preventDefault();
     event.stopImmediatePropagation();
   }
 
   onKeyRelease(event) {
-    if (!this.#isKeyPressAllowed) {
-      return;
-    }
-
+    if (!this.#isKeyPressAllowed) return;
     switch (event.key) {
       case "ArrowUp":
       case "ArrowDown":
@@ -164,7 +153,6 @@ class Game {
       default:
         return;
     }
-
     event.preventDefault();
     event.stopImmediatePropagation();
   }
