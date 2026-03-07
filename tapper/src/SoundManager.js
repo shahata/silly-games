@@ -40,7 +40,6 @@ class SoundManager {
   #soundList = {};
 
   preloadSounds(loadCallback) {
-    this.#soundList = {};
     for (const soundData of SOUND_DATA) {
       this.load(soundData, loadCallback);
     }

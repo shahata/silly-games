@@ -37,33 +37,21 @@ const CUSTOMER_GRAY_HAT_COWBOY = 3;
 const MAX_CUSTOMER_TYPE = 4;
 
 class LevelManager {
-  #score = 0;
-  #lives = 0;
-  #difficulty = 1;
-  #wave = 1;
-  #lastRow = -1;
-  #fontImage = null;
-  #miscImage = null;
-  #gameTitleImage = null;
-  #backgroundImage = null;
-  #readyToPlayImage = null;
+  #lives;
+  #difficulty;
+  #score;
+  #wave;
+  #lastRandomRow;
+  #fontImage = ResourceManager.getImageResource("font");
+  #miscImage = ResourceManager.getImageResource("misc");
+  #gameTitleImage = ResourceManager.getImageResource("game_title");
+  #backgroundImage = ResourceManager.getImageResource("background");
+  #readyToPlayImage = ResourceManager.getImageResource("ready_to_play");
 
-  init() {
-    this.#gameTitleImage = ResourceManager.getImageResource("game_title");
-    this.#readyToPlayImage = ResourceManager.getImageResource("ready_to_play");
-    this.#backgroundImage = ResourceManager.getImageResource("background");
-    this.#fontImage = ResourceManager.getImageResource("font");
-    this.#miscImage = ResourceManager.getImageResource("misc");
-    this.#score = 0;
-    this.#lives = MAX_LIFE;
-    this.#difficulty = 1;
-    this.#wave = 1;
-  }
-
-  addCustomer() {
+  #addCustomer() {
     if (GameState.state !== STATE_PLAY) return;
 
-    if (Customers.isAnyCustomer() < 2) {
+    if (Customers.count() < 2) {
       if (this.#wave++ === this.#difficulty * 2) this.#difficulty++;
       for (let i = 1; i <= this.#difficulty; i++) {
         Customers.add(1, i, CUSTOMER_GREEN_HAT_COWBOY);
@@ -74,25 +62,17 @@ class LevelManager {
       }
     } else {
       const randomRow = Math.floor(Math.random() * 5);
-      if (randomRow !== 0 && randomRow !== this.#lastRow) {
+      if (randomRow !== 0 && randomRow !== this.#lastRandomRow) {
         const randomCustomerType = Math.floor(
           Math.random() * MAX_CUSTOMER_TYPE,
         );
         Customers.add(randomRow, 1, randomCustomerType);
         SoundManager.play(POP_OUT);
-        this.#lastRow = randomRow;
+        this.#lastRandomRow = randomRow;
       }
     }
 
-    setTimeout(() => this.addCustomer(), TIME_STEP_SECONDS * 1000);
-  }
-
-  addScore(points) {
-    this.#score += points;
-  }
-
-  lifeLost() {
-    return --this.#lives;
+    setTimeout(() => this.#addCustomer(), TIME_STEP_SECONDS * 1000);
   }
 
   #displayText(context, text, xPosition) {
@@ -112,15 +92,7 @@ class LevelManager {
     }
   }
 
-  displayScore(context) {
-    this.#displayText(context, `${this.#score}`, SCORE_X_POSITION);
-  }
-
-  displayDifficulty(context) {
-    this.#displayText(context, `${this.#difficulty}`, DIFFICULTY_X_POSITION);
-  }
-
-  displayLife(context) {
+  #displayLife(context) {
     if (this.#lives <= 0) return;
 
     let xPosition = SCORE_X_POSITION;
@@ -185,33 +157,32 @@ class LevelManager {
     );
   }
 
+  drawLevelBackground(context) {
+    context.drawImage(this.#backgroundImage, 0, 0);
+    this.#displayLife(context);
+    this.#displayText(context, `${this.#score}`, SCORE_X_POSITION);
+    this.#displayText(context, `${this.#difficulty}`, DIFFICULTY_X_POSITION);
+  }
+
+  addScore(points) {
+    this.#score += points;
+  }
+
+  lifeLost() {
+    return --this.#lives;
+  }
+
   reset() {
-    for (let i = 1; i <= this.#difficulty; i++) {
-      Customers.add(1, i, CUSTOMER_GREEN_HAT_COWBOY);
-      Customers.add(2, i, CUSTOMER_WOMAN);
-      Customers.add(3, i, CUSTOMER_BLACK_GUY);
-      Customers.add(4, i, CUSTOMER_GRAY_HAT_COWBOY);
-    }
-    this.#lastRow = -1;
-    setTimeout(() => this.addCustomer(), TIME_STEP_SECONDS * 1000);
+    this.#wave--;
+    this.#addCustomer();
   }
 
   newGame() {
-    this.#score = 0;
+    this.#lastRandomRow = -1;
     this.#lives = MAX_LIFE;
     this.#difficulty = 1;
+    this.#score = 0;
     this.#wave = 1;
-    this.#lastRow = -1;
-  }
-
-  drawGameHUD(context) {
-    this.displayScore(context);
-    this.displayLife(context);
-    this.displayDifficulty(context);
-  }
-
-  drawLevelBackground(context) {
-    context.drawImage(this.#backgroundImage, 0, 0);
   }
 }
 

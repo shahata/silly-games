@@ -73,15 +73,11 @@ class Glass {
 }
 
 class Beers {
-  #glasses = [];
-  #spriteImage = null;
-
-  init() {
-    this.#spriteImage = ResourceManager.getImageResource("beer_glass");
-  }
+  #glasses;
+  #spriteImage = ResourceManager.getImageResource("beer_glass");
 
   reset() {
-    for (let row = 1; row <= 4; row++) this.#glasses[row] = [];
+    this.#glasses = new Array(5).fill(null).map(() => []);
   }
 
   add(row, xPosition, isFull) {

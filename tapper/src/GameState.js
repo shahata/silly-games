@@ -9,7 +9,6 @@ export const STATE_PAUSE = 6;
 
 class GameState {
   state;
-
   changeState(newState) {
     this.state = newState;
   }

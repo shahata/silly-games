@@ -69,26 +69,22 @@ const DEFAULT_ROW = 2;
 const LEG_ANIMATION_TIMING = 20;
 
 class Player {
-  #spriteImage = null;
-  #goState = 0;
-  #legState = 0;
-  #tapperState = 0;
+  currentRow;
+  xPosition;
+  #yPosition;
+  #goState;
+  #legState;
+  #tapperState;
+  #playerAction;
+  #lastRow;
+  #isGamePlay;
+  #isGoingLeft;
+  #isRunning;
+  #isServing;
+  #fpsCount;
   #servingCounter = 0;
-  #playerAction = null;
-  #isGamePlay = false;
-  currentRow = DEFAULT_ROW;
-  #lastRow = 0;
   #lastXPosition = null;
-  #isGoingLeft = true;
-  #isRunning = false;
-  #isServing = false;
-  xPosition = ROW_X_POSITIONS[this.currentRow];
-  #yPosition = ROW_Y_POSITIONS[this.currentRow];
-  #fpsCount = 0;
-
-  init() {
-    this.#spriteImage = ResourceManager.getImageResource("barman");
-  }
+  #spriteImage = ResourceManager.getImageResource("barman");
 
   reset() {
     this.currentRow = DEFAULT_ROW;

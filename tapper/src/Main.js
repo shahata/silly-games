@@ -22,23 +22,17 @@ import GameState, {
 
 class Game {
   #isKeyPressAllowed = true;
-  #frameBuffer = null;
+  #frameBuffer = System.initVideo("tapperJS", 512, 480);
 
-  initialize() {
-    this.#frameBuffer = System.initVideo("tapperJS", 512, 480);
+  constructor() {
     GameState.changeState(STATE_LOADING);
-    setInterval(() => this.onUpdateFrame(), 1000 / FPS);
-    ResourceManager.loadAllResources(() => this.loaded());
+    setInterval(() => this.#onUpdateFrame(), 1000 / FPS);
+    ResourceManager.loadAllResources(() => this.#loaded());
   }
 
-  loaded() {
-    LevelManager.init();
-    Player.init();
-    Beers.init();
-    Customers.init();
-
-    document.addEventListener("keydown", (event) => this.onKeyPress(event));
-    document.addEventListener("keyup", (event) => this.onKeyRelease(event));
+  #loaded() {
+    document.addEventListener("keydown", (event) => this.#onKeyPress(event));
+    document.addEventListener("keyup", (event) => this.#onKeyRelease(event));
     GameState.changeState(STATE_MENU);
 
     const newGameButton = document.getElementById("tapper-new-game");
@@ -48,22 +42,22 @@ class Game {
     });
   }
 
-  reset() {
+  #reset() {
     GameState.changeState(STATE_READY);
-    Player.reset();
-    Beers.reset();
-    Customers.reset();
-    LevelManager.reset();
     SoundManager.play(GET_READY);
     setTimeout(() => {
       if (GameState.state === STATE_READY) {
         GameState.changeState(STATE_PLAY);
         SoundManager.play(OH_SUSANNA, true);
+        Player.reset();
+        Beers.reset();
+        Customers.reset();
+        LevelManager.reset();
       }
     }, 2.5 * 1000);
   }
 
-  lost() {
+  #lost() {
     Player.lost();
     SoundManager.stop(OH_SUSANNA);
     if (LevelManager.lifeLost() <= 0) {
@@ -72,11 +66,11 @@ class Game {
     } else {
       GameState.changeState(STATE_LIFE_LOST);
       SoundManager.play(LAUGHING);
-      setTimeout(() => this.reset(), 3 * 1000);
+      setTimeout(() => this.#reset(), 3 * 1000);
     }
   }
 
-  onUpdateFrame() {
+  #onUpdateFrame() {
     switch (GameState.state) {
       case STATE_LOADING:
         ResourceManager.displayLoadingScreen(this.#frameBuffer);
@@ -93,11 +87,9 @@ class Game {
           Customers.draw(this.#frameBuffer) ||
           Beers.draw(this.#frameBuffer)
         ) {
-          this.lost();
+          this.#lost();
         }
-
         this.#isKeyPressAllowed = Player.draw(this.#frameBuffer);
-        LevelManager.drawGameHUD(this.#frameBuffer);
         if (GameState.state === STATE_GAME_OVER) {
           LevelManager.displayGameOver(this.#frameBuffer);
         }
@@ -106,7 +98,7 @@ class Game {
     System.drawFrameBuffer();
   }
 
-  onKeyPress(event) {
+  #onKeyPress(event) {
     if (!this.#isKeyPressAllowed) return;
     switch (event.key) {
       case "ArrowUp":
@@ -127,7 +119,7 @@ class Game {
       case "Enter":
         if (GameState.state === STATE_MENU) {
           LevelManager.newGame();
-          this.reset();
+          this.#reset();
         } else if (GameState.state === STATE_GAME_OVER) {
           GameState.changeState(STATE_MENU);
         }
@@ -139,7 +131,7 @@ class Game {
     event.stopImmediatePropagation();
   }
 
-  onKeyRelease(event) {
+  #onKeyRelease(event) {
     if (!this.#isKeyPressAllowed) return;
     switch (event.key) {
       case "ArrowUp":
@@ -158,4 +150,4 @@ class Game {
   }
 }
 
-new Game().initialize();
+new Game();

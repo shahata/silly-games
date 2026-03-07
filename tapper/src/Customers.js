@@ -20,38 +20,29 @@ const SPRITE_HEIGHT = 32;
 const BONUS_TIMEOUT_MS = 10 * 1000;
 
 class Customers {
-  #leadingCustomerByRow = [];
-  #customersList = [];
-  #spriteImage = null;
-  #miscImage = null;
-  #oneReachedEndOfRow = false;
+  #oneReachedEndOfRow;
+  #leadingCustomerByRow;
+  #customersList;
+  #spriteImage = ResourceManager.getImageResource("customers");
+  #miscImage = ResourceManager.getImageResource("beer_glass");
 
   #bonus = {
     visible: false,
     timeoutReached: true,
-    row: 1,
     xPosition: 100,
     yPosition: 0,
+    row: 1,
   };
 
-  init() {
-    this.#spriteImage = ResourceManager.getImageResource("customers");
-    this.#miscImage = ResourceManager.getImageResource("beer_glass");
-  }
-
   reset() {
-    for (let count = 1; count <= 4; count++) {
-      this.#customersList[count] = [];
-      this.#leadingCustomerByRow[count] = null;
-    }
+    this.#customersList = new Array(5).fill(null).map(() => []);
+    this.#leadingCustomerByRow = new Array(5).fill(null);
     this.#oneReachedEndOfRow = false;
     this.#bonus.visible = false;
   }
 
   add(row, pos, type) {
-    const customer = new Customer(row, type, pos);
-
-    this.#customersList[row].push(customer);
+    this.#customersList[row].push(new Customer(row, type, pos));
   }
 
   checkBonus(row, customerXPosition) {
@@ -112,7 +103,7 @@ class Customers {
     return this.#leadingCustomerByRow[row];
   }
 
-  isAnyCustomer() {
+  count() {
     return (
       this.#customersList[1].length +
       this.#customersList[2].length +

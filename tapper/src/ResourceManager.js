@@ -22,18 +22,21 @@ const LOGO_HEIGHT = 104;
 class ResourceManager {
   #imageList = {};
   #loadCount = 0;
-  #resourceCount = 0;
-  #loadedCallback;
+  #resourceCount;
+  #loadedCallback = () => undefined;
+
+  constructor() {
+    this.#resourceCount = this.preloadImages(this.#resourceLoaded);
+    this.#resourceCount += SoundManager.preloadSounds(this.#resourceLoaded);
+  }
 
   #resourceLoaded = () => {
     if (++this.#loadCount === this.#resourceCount) this.#loadedCallback();
   };
 
   loadAllResources(loadCallback) {
-    this.#loadCount = 0;
-    this.#resourceCount = this.preloadImages(this.#resourceLoaded);
-    this.#resourceCount += SoundManager.preloadSounds(this.#resourceLoaded);
     this.#loadedCallback = loadCallback;
+    if (this.#loadCount === this.#resourceCount) this.#loadedCallback();
   }
 
   preloadImages(loadCallback) {
@@ -57,8 +60,7 @@ class ResourceManager {
       (context.canvas.height - LOGO_HEIGHT) / 2,
     );
 
-    const percent =
-      this.#resourceCount > 0 ? this.#loadCount / this.#resourceCount : 0;
+    const percent = this.#loadCount / this.#resourceCount;
     const width = Math.floor(percent * context.canvas.width);
 
     context.strokeStyle = "gray";
