@@ -20,7 +20,7 @@ import GameState, {
   STATE_READY,
 } from "./GameState.js";
 
-class GameRunner {
+class Game {
   #isKeyPressAllowed = true;
   #frameBuffer = null;
 
@@ -71,7 +71,6 @@ class GameRunner {
     Player.lost();
     Beers.stop();
     Customers.stop();
-
     SoundManager.stop(OH_SUSANNA);
 
     if (LevelManager.lives <= 0) {
@@ -114,68 +113,43 @@ class GameRunner {
   }
 
   onKeyPress(event) {
-    let preventDefault = false;
     if (!this.#isKeyPressAllowed) {
       return;
     }
 
     switch (event.key) {
       case "ArrowUp":
-        if (GameState.state === STATE_PLAY) {
-          Player.move(UP);
-        }
-        preventDefault = true;
+        Player.move(UP);
         break;
       case "ArrowDown":
-        if (GameState.state === STATE_PLAY) {
-          Player.move(DOWN);
-        }
-        preventDefault = true;
+        Player.move(DOWN);
         break;
       case "ArrowLeft":
-        if (GameState.state === STATE_PLAY) {
-          Player.move(LEFT);
-        }
-        preventDefault = true;
+        Player.move(LEFT);
         break;
       case "ArrowRight":
-        if (GameState.state === STATE_PLAY) {
-          Player.move(RIGHT);
-        }
-        preventDefault = true;
+        Player.move(RIGHT);
         break;
       case " ":
-        if (GameState.state === STATE_PLAY) {
-          Player.move(FIRE);
-        }
-        preventDefault = true;
+        Player.move(FIRE);
         break;
       case "Enter":
-        switch (GameState.state) {
-          case STATE_MENU:
-            LevelManager.newGame();
-            this.reset();
-            break;
-          case STATE_GAME_OVER:
-            GameState.changeState(STATE_MENU);
-            break;
-          default:
-            break;
+        if (GameState.state === STATE_MENU) {
+          LevelManager.newGame();
+          this.reset();
+        } else if (GameState.state === STATE_GAME_OVER) {
+          GameState.changeState(STATE_MENU);
         }
-        preventDefault = true;
         break;
       default:
-        break;
+        return;
     }
 
-    if (preventDefault) {
-      event.preventDefault();
-      event.stopImmediatePropagation();
-    }
+    event.preventDefault();
+    event.stopImmediatePropagation();
   }
 
   onKeyRelease(event) {
-    let preventDefault = false;
     if (!this.#isKeyPressAllowed) {
       return;
     }
@@ -183,29 +157,19 @@ class GameRunner {
     switch (event.key) {
       case "ArrowUp":
       case "ArrowDown":
-        preventDefault = true;
         break;
       case "ArrowLeft":
       case "ArrowRight":
       case " ":
-        if (GameState.state === STATE_PLAY) {
-          Player.move(NONE);
-        }
-        preventDefault = true;
+        Player.move(NONE);
         break;
       default:
-        break;
+        return;
     }
 
-    if (preventDefault) {
-      event.preventDefault();
-      event.stopImmediatePropagation();
-    }
+    event.preventDefault();
+    event.stopImmediatePropagation();
   }
 }
 
-const Game = new GameRunner();
-
-window.onload = function () {
-  Game.initialize();
-};
+new Game().initialize();

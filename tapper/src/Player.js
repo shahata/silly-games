@@ -3,12 +3,13 @@ import Beers from "./Beers.js";
 import SoundManager, {
   BARMAN_ZIP_DOWN,
   BARMAN_ZIP_UP,
-  FULL_MUG as SOUND_FULL_MUG,
+  FULL_MUG,
   MUG_FILL_1,
   MUG_FILL_2,
   THROW_MUG,
 } from "./SoundManager.js";
 import ResourceManager from "./ResourceManager.js";
+import GameState, { STATE_PLAY } from "./GameState.js";
 
 const STEP = 16;
 export const LEFT = 0;
@@ -365,17 +366,16 @@ class Player {
   }
 
   move(direction) {
+    if (GameState.state !== STATE_PLAY) return;
     this.#isPlayerRunning = false;
 
     switch (direction) {
       case UP: {
         this.#isTapperServing = false;
         this.#lastRow = this.currentRow;
-        this.currentRow -= 1;
 
-        if (this.currentRow === 0) {
-          this.currentRow = 4;
-        }
+        if (this.currentRow === 1) this.currentRow = 4;
+        else this.currentRow--;
 
         this.#goState = GO_1;
         this.#lastPlayerXPosition = this.playerXPosition;
@@ -388,11 +388,9 @@ class Player {
       case DOWN: {
         this.#isTapperServing = false;
         this.#lastRow = this.currentRow;
-        this.currentRow += 1;
 
-        if (this.currentRow === 5) {
-          this.currentRow = 1;
-        }
+        if (this.currentRow === 4) this.currentRow = 1;
+        else this.currentRow++;
 
         this.#goState = GO_1;
         this.#lastPlayerXPosition = this.playerXPosition;
@@ -473,7 +471,7 @@ class Player {
               SoundManager.play(MUG_FILL_2);
               break;
             case SERVING_MAX:
-              SoundManager.play(SOUND_FULL_MUG);
+              SoundManager.play(FULL_MUG);
               break;
             default:
               break;

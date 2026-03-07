@@ -42,8 +42,6 @@ class LevelManager {
   rowRightBounds = ROW_RIGHT_BOUNDS;
   rowYPositions = ROW_Y_POSITIONS;
 
-  #imageLevel = [2];
-  #currentLevel = 1;
   #score = 0;
   lives = 0;
   #difficulty = 1;
@@ -52,16 +50,16 @@ class LevelManager {
   #fontImage = null;
   #miscImage = null;
   #gameTitleImage = null;
+  #backgroundImage = null;
   #readyToPlayImage = null;
 
   init() {
     this.#gameTitleImage = ResourceManager.getImageResource("game_title");
-    this.#readyToPlayImage = ResourceManager.getImageResource("pregame");
-    this.#imageLevel[1] = ResourceManager.getImageResource("game");
+    this.#readyToPlayImage = ResourceManager.getImageResource("ready_to_play");
+    this.#backgroundImage = ResourceManager.getImageResource("background");
     this.#fontImage = ResourceManager.getImageResource("font");
     this.#miscImage = ResourceManager.getImageResource("misc");
 
-    this.#currentLevel = 1;
     this.#score = 0;
     this.lives = MAX_LIFE;
     this.#difficulty = 1;
@@ -232,7 +230,6 @@ class LevelManager {
   }
 
   newGame() {
-    this.#currentLevel = 1;
     this.#score = 0;
     this.lives = MAX_LIFE;
     this.#difficulty = 1;
@@ -247,8 +244,7 @@ class LevelManager {
   }
 
   drawLevelBackground(context) {
-    const backgroundImage = this.#imageLevel[this.#currentLevel];
-    context.drawImage(backgroundImage, 0, 0);
+    context.drawImage(this.#backgroundImage, 0, 0);
   }
 }
 
