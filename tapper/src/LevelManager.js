@@ -1,16 +1,9 @@
-import Customers, {
-  CUSTOMER_BLACK_GUY,
-  CUSTOMER_GRAY_HAT_COWBOY,
-  CUSTOMER_GREEN_HAT_COWBOY,
-  CUSTOMER_WOMAN,
-  MAX_CUSTOMER_TYPE,
-} from "./Customers.js";
+import Customers from "./Customers.js";
 import SoundManager, { POP_OUT } from "./SoundManager.js";
 import ResourceManager from "./ResourceManager.js";
 import GameState, { STATE_PLAY } from "./GameState.js";
 
-export const NUM_LEVEL = 1;
-export const MAX_LIFE = 3;
+const MAX_LIFE = 3;
 const TIME_STEP_SECONDS = 3;
 
 const ROW_LEFT_BOUNDS = [null, 120, 88, 56, 24];
@@ -32,6 +25,12 @@ const SCORE_X_POSITION = 100;
 const SCORE_Y_POSITION = 8;
 const LIFE_Y_POSITION = 24;
 const DIFFICULTY_X_POSITION = 376;
+
+const CUSTOMER_GREEN_HAT_COWBOY = 0;
+const CUSTOMER_WOMAN = 1;
+const CUSTOMER_BLACK_GUY = 2;
+const CUSTOMER_GRAY_HAT_COWBOY = 3;
+const MAX_CUSTOMER_TYPE = 4;
 
 export const SCORE_BONUS = 1500;
 export const SCORE_EMPTY_BEER = 100;
@@ -81,7 +80,7 @@ class LevelManager {
         Customers.add(2, i, CUSTOMER_WOMAN);
         Customers.add(3, i, CUSTOMER_BLACK_GUY);
         Customers.add(4, i, CUSTOMER_GRAY_HAT_COWBOY);
-        SoundManager.play(POP_OUT, false);
+        SoundManager.play(POP_OUT);
       }
     } else {
       const randomRow = Math.floor(Math.random() * 5);
@@ -91,7 +90,7 @@ class LevelManager {
           Math.random() * MAX_CUSTOMER_TYPE,
         );
         Customers.add(randomRow, 1, randomCustomerType);
-        SoundManager.play(POP_OUT, false);
+        SoundManager.play(POP_OUT);
         this.#lastRow = randomRow;
       }
     }

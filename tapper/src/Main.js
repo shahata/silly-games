@@ -58,7 +58,7 @@ class Game {
     Customers.reset();
     LevelManager.reset();
 
-    SoundManager.play(GET_READY, false);
+    SoundManager.play(GET_READY);
     setTimeout(() => {
       if (GameState.state === STATE_READY) {
         GameState.changeState(STATE_PLAY);
@@ -75,10 +75,10 @@ class Game {
 
     if (LevelManager.lives <= 0) {
       GameState.changeState(STATE_GAME_OVER);
-      SoundManager.play(YOU_LOSE, false);
+      SoundManager.play(YOU_LOSE);
     } else {
       GameState.changeState(STATE_LIFE_LOST);
-      SoundManager.play(LAUGHING, false);
+      SoundManager.play(LAUGHING);
       setTimeout(() => this.reset(), 3 * 1000);
     }
   }

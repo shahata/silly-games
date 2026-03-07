@@ -1,4 +1,4 @@
-import Customer, { CUSTOMER_STATE_WAIT } from "./Customer.js";
+import Customer from "./Customer.js";
 import LevelManager, { SCORE_BONUS, SCORE_CUSTOMER } from "./LevelManager.js";
 import SoundManager, {
   COLLECT_TIP,
@@ -7,16 +7,8 @@ import SoundManager, {
 } from "./SoundManager.js";
 import ResourceManager from "./ResourceManager.js";
 import GameState, { STATE_PLAY } from "./GameState.js";
-export const CUSTOMER_GREEN_HAT_COWBOY = 0;
-export const CUSTOMER_WOMAN = 1;
-export const CUSTOMER_BLACK_GUY = 2;
-export const CUSTOMER_GRAY_HAT_COWBOY = 3;
-export const MAX_CUSTOMER_TYPE = 4;
 
 const BONUS_OFFSET = 5;
-
-const CUSTOMER_Y_OFFSET = [0, 32, 64, 96];
-
 const SPRITE_WIDTH = 32;
 const SPRITE_HEIGHT = 32;
 const BONUS_TIMEOUT_MS = 10 * 1000;
@@ -78,7 +70,7 @@ class Customers {
             this.#bonus.timeoutReached = true;
           }, BONUS_TIMEOUT_MS);
 
-          SoundManager.play(TIP_APPEAR, false);
+          SoundManager.play(TIP_APPEAR);
         }
       }
     }
@@ -92,7 +84,7 @@ class Customers {
     ) {
       this.#bonus.visible = false;
       LevelManager.addScore(SCORE_BONUS);
-      SoundManager.play(COLLECT_TIP, false);
+      SoundManager.play(COLLECT_TIP);
     }
   }
 
@@ -130,11 +122,7 @@ class Customers {
     const customerIndex = this.#leadingCustomerIndexByRow[row];
     const customer = this.#customersList[row][customerIndex];
 
-    if (!customer) {
-      return false;
-    }
-
-    if (customer.state === CUSTOMER_STATE_WAIT) {
+    if (customer?.waiting()) {
       customer.catchBeer();
       return true;
     }
@@ -170,14 +158,14 @@ class Customers {
           if (customer.isOut) {
             customerArrayCopy.splice(i, 1);
             copyFlag = true;
-            SoundManager.play(OUT_DOOR, false);
+            SoundManager.play(OUT_DOOR);
             LevelManager.addScore(SCORE_CUSTOMER);
             continue;
           }
 
           if (
             customer.xPosition > this.#maxCustomerPositionByRow[rowCount] &&
-            customer.state === CUSTOMER_STATE_WAIT
+            customer.waiting()
           ) {
             this.#leadingCustomerIndexByRow[rowCount] = i;
             this.#maxCustomerPositionByRow[rowCount] = customer.xPosition;
@@ -190,31 +178,7 @@ class Customers {
           lost = true;
         }
 
-        context.drawImage(
-          this.#spriteImage,
-          customer.sprite,
-          CUSTOMER_Y_OFFSET[customer.type],
-          SPRITE_WIDTH,
-          SPRITE_HEIGHT,
-          customer.xPosition,
-          customer.yPosition,
-          SPRITE_WIDTH,
-          SPRITE_HEIGHT,
-        );
-
-        if (customer.state !== CUSTOMER_STATE_WAIT) {
-          context.drawImage(
-            this.#spriteImage,
-            customer.secondarySprite,
-            CUSTOMER_Y_OFFSET[customer.type],
-            SPRITE_WIDTH,
-            SPRITE_HEIGHT,
-            customer.xPosition + 32,
-            customer.secondaryYPosition,
-            SPRITE_WIDTH,
-            SPRITE_HEIGHT,
-          );
-        }
+        customer.draw(context, this.#spriteImage);
       }
 
       if (copyFlag) {

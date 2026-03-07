@@ -67,8 +67,6 @@ const ROW_LEFT_BOUNDS = [null, 128, 96, 64, 32];
 const ROW_RIGHT_BOUNDS = [null, 336, 368, 400, 432];
 
 const DEFAULT_ROW = 2;
-const DEFAULT_PLAYER_X = 336;
-const DEFAULT_PLAYER_Y = 192;
 const LEG_ANIMATION_TIMING = 20;
 
 class Player {
@@ -85,8 +83,8 @@ class Player {
   #isPlayerGoingLeft = true;
   #isPlayerRunning = false;
   #isTapperServing = false;
-  playerXPosition = DEFAULT_PLAYER_X;
-  #playerYPosition = DEFAULT_PLAYER_Y;
+  playerXPosition = ROW_X_POSITIONS[this.currentRow];
+  #playerYPosition = ROW_Y_POSITIONS[this.currentRow];
   #fpsCount = 0;
 
   init() {
@@ -96,8 +94,8 @@ class Player {
   reset() {
     this.currentRow = DEFAULT_ROW;
     this.#lastRow = 0;
-    this.playerXPosition = DEFAULT_PLAYER_X;
-    this.#playerYPosition = DEFAULT_PLAYER_Y;
+    this.playerXPosition = ROW_X_POSITIONS[this.currentRow];
+    this.#playerYPosition = ROW_Y_POSITIONS[this.currentRow];
 
     this.#playerAction = STAND_L1;
 
@@ -166,92 +164,67 @@ class Player {
     }
   }
 
+  drawSprite(context, sprite, x, y) {
+    context.drawImage(
+      this.#spriteImage,
+      sprite << SPRITE_SHIFT,
+      0,
+      SPRITE_WIDTH,
+      SPRITE_HEIGHT,
+      x,
+      y,
+      SPRITE_WIDTH,
+      SPRITE_HEIGHT,
+    );
+  }
+
   #drawServing(context) {
     for (let i = 1, count = this.#servingCounter + 1; i < count; i++) {
-      context.drawImage(
-        this.#spriteImage,
-        BEER_FILL[i] << SPRITE_SHIFT,
-        0,
-        SPRITE_WIDTH,
-        SPRITE_HEIGHT,
+      this.drawSprite(
+        context,
+        BEER_FILL[i],
         this.playerXPosition + 12,
         this.#playerYPosition + 2,
-        SPRITE_WIDTH,
-        SPRITE_HEIGHT,
       );
     }
 
     if (this.#tapperState === TAPPER_2) {
-      context.drawImage(
-        this.#spriteImage,
-        SERVE_UP_1_1 << SPRITE_SHIFT,
-        0,
-        SPRITE_WIDTH,
-        SPRITE_HEIGHT,
+      this.drawSprite(
+        context,
+        SERVE_UP_1_1,
         this.playerXPosition - 20,
         this.#playerYPosition + 2,
-        SPRITE_WIDTH,
-        SPRITE_HEIGHT,
       );
-
-      context.drawImage(
-        this.#spriteImage,
-        SERVE_UP_1_2 << SPRITE_SHIFT,
-        0,
-        SPRITE_WIDTH,
-        SPRITE_HEIGHT,
+      this.drawSprite(
+        context,
+        SERVE_UP_1_2,
         this.playerXPosition + 12,
         this.#playerYPosition + 2,
-        SPRITE_WIDTH,
-        SPRITE_HEIGHT,
       );
-
-      context.drawImage(
-        this.#spriteImage,
-        SERVE_DOWN_1 << SPRITE_SHIFT,
-        0,
-        SPRITE_WIDTH,
-        SPRITE_HEIGHT,
+      this.drawSprite(
+        context,
+        SERVE_DOWN_1,
         this.playerXPosition - 20,
         this.#playerYPosition + SPRITE_HEIGHT + 2,
-        SPRITE_WIDTH,
-        SPRITE_HEIGHT,
       );
     } else {
-      context.drawImage(
-        this.#spriteImage,
-        SERVE_UP_2_1 << SPRITE_SHIFT,
-        0,
-        SPRITE_WIDTH,
-        SPRITE_HEIGHT,
+      this.drawSprite(
+        context,
+        SERVE_UP_2_1,
         this.playerXPosition - 20,
         this.#playerYPosition + 2,
-        SPRITE_WIDTH,
-        SPRITE_HEIGHT,
       );
-
-      context.drawImage(
-        this.#spriteImage,
-        SERVE_UP_2_2 << SPRITE_SHIFT,
-        0,
-        SPRITE_WIDTH,
-        SPRITE_HEIGHT,
+      this.drawSprite(
+        context,
+        SERVE_UP_2_2,
         this.playerXPosition + 12,
         this.#playerYPosition + 2,
-        SPRITE_WIDTH,
-        SPRITE_HEIGHT,
       );
-
-      context.drawImage(
-        this.#spriteImage,
-        SERVE_DOWN_2 << SPRITE_SHIFT,
-        0,
-        SPRITE_WIDTH,
-        SPRITE_HEIGHT,
+      this.drawSprite(
+        context,
+        SERVE_DOWN_2,
         this.playerXPosition - 20,
         this.#playerYPosition + SPRITE_HEIGHT + 2,
-        SPRITE_WIDTH,
-        SPRITE_HEIGHT,
       );
     }
   }
@@ -260,16 +233,11 @@ class Player {
     this.#drawTapper(context);
 
     if (this.#lastRow !== 0) {
-      context.drawImage(
-        this.#spriteImage,
-        this.#goState << SPRITE_SHIFT,
-        0,
-        SPRITE_WIDTH,
-        SPRITE_HEIGHT,
+      this.drawSprite(
+        context,
+        this.#goState,
         this.#lastPlayerXPosition,
         ROW_Y_POSITIONS[this.#lastRow],
-        SPRITE_WIDTH,
-        SPRITE_HEIGHT,
       );
       this.#goState += 1;
 
@@ -286,79 +254,46 @@ class Player {
       return true;
     }
 
-    context.drawImage(
-      this.#spriteImage,
-      this.#playerAction << SPRITE_SHIFT,
-      0,
-      SPRITE_WIDTH,
-      SPRITE_HEIGHT,
+    this.drawSprite(
+      context,
+      this.#playerAction,
       this.playerXPosition,
       this.#playerYPosition,
-      SPRITE_WIDTH,
-      SPRITE_HEIGHT,
     );
 
     if (!this.#isPlayerRunning) {
       this.#setAnimation();
-
-      context.drawImage(
-        this.#spriteImage,
-        (2 + this.#playerAction) << SPRITE_SHIFT,
-        0,
-        SPRITE_WIDTH,
-        SPRITE_HEIGHT,
+      this.drawSprite(
+        context,
+        2 + this.#playerAction,
         this.playerXPosition,
         this.#playerYPosition + SPRITE_HEIGHT,
-        SPRITE_WIDTH,
-        SPRITE_HEIGHT,
       );
     } else if (this.#isPlayerGoingLeft) {
-      context.drawImage(
-        this.#spriteImage,
-        this.#legState << SPRITE_SHIFT,
-        0,
-        SPRITE_WIDTH,
-        SPRITE_HEIGHT,
+      this.drawSprite(
+        context,
+        this.#legState,
         this.playerXPosition,
         this.#playerYPosition + SPRITE_HEIGHT,
-        SPRITE_WIDTH,
-        SPRITE_HEIGHT,
       );
-
-      context.drawImage(
-        this.#spriteImage,
-        (this.#legState + 1) << SPRITE_SHIFT,
-        0,
-        SPRITE_WIDTH,
-        SPRITE_HEIGHT,
+      this.drawSprite(
+        context,
+        this.#legState + 1,
         this.playerXPosition + SPRITE_HEIGHT,
         this.#playerYPosition + SPRITE_HEIGHT,
-        SPRITE_WIDTH,
-        SPRITE_HEIGHT,
       );
     } else {
-      context.drawImage(
-        this.#spriteImage,
-        (this.#legState + RUN_DOWN_RIGHT_OFFSET) << SPRITE_SHIFT,
-        0,
-        SPRITE_WIDTH,
-        SPRITE_HEIGHT,
+      this.drawSprite(
+        context,
+        this.#legState + RUN_DOWN_RIGHT_OFFSET,
         this.playerXPosition,
         this.#playerYPosition + SPRITE_HEIGHT,
-        SPRITE_WIDTH,
-        SPRITE_HEIGHT,
       );
-
-      context.drawImage(
-        this.#spriteImage,
-        (this.#legState + 1 + RUN_DOWN_RIGHT_OFFSET) << SPRITE_SHIFT,
-        0,
-        SPRITE_WIDTH,
-        SPRITE_HEIGHT,
+      this.drawSprite(
+        context,
+        this.#legState + 1 + RUN_DOWN_RIGHT_OFFSET,
         this.playerXPosition - SPRITE_HEIGHT,
         this.#playerYPosition + SPRITE_HEIGHT,
-        SPRITE_WIDTH,
-        SPRITE_HEIGHT,
       );
     }
 

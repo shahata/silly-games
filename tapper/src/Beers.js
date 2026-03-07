@@ -18,7 +18,7 @@ const SPRITE_WIDTH = 32;
 const SPRITE_HEIGHT = 32;
 
 class Glass {
-  sprite = SPRITE_FULL_1;
+  #sprite = SPRITE_FULL_1;
   xPosition;
   yPosition;
   #isFull;
@@ -39,8 +39,8 @@ class Glass {
   update() {
     if (this.#isFull) {
       if (this.#fpsCount++ > this.#fpsMax) {
-        this.sprite =
-          this.sprite === SPRITE_FULL_1 ? SPRITE_FULL_2 : SPRITE_FULL_1;
+        this.#sprite =
+          this.#sprite === SPRITE_FULL_1 ? SPRITE_FULL_2 : SPRITE_FULL_1;
         this.#fpsCount = 0;
       }
 
@@ -48,20 +48,34 @@ class Glass {
         this.xPosition -= STEP_FULL;
       } else {
         this.broken = true;
-        this.sprite = SPRITE_BROKEN;
+        this.#sprite = SPRITE_BROKEN;
       }
     } else {
-      this.sprite = SPRITE_EMPTY_1;
+      this.#sprite = SPRITE_EMPTY_1;
 
       if (this.xPosition < this.#rightBound) {
         this.xPosition += STEP_EMPTY;
       } else {
         this.broken = true;
-        this.sprite = SPRITE_FALLING;
+        this.#sprite = SPRITE_FALLING;
         this.xPosition += 16;
         this.yPosition += SPRITE_HEIGHT;
       }
     }
+  }
+
+  draw(context, spriteImage) {
+    context.drawImage(
+      spriteImage,
+      this.#sprite,
+      0,
+      SPRITE_WIDTH,
+      SPRITE_HEIGHT,
+      this.xPosition,
+      this.yPosition,
+      SPRITE_WIDTH,
+      SPRITE_HEIGHT,
+    );
   }
 }
 
@@ -117,7 +131,7 @@ class Beers {
       Player.currentRow === row &&
       glass.xPosition + SPRITE_WIDTH >= Player.playerXPosition
     ) {
-      SoundManager.play(GRAB_MUG, false);
+      SoundManager.play(GRAB_MUG);
       LevelManager.addScore(SCORE_EMPTY_BEER);
       return true;
     }
@@ -163,17 +177,7 @@ class Beers {
         glassArrayCopy.splice(i, 1);
         copyFlag = true;
       } else {
-        context.drawImage(
-          this.#spriteImage,
-          glass.sprite,
-          0,
-          SPRITE_WIDTH,
-          SPRITE_HEIGHT,
-          glass.xPosition,
-          glass.yPosition,
-          SPRITE_WIDTH,
-          SPRITE_HEIGHT,
-        );
+        glass.draw(context, this.#spriteImage);
       }
     }
 
@@ -211,17 +215,7 @@ class Beers {
         glassArrayCopy.splice(i, 1);
         copyFlag = true;
       } else {
-        context.drawImage(
-          this.#spriteImage,
-          glass.sprite,
-          0,
-          SPRITE_WIDTH,
-          SPRITE_HEIGHT,
-          glass.xPosition,
-          glass.yPosition,
-          SPRITE_WIDTH,
-          SPRITE_HEIGHT,
-        );
+        glass.draw(context, this.#spriteImage);
       }
     }
 

@@ -26,11 +26,7 @@ class ResourceManager {
   #loadedCallback;
 
   #resourceLoaded = () => {
-    console.log(123);
-    this.#loadCount++;
-    if (this.#loadCount === this.#resourceCount) {
-      this.#loadedCallback();
-    }
+    if (++this.#loadCount === this.#resourceCount) this.#loadedCallback();
   };
 
   loadAllResources(loadCallback) {
