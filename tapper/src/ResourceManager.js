@@ -19,7 +19,7 @@ import fullMugSound from "../sounds/full_mug.mp3";
 import popOutSound from "../sounds/pop_out.mp3";
 import outDoorSound from "../sounds/out_door.mp3";
 import laughingSound from "../sounds/laughing.mp3";
-import getReadyToServeSound from "../sounds/get_ready_to_serve.mp3";
+import getReadySound from "../sounds/get_ready.mp3";
 import youLoseSound from "../sounds/you_lose.mp3";
 import collectTipSound from "../sounds/collect_tip.mp3";
 import tipAppearSound from "../sounds/tip_appear.mp3";
@@ -48,8 +48,8 @@ const SOUND_DATA = [
   { name: "out_door", src: outDoorSound, channel: 4 }, // 9
   { name: "laughing", src: laughingSound, channel: 1 }, // 10
   {
-    name: "get_ready_to_serve",
-    src: getReadyToServeSound,
+    name: "get_ready",
+    src: getReadySound,
     channel: 1,
   }, // 11
   { name: "you_lose", src: youLoseSound, channel: 1 }, // 12
@@ -150,10 +150,6 @@ class ResourceManager {
 
   getImageResource(name) {
     return this.#imageList[name];
-  }
-
-  getImageRessource(name) {
-    return this.getImageResource(name);
   }
 }
 

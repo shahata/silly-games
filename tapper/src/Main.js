@@ -3,7 +3,7 @@ import Customers from "./Customers.js";
 import Beers from "./Beers.js";
 import LevelManager from "./LevelManager.js";
 import SoundManager, {
-  GET_READY_TO_SERVE,
+  GET_READY,
   LAUGHING,
   OH_SUSANNA,
   YOU_LOSE,
@@ -70,7 +70,7 @@ class GameRunner {
     Customers.reset();
     LevelManager.reset();
 
-    SoundManager.play(GET_READY_TO_SERVE, false);
+    SoundManager.play(GET_READY, false);
     setTimeout(() => {
       if (GameState.state === STATE_READY) {
         GameState.changeState(STATE_PLAY);
