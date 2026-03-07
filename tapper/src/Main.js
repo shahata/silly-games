@@ -69,8 +69,6 @@ class Game {
 
   lost() {
     Player.lost();
-    Beers.stop();
-    Customers.stop();
     SoundManager.stop(OH_SUSANNA);
 
     if (LevelManager.lives <= 0) {

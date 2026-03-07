@@ -102,27 +102,16 @@ class Beers {
 
   add(row, xPosition, isFull) {
     const glass = new Glass(row, xPosition, isFull);
-
-    if (isFull) {
-      this.#glassesFull[row].push(glass);
-    } else {
-      this.#glassesEmpty[row].push(glass);
-    }
+    const glassArray = isFull ? this.#glassesFull : this.#glassesEmpty;
+    glassArray[row].push(glass);
   }
 
-  stop() {}
-
   #checkCustomerCollision(glass, row) {
-    const firstCustomerPosition = Customers.getFirstCustomerPosition(row);
-    if (firstCustomerPosition === undefined) {
-      return false;
+    const customer = Customers.getFirstWaitingCustomer(row);
+    if (customer && glass.xPosition <= customer.xPosition + 24) {
+      customer.catchBeer(row);
+      return true;
     }
-
-    const customerPosition = firstCustomerPosition + 24;
-    if (glass.xPosition <= customerPosition) {
-      return Customers.beerCollisionDetected(row);
-    }
-
     return false;
   }
 
@@ -135,22 +124,19 @@ class Beers {
       LevelManager.addScore(SCORE_EMPTY_BEER);
       return true;
     }
-
     return false;
   }
 
   draw(context) {
     let lost = false;
-
     for (let row = 1; row <= 4; row++) {
-      lost ||= this.drawFullMug(context, row);
-      lost ||= this.drawEmptyMug(context, row);
+      lost ||= this.#drawFullMug(context, row);
+      lost ||= this.#drawEmptyMug(context, row);
     }
-
     return lost;
   }
 
-  drawFullMug(context, rowCount) {
+  #drawFullMug(context, rowCount) {
     let lost = false;
     const glassArrayCopy = this.#glassesFull[rowCount].slice();
     let copyFlag = false;
@@ -188,7 +174,7 @@ class Beers {
     return lost;
   }
 
-  drawEmptyMug(context, rowCount) {
+  #drawEmptyMug(context, rowCount) {
     let lost = false;
     const glassArrayCopy = this.#glassesEmpty[rowCount].slice();
     let copyFlag = false;

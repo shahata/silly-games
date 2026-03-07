@@ -14,8 +14,7 @@ const SPRITE_HEIGHT = 32;
 const BONUS_TIMEOUT_MS = 10 * 1000;
 
 class Customers {
-  #leadingCustomerIndexByRow = [5];
-  #maxCustomerPositionByRow = [5];
+  #leadingCustomerByRow = [];
   #customersList = [];
   #spriteImage = null;
   #miscImage = null;
@@ -37,7 +36,7 @@ class Customers {
   reset() {
     for (let count = 1; count <= 4; count++) {
       this.#customersList[count] = [];
-      this.#leadingCustomerIndexByRow[count] = -1;
+      this.#leadingCustomerByRow[count] = null;
     }
     this.#oneReachedEndOfRow = false;
     this.#bonus.visible = false;
@@ -104,30 +103,8 @@ class Customers {
     }
   }
 
-  stop() {}
-
-  getFirstCustomerPosition(row) {
-    if (
-      this.#leadingCustomerIndexByRow[row] !== -1 &&
-      this.#customersList[row][this.#leadingCustomerIndexByRow[row]]
-    ) {
-      return this.#customersList[row][this.#leadingCustomerIndexByRow[row]]
-        .xPosition;
-    }
-
-    return undefined;
-  }
-
-  beerCollisionDetected(row) {
-    const customerIndex = this.#leadingCustomerIndexByRow[row];
-    const customer = this.#customersList[row][customerIndex];
-
-    if (customer?.waiting()) {
-      customer.catchBeer();
-      return true;
-    }
-
-    return false;
+  getFirstWaitingCustomer(row) {
+    return this.#leadingCustomerByRow[row];
   }
 
   isAnyCustomer() {
@@ -142,8 +119,7 @@ class Customers {
   draw(context) {
     let lost = false;
 
-    this.#leadingCustomerIndexByRow = [-1, -1, -1, -1, -1];
-    this.#maxCustomerPositionByRow = [0, 0, 0, 0, 0];
+    this.#leadingCustomerByRow = [null, null, null, null, null];
 
     for (let rowCount = 1; rowCount <= 4; rowCount++) {
       const customerArrayCopy = this.#customersList[rowCount].slice();
@@ -163,12 +139,9 @@ class Customers {
             continue;
           }
 
-          if (
-            customer.xPosition > this.#maxCustomerPositionByRow[rowCount] &&
-            customer.waiting()
-          ) {
-            this.#leadingCustomerIndexByRow[rowCount] = i;
-            this.#maxCustomerPositionByRow[rowCount] = customer.xPosition;
+          const first = this.#leadingCustomerByRow[rowCount]?.xPosition || 0;
+          if (customer.waiting() && customer.xPosition > first) {
+            this.#leadingCustomerByRow[rowCount] = customer;
           }
         }
 
