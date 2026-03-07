@@ -2,7 +2,7 @@ import SoundManager from "./SoundManager.js";
 import loadingTitleImage from "../images/loading_title.png";
 import gameTitleImage from "../images/game_title.png";
 import pregameImage from "../images/pregame.png";
-import level1Image from "../images/level-1.png";
+import gameImage from "../images/game.png";
 import barmanImage from "../images/barman.png";
 import beerGlassImage from "../images/beer_glass.png";
 import customersImage from "../images/customers.png";
@@ -27,7 +27,7 @@ import tipAppearSound from "../sounds/tip_appear.mp3";
 const IMAGE_DATA = [
   { name: "game_title", src: gameTitleImage },
   { name: "pregame", src: pregameImage },
-  { name: "level-1", src: level1Image },
+  { name: "game", src: gameImage },
   { name: "barman", src: barmanImage },
   { name: "beer_glass", src: beerGlassImage },
   { name: "customers", src: customersImage },

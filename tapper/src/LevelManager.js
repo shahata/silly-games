@@ -57,7 +57,7 @@ class LevelManager {
   init() {
     this.#gameTitleImage = ResourceManager.getImageResource("game_title");
     this.#readyToPlayImage = ResourceManager.getImageResource("pregame");
-    this.#imageLevel[1] = ResourceManager.getImageResource("level-1");
+    this.#imageLevel[1] = ResourceManager.getImageResource("game");
     this.#fontImage = ResourceManager.getImageResource("font");
     this.#miscImage = ResourceManager.getImageResource("misc");
 
