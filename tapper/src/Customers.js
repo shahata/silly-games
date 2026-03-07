@@ -152,7 +152,7 @@ class Customers {
   }
 
   draw(context) {
-    let ret = 0;
+    let lost = false;
 
     this.#leadingCustomerIndexByRow = [-1, -1, -1, -1, -1];
     this.#maxCustomerPositionByRow = [0, 0, 0, 0, 0];
@@ -187,7 +187,7 @@ class Customers {
         if (customer.endOfRow && !this.#oneReachedEndOfRow) {
           this.#oneReachedEndOfRow = true;
           LevelManager.lifeLost();
-          ret = rowCount;
+          lost = true;
         }
 
         context.drawImage(
@@ -223,7 +223,7 @@ class Customers {
     }
 
     this.drawBonus(context);
-    return ret;
+    return lost;
   }
 }
 

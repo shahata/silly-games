@@ -15,14 +15,10 @@ export const COLLECT_TIP = 13;
 export const TIP_APPEAR = 14;
 
 class SoundManager {
-  #enabled = true;
   #audioChannels = [];
-
-  init() {}
 
   load(soundId, sound, loadCallback) {
     const soundClip = document.createElement("audio");
-
     soundClip.src = sound.src;
     soundClip.autobuffer = true;
     soundClip.preload = "auto";
@@ -37,43 +33,22 @@ class SoundManager {
     );
     soundClip.load();
 
-    this.#audioChannels[soundId] = [soundClip];
-    if (sound.channel > 1) {
-      for (let channel = 1; channel < sound.channel; channel++) {
-        this.#audioChannels[soundId].push(soundClip.cloneNode(true));
-      }
-    }
+    this.#audioChannels[soundId] = new Array(sound.channel)
+      .fill()
+      .map(() => soundClip.cloneNode(true));
   }
 
   stop(soundId) {
-    if (!this.#enabled || !this.#audioChannels[soundId]) {
-      return;
-    }
-
-    const sound = this.#audioChannels[soundId];
-    for (const clip of sound) {
-      clip.pause();
-    }
+    this.#audioChannels[soundId].forEach((clip) => clip.pause());
   }
 
   play(soundId, loop = false) {
-    if (!this.#enabled || !this.#audioChannels[soundId]) {
-      return;
-    }
-
-    let freeChannel = 0;
-    const clip = this.#audioChannels[soundId];
-
-    for (let i = clip.length; i--; ) {
-      if (clip[i].paused || clip[i].ended) {
-        freeChannel = i;
-        break;
-      }
-    }
-
-    clip[freeChannel].currentTime = 0;
-    clip[freeChannel].loop = loop;
-    clip[freeChannel].play();
+    const soundClip = this.#audioChannels[soundId].find(
+      (clip) => clip.paused || clip.ended,
+    );
+    soundClip.currentTime = 0;
+    soundClip.loop = loop;
+    soundClip.play();
   }
 }
 

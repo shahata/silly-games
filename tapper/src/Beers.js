@@ -126,18 +126,18 @@ class Beers {
   }
 
   draw(context) {
-    let ret = 0;
+    let lost = false;
 
     for (let row = 1; row <= 4; row++) {
-      ret += this.drawFullMug(context, row);
-      ret += this.drawEmptyMug(context, row);
+      lost ||= this.drawFullMug(context, row);
+      lost ||= this.drawEmptyMug(context, row);
     }
 
-    return ret;
+    return lost;
   }
 
   drawFullMug(context, rowCount) {
-    let ret = 0;
+    let lost = false;
     const glassArrayCopy = this.#glassesFull[rowCount].slice();
     let copyFlag = false;
 
@@ -152,7 +152,7 @@ class Beers {
           if (!this.#isOneFullGlassBroken) {
             this.#isOneFullGlassBroken = true;
             LevelManager.lifeLost();
-            ret = rowCount;
+            lost = true;
           }
         } else {
           collision = this.#checkCustomerCollision(glass, rowCount);
@@ -181,11 +181,11 @@ class Beers {
       this.#glassesFull[rowCount] = glassArrayCopy.slice();
     }
 
-    return ret;
+    return lost;
   }
 
   drawEmptyMug(context, rowCount) {
-    let ret = 0;
+    let lost = false;
     const glassArrayCopy = this.#glassesEmpty[rowCount].slice();
     let copyFlag = false;
 
@@ -200,7 +200,7 @@ class Beers {
           if (!this.#isOneEmptyGlassBroken) {
             this.#isOneEmptyGlassBroken = true;
             LevelManager.lifeLost();
-            ret = rowCount;
+            lost = true;
           }
         } else {
           collision = this.#checkPlayerCollision(glass, rowCount);
@@ -229,7 +229,7 @@ class Beers {
       this.#glassesEmpty[rowCount] = glassArrayCopy.slice();
     }
 
-    return ret;
+    return lost;
   }
 }
 

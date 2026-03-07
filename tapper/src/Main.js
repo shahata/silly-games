@@ -26,7 +26,6 @@ class GameRunner {
 
   initialize() {
     this.#frameBuffer = System.initVideo("tapperJS", 512, 480);
-    SoundManager.init();
     GameState.changeState(STATE_LOADING);
     setInterval(() => this.onUpdateFrame(), 1000 / FPS);
     ResourceManager.loadAllResources(() => this.loaded());
@@ -97,13 +96,12 @@ class GameRunner {
         LevelManager.displayReadyToPlay(this.#frameBuffer);
         break;
       default:
+        let lost = false;
         LevelManager.drawLevelBackground(this.#frameBuffer);
-        if (Customers.draw(this.#frameBuffer) !== 0) {
-          this.lost();
-        }
-        if (Beers.draw(this.#frameBuffer) !== 0) {
-          this.lost();
-        }
+        lost ||= Customers.draw(this.#frameBuffer);
+        lost ||= Beers.draw(this.#frameBuffer);
+        if (lost) this.lost();
+
         this.#isKeyPressAllowed = Player.draw(this.#frameBuffer);
         LevelManager.drawGameHUD(this.#frameBuffer);
         if (GameState.state === STATE_GAME_OVER) {
