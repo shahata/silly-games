@@ -96,11 +96,11 @@ class ResourceManager {
   preloadImages(images) {
     this.#imageList = {};
 
-    for (let i = 0; i < images.length; i++) {
+    for (const imageData of images) {
       const newImage = new Image();
       newImage.addEventListener("load", this.#resourceLoaded);
-      newImage.src = images[i].src;
-      this.#imageList[images[i].name] = newImage;
+      newImage.src = imageData.src;
+      this.#imageList[imageData.name] = newImage;
     }
 
     return images.length;

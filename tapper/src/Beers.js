@@ -21,7 +21,6 @@ class Glass {
   sprite = SPRITE_FULL_1;
   xPosition;
   yPosition;
-  #row;
   #isFull;
   #leftBound;
   #rightBound;
@@ -29,10 +28,9 @@ class Glass {
   #fpsMax = FPS >> 1;
   broken = false;
 
-  constructor(row, defaultXPosition, defaultYPosition, isFull) {
-    this.xPosition = defaultXPosition;
-    this.yPosition = defaultYPosition;
-    this.#row = row;
+  constructor(row, xPosition, isFull) {
+    this.xPosition = xPosition;
+    this.yPosition = LevelManager.rowYPositions[row] + 8;
     this.#isFull = isFull;
     this.#leftBound = LevelManager.rowLeftBounds[row] - 4;
     this.#rightBound = LevelManager.rowRightBounds[row] + 16;
@@ -79,9 +77,9 @@ class Beers {
   }
 
   reset() {
-    for (let count = 1; count < 5; count++) {
-      this.#glassesFull[count] = [];
-      this.#glassesEmpty[count] = [];
+    for (let row = 1; row <= 4; row++) {
+      this.#glassesFull[row] = [];
+      this.#glassesEmpty[row] = [];
     }
 
     this.#isOneFullGlassBroken = false;
@@ -89,12 +87,7 @@ class Beers {
   }
 
   add(row, xPosition, isFull) {
-    const glass = new Glass(
-      row,
-      xPosition,
-      LevelManager.rowYPositions[row] + 8,
-      isFull,
-    );
+    const glass = new Glass(row, xPosition, isFull);
 
     if (isFull) {
       this.#glassesFull[row].push(glass);
@@ -135,17 +128,10 @@ class Beers {
   draw(context) {
     let ret = 0;
 
-    ret += this.drawFullMug(context, 1);
-    ret += this.drawEmptyMug(context, 1);
-
-    ret += this.drawFullMug(context, 2);
-    ret += this.drawEmptyMug(context, 2);
-
-    ret += this.drawFullMug(context, 3);
-    ret += this.drawEmptyMug(context, 3);
-
-    ret += this.drawFullMug(context, 4);
-    ret += this.drawEmptyMug(context, 4);
+    for (let row = 1; row <= 4; row++) {
+      ret += this.drawFullMug(context, row);
+      ret += this.drawEmptyMug(context, row);
+    }
 
     return ret;
   }

@@ -51,8 +51,8 @@ class SoundManager {
     }
 
     const sound = this.#audioChannels[soundId];
-    for (let i = sound.length; i--; ) {
-      sound[i].pause();
+    for (const clip of sound) {
+      clip.pause();
     }
   }
 

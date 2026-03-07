@@ -132,7 +132,7 @@ class Player {
   }
 
   #drawTapper(context) {
-    for (let rowNumber = 1; rowNumber < 5; rowNumber++) {
+    for (let rowNumber = 1; rowNumber <= 4; rowNumber++) {
       if (
         this.currentRow !== rowNumber ||
         !this.#isTapperServing ||

@@ -25,7 +25,6 @@ class Customers {
   #leadingCustomerIndexByRow = [5];
   #maxCustomerPositionByRow = [5];
   #customersList = [];
-  #endOfRowCustomer = null;
   #spriteImage = null;
   #miscImage = null;
   #oneReachedEndOfRow = false;
@@ -44,12 +43,11 @@ class Customers {
   }
 
   reset() {
-    for (let count = 1; count < 5; count++) {
+    for (let count = 1; count <= 4; count++) {
       this.#customersList[count] = [];
       this.#leadingCustomerIndexByRow[count] = -1;
     }
     this.#oneReachedEndOfRow = false;
-    this.#endOfRowCustomer = false;
     this.#bonus.visible = false;
   }
 
@@ -159,7 +157,7 @@ class Customers {
     this.#leadingCustomerIndexByRow = [-1, -1, -1, -1, -1];
     this.#maxCustomerPositionByRow = [0, 0, 0, 0, 0];
 
-    for (let rowCount = 1; rowCount < 5; rowCount++) {
+    for (let rowCount = 1; rowCount <= 4; rowCount++) {
       const customerArrayCopy = this.#customersList[rowCount].slice();
       let copyFlag = false;
 
@@ -188,7 +186,6 @@ class Customers {
 
         if (customer.endOfRow && !this.#oneReachedEndOfRow) {
           this.#oneReachedEndOfRow = true;
-          this.#endOfRowCustomer = customer;
           LevelManager.lifeLost();
           ret = rowCount;
         }
