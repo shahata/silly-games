@@ -131,14 +131,14 @@ class Player {
         !this.#isServing ||
         this.#goState !== 0
       ) {
-        this.drawSprite(
+        this.#drawSprite(
           context,
           TAPPER_1,
           ROW_RIGHT_BOUNDS[rowNumber] + 12,
           ROW_Y_POSITIONS[rowNumber] - 24,
         );
       } else {
-        this.drawSprite(
+        this.#drawSprite(
           context,
           this.#tapperState,
           ROW_RIGHT_BOUNDS[rowNumber] + 12,
@@ -148,7 +148,7 @@ class Player {
     }
   }
 
-  drawSprite(context, sprite, x, y) {
+  #drawSprite(context, sprite, x, y) {
     context.drawImage(
       this.#spriteImage,
       sprite * SPRITE_WIDTH,
@@ -164,7 +164,7 @@ class Player {
 
   #drawServing(context) {
     for (let i = 1, count = this.#servingCounter + 1; i < count; i++) {
-      this.drawSprite(
+      this.#drawSprite(
         context,
         BEER_FILL[i],
         this.xPosition + 12,
@@ -173,38 +173,38 @@ class Player {
     }
 
     if (this.#tapperState === TAPPER_2) {
-      this.drawSprite(
+      this.#drawSprite(
         context,
         SERVE_UP_1_1,
         this.xPosition - 20,
         this.#yPosition + 2,
       );
-      this.drawSprite(
+      this.#drawSprite(
         context,
         SERVE_UP_1_2,
         this.xPosition + 12,
         this.#yPosition + 2,
       );
-      this.drawSprite(
+      this.#drawSprite(
         context,
         SERVE_DOWN_1,
         this.xPosition - 20,
         this.#yPosition + SPRITE_HEIGHT + 2,
       );
     } else {
-      this.drawSprite(
+      this.#drawSprite(
         context,
         SERVE_UP_2_1,
         this.xPosition - 20,
         this.#yPosition + 2,
       );
-      this.drawSprite(
+      this.#drawSprite(
         context,
         SERVE_UP_2_2,
         this.xPosition + 12,
         this.#yPosition + 2,
       );
-      this.drawSprite(
+      this.#drawSprite(
         context,
         SERVE_DOWN_2,
         this.xPosition - 20,
@@ -217,7 +217,7 @@ class Player {
     this.#drawTapper(context);
 
     if (this.#lastRow !== 0) {
-      this.drawSprite(
+      this.#drawSprite(
         context,
         this.#goState,
         this.#lastXPosition,
@@ -238,7 +238,7 @@ class Player {
       return true;
     }
 
-    this.drawSprite(
+    this.#drawSprite(
       context,
       this.#playerAction,
       this.xPosition,
@@ -247,33 +247,33 @@ class Player {
 
     if (!this.#isRunning) {
       this.#setAnimation();
-      this.drawSprite(
+      this.#drawSprite(
         context,
         2 + this.#playerAction,
         this.xPosition,
         this.#yPosition + SPRITE_HEIGHT,
       );
     } else if (this.#isGoingLeft) {
-      this.drawSprite(
+      this.#drawSprite(
         context,
         this.#legState,
         this.xPosition,
         this.#yPosition + SPRITE_HEIGHT,
       );
-      this.drawSprite(
+      this.#drawSprite(
         context,
         this.#legState + 1,
         this.xPosition + SPRITE_HEIGHT,
         this.#yPosition + SPRITE_HEIGHT,
       );
     } else {
-      this.drawSprite(
+      this.#drawSprite(
         context,
         this.#legState + RUN_DOWN_RIGHT_OFFSET,
         this.xPosition,
         this.#yPosition + SPRITE_HEIGHT,
       );
-      this.drawSprite(
+      this.#drawSprite(
         context,
         this.#legState + 1 + RUN_DOWN_RIGHT_OFFSET,
         this.xPosition - SPRITE_HEIGHT,

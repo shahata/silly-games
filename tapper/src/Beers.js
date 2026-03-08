@@ -87,7 +87,7 @@ class Beers {
   #checkCustomerCollision(glass, row) {
     const customer = Customers.getFirstWaitingCustomer(row);
     if (customer && glass.xPosition <= customer.xPosition + 24) {
-      customer.catchBeer(row);
+      customer.catchBeer();
       return true;
     }
     return false;

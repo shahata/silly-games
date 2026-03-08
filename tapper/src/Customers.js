@@ -80,7 +80,7 @@ class Customers {
     }
   }
 
-  drawBonus(context) {
+  #drawBonus(context) {
     if (this.#bonus.visible) {
       context.drawImage(
         this.#miscImage,
@@ -130,7 +130,7 @@ class Customers {
         customer.draw(context, this.#spriteImage);
       }
     }
-    this.drawBonus(context);
+    this.#drawBonus(context);
     return false;
   }
 }
