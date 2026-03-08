@@ -168,16 +168,11 @@ class Game {
   #onKeyRelease(event) {
     if (!this.#isKeyPressAllowed) return;
     switch (event.key) {
-      case "ArrowUp":
-      case "ArrowDown":
-        break;
       case "ArrowLeft":
       case "ArrowRight":
       case " ":
         Player.move(NONE);
         break;
-      default:
-        return;
     }
     event.preventDefault();
     event.stopImmediatePropagation();
