@@ -24,30 +24,38 @@ const SPRITE_HEIGHT = 32;
 
 class Glass {
   #sprite = SPRITE_FULL_1;
-  xPosition;
-  isFull;
+  #xPosition;
+  #isFull;
   #fpsCount = 0;
   #row;
 
   constructor(row, xPosition, isFull) {
     this.#row = row;
-    this.xPosition = xPosition;
-    this.isFull = isFull;
+    this.#xPosition = xPosition;
+    this.#isFull = isFull;
+  }
+
+  get xPosition() {
+    return this.#xPosition;
+  }
+
+  get isFull() {
+    return this.#isFull;
   }
 
   update() {
-    if (this.isFull) {
-      if (this.xPosition > ROW_LEFT_BOUNDS[this.#row]) {
+    if (this.#isFull) {
+      if (this.#xPosition > ROW_LEFT_BOUNDS[this.#row]) {
         this.#sprite = this.#fpsCount++ & 8 ? SPRITE_FULL_1 : SPRITE_FULL_2;
-        this.xPosition -= STEP_FULL;
+        this.#xPosition -= STEP_FULL;
       } else {
         this.#sprite = SPRITE_BROKEN;
         return true;
       }
     } else {
-      if (this.xPosition < ROW_RIGHT_BOUNDS[this.#row] + SPRITE_WIDTH) {
+      if (this.#xPosition < ROW_RIGHT_BOUNDS[this.#row] + SPRITE_WIDTH) {
         this.#sprite = SPRITE_EMPTY_1;
-        this.xPosition += STEP_EMPTY;
+        this.#xPosition += STEP_EMPTY;
       } else {
         this.#sprite = SPRITE_FALLING;
         return true;
@@ -64,7 +72,7 @@ class Glass {
       0,
       SPRITE_WIDTH,
       SPRITE_HEIGHT,
-      this.xPosition,
+      this.#xPosition,
       yPosition,
       SPRITE_WIDTH,
       SPRITE_HEIGHT,

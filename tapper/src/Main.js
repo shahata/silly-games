@@ -46,8 +46,8 @@ class Game {
 
   #calcZoom() {
     return Math.min(
-      (window.innerWidth - 20) / GAME_WIDTH,
-      (window.innerHeight - CHROME_HEIGHT - 20) / GAME_HEIGHT,
+      (window.innerWidth - 30) / GAME_WIDTH,
+      (window.innerHeight - CHROME_HEIGHT - 30) / GAME_HEIGHT,
     );
   }
 

@@ -7,7 +7,6 @@ import SoundManager, { OUT_DOOR, POP_OUT } from "./SoundManager.js";
 import ResourceManager from "./ResourceManager.js";
 import GameState, { STATE_PLAY } from "./GameState.js";
 
-const SPRITE_WIDTH = 32;
 const TIME_STEP_SECONDS = 3;
 
 const CUSTOMER_GREEN_HAT_COWBOY = 0;
