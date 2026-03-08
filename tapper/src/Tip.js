@@ -21,6 +21,18 @@ class Tip {
   #row = 1;
   #spriteImage = ResourceManager.getImageResource("beer_glass");
 
+  get visible() {
+    return this.#visible;
+  }
+
+  get row() {
+    return this.#row;
+  }
+
+  get xPosition() {
+    return this.#xPosition;
+  }
+
   reset() {
     this.#tipTimer = null;
     this.#visible = false;

@@ -1,17 +1,20 @@
 import Player from "./Player.js";
 import Customers from "./Customers.js";
 import Beers from "./Beers.js";
+import Tip from "./Tip.js";
 import GameState, { STATE_PLAY } from "./GameState.js";
+import { ROW_RIGHT_BOUNDS } from "./LevelManager.js";
 
 const FILL_PRESSES = 4;
-const WIND_COOLDOWN = 6;
-const THROW_COOLDOWN = 5;
+const SWITCH_COOLDOWN = 0;
+const SPRITE_WIDTH = 32;
 
 class AutoPlayer {
   #active = false;
   #cooldown = 0;
   #filling = false;
   #fillCount = 0;
+  #collectingTip = false;
 
   get active() {
     return this.#active;
@@ -22,6 +25,7 @@ class AutoPlayer {
     this.#cooldown = 0;
     this.#filling = false;
     this.#fillCount = 0;
+    this.#collectingTip = false;
   }
 
   update() {
@@ -33,22 +37,81 @@ class AutoPlayer {
       return;
     }
 
-    const emptyBeerRow = this.#findEmptyBeerRow();
-    if (emptyBeerRow) {
-      if (Player.row !== emptyBeerRow) {
-        this.#switchRow(emptyBeerRow);
+    if (this.#collectingTip) {
+      if (!Tip.visible || Tip.row !== Player.row) {
+        this.#collectingTip = false;
+        Player.move(null);
+      } else {
+        Player.move("ArrowLeft");
+        return;
       }
-      return;
     }
 
-    const targetRow = this.#findMostUrgentRow();
-    if (!targetRow) return;
+    const action = this.#pickAction();
 
-    if (Player.row !== targetRow) {
-      this.#switchRow(targetRow);
-    } else {
-      this.#startFilling();
+    switch (action.type) {
+      case "serve":
+        if (Player.row !== action.row) this.#switchRow(action.row);
+        else this.#startFilling();
+        break;
+      case "catch":
+        if (Player.row !== action.row) this.#switchRow(action.row);
+        break;
+      case "tip":
+        if (Player.row !== Tip.row) this.#switchRow(Tip.row);
+        else {
+          this.#collectingTip = true;
+          Player.move("ArrowLeft");
+        }
+        break;
     }
+  }
+
+  #pickAction() {
+    const glasses = Beers.glasses;
+    const customers = Customers.customers;
+
+    // Score each row: combine customer urgency and empty beer urgency
+    let bestAction = { type: "idle", score: Infinity };
+
+    for (let row = 1; row <= 4; row++) {
+      const hasFullBeer = glasses[row] && glasses[row].some((g) => g.isFull);
+
+      // Prefer staying on current row to avoid switch overhead
+      const switchCost = row === Player.row ? 0 : 3;
+
+      // Customer urgency on this row
+      if (!hasFullBeer && customers[row]) {
+        for (const customer of customers[row]) {
+          if (customer.waiting()) {
+            const score = ROW_RIGHT_BOUNDS[row] - customer.xPosition + switchCost;
+            if (score < bestAction.score) {
+              bestAction = { type: "serve", row, score };
+            }
+          }
+        }
+      }
+
+      // Empty beer urgency on this row
+      if (glasses[row]) {
+        const fallPoint = ROW_RIGHT_BOUNDS[row] + SPRITE_WIDTH;
+        for (const glass of glasses[row]) {
+          if (!glass.isFull) {
+            const score = fallPoint - glass.xPosition + switchCost;
+            if (score < bestAction.score) {
+              bestAction = { type: "catch", row, score };
+            }
+          }
+        }
+      }
+    }
+
+    // Tip collection when nothing is urgent
+    if (bestAction.score > 100 && Tip.visible) {
+      return { type: "tip" };
+    }
+
+    return bestAction;
   }
 
   #continueFilling() {
@@ -59,7 +122,7 @@ class AutoPlayer {
       Player.move(null);
       this.#filling = false;
       this.#fillCount = 0;
-      this.#cooldown = THROW_COOLDOWN;
+      this.#cooldown = 1;
     }
   }
 
@@ -72,41 +135,7 @@ class AutoPlayer {
   #switchRow(targetRow) {
     const diff = (targetRow - Player.row + 4) % 4;
     Player.move(diff <= 2 ? "ArrowDown" : "ArrowUp");
-    this.#cooldown = WIND_COOLDOWN;
-  }
-
-  #findEmptyBeerRow() {
-    const glasses = Beers.glasses;
-    let bestRow = 0;
-    let bestX = 0;
-    for (let row = 1; row <= 4; row++) {
-      if (!glasses[row]) continue;
-      for (const glass of glasses[row]) {
-        if (!glass.isFull && glass.xPosition > bestX) {
-          bestX = glass.xPosition;
-          bestRow = row;
-        }
-      }
-    }
-    return bestRow || null;
-  }
-
-  #findMostUrgentRow() {
-    const glasses = Beers.glasses;
-    const customers = Customers.customers;
-    let bestRow = 0;
-    let bestX = 0;
-    for (let row = 1; row <= 4; row++) {
-      if (glasses[row] && glasses[row].some((g) => g.isFull)) continue;
-      if (!customers[row]) continue;
-      for (const customer of customers[row]) {
-        if (customer.waiting() && customer.xPosition > bestX) {
-          bestX = customer.xPosition;
-          bestRow = row;
-        }
-      }
-    }
-    return bestRow || null;
+    this.#cooldown = SWITCH_COOLDOWN;
   }
 }
 
