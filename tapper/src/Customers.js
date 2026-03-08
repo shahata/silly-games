@@ -60,6 +60,10 @@ class Customers {
     }
   }
 
+  get customers() {
+    return this.#customersList;
+  }
+
   getFirstWaitingCustomer(row) {
     return this.#leadingCustomerByRow[row];
   }

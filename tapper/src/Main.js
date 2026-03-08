@@ -9,6 +9,7 @@ import SoundManager, {
   OH_SUSANNA,
   YOU_LOSE,
 } from "./SoundManager.js";
+import AutoPlayer from "./AutoPlayer.js";
 import System from "./System.js";
 import ResourceManager from "./ResourceManager.js";
 import GameState, {
@@ -112,6 +113,7 @@ class Game {
           this.#lost();
         }
         Tip.draw(this.#frameBuffer);
+        AutoPlayer.update();
         this.#isKeyPressAllowed = Player.draw(this.#frameBuffer);
         if (GameState.state === STATE_GAME_OVER) {
           LevelManager.displayTextOverlay(this.#frameBuffer, "Game Over !");
@@ -140,6 +142,9 @@ class Game {
         } else if (GameState.state === STATE_GAME_OVER) {
           GameState.changeState(STATE_MENU);
         }
+        break;
+      case "Tab":
+        AutoPlayer.toggle();
         break;
       case "Escape":
         if (GameState.state === STATE_PLAY) {

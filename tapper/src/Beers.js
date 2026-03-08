@@ -16,6 +16,10 @@ class Beers {
     this.#glasses = new Array(5).fill(null).map(() => []);
   }
 
+  get glasses() {
+    return this.#glasses;
+  }
+
   add(row, xPosition, isFull) {
     this.#glasses[row].push(new BeerGlass(row, xPosition, isFull));
   }
