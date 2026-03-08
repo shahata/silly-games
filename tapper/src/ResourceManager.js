@@ -26,7 +26,7 @@ class ResourceManager {
   #loadedCallback = () => undefined;
 
   constructor() {
-    this.#resourceCount = this.preloadImages(this.#resourceLoaded);
+    this.#resourceCount = this.#preloadImages(this.#resourceLoaded);
     this.#resourceCount += SoundManager.preloadSounds(this.#resourceLoaded);
   }
 
@@ -39,7 +39,7 @@ class ResourceManager {
     if (this.#loadCount === this.#resourceCount) this.#loadedCallback();
   }
 
-  preloadImages(loadCallback) {
+  #preloadImages(loadCallback) {
     this.#imageList = {};
     for (const imageData of IMAGE_DATA) {
       const newImage = new Image();
@@ -53,7 +53,6 @@ class ResourceManager {
   displayLoadingScreen(context) {
     context.fillStyle = "black";
     context.fillRect(0, 0, context.canvas.width, context.canvas.height);
-    context.fill();
     context.drawImage(
       this.getImageResource("loading_title"),
       (context.canvas.width - LOGO_WIDTH) / 2,

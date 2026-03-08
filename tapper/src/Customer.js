@@ -138,7 +138,7 @@ export default class Customer {
         SPRITE_HEIGHT * this.#type,
         SPRITE_WIDTH,
         SPRITE_HEIGHT,
-        this.xPosition + 32,
+        this.xPosition + SPRITE_WIDTH,
         this.#secondaryYPosition,
         SPRITE_WIDTH,
         SPRITE_HEIGHT,

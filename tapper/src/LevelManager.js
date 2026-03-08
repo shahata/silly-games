@@ -115,7 +115,6 @@ class LevelManager {
   displayGameTitle(context) {
     context.fillStyle = "rgb(0,0,0)";
     context.fillRect(0, 0, context.canvas.width, context.canvas.height);
-    context.fill();
 
     context.drawImage(
       this.#gameTitleImage,
@@ -144,7 +143,6 @@ class LevelManager {
       180,
       32,
     );
-    context.fill();
 
     context.fillStyle = "rgb(255,255,255)";
     context.font = "bold 14px Courier";

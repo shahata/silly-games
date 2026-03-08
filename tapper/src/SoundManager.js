@@ -41,12 +41,12 @@ class SoundManager {
 
   preloadSounds(loadCallback) {
     for (const soundData of SOUND_DATA) {
-      this.load(soundData, loadCallback);
+      this.#load(soundData, loadCallback);
     }
     return SOUND_DATA.length;
   }
 
-  load(sound, loadCallback) {
+  #load(sound, loadCallback) {
     const soundClip = document.createElement("audio");
     soundClip.src = sound.src;
     soundClip.autobuffer = true;
