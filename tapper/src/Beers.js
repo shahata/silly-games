@@ -11,10 +11,10 @@ import ResourceManager from "./ResourceManager.js";
 import GameState, { STATE_PLAY } from "./GameState.js";
 
 const SPRITE_FULL_1 = 0;
-const SPRITE_FULL_2 = 32;
-const SPRITE_EMPTY_1 = 64;
-const SPRITE_FALLING = 96;
-const SPRITE_BROKEN = 128;
+const SPRITE_FULL_2 = 1;
+const SPRITE_EMPTY_1 = 2;
+const SPRITE_FALLING = 3;
+const SPRITE_BROKEN = 4;
 
 const STEP_FULL = 4;
 const STEP_EMPTY = 1;
@@ -60,7 +60,7 @@ class Glass {
     if (this.#sprite === SPRITE_FALLING) yPosition += SPRITE_HEIGHT;
     context.drawImage(
       spriteImage,
-      this.#sprite,
+      this.#sprite * SPRITE_WIDTH,
       0,
       SPRITE_WIDTH,
       SPRITE_HEIGHT,
@@ -108,9 +108,8 @@ class Beers {
         const glass = this.#glasses[row][i];
         if (GameState.state === STATE_PLAY) {
           let collision = false;
-          if (glass.update()) {
-            return true;
-          } else if (glass.isFull) {
+          if (glass.update()) return true;
+          if (glass.isFull) {
             collision = this.#checkCustomerCollision(glass, row);
           } else if (Player.currentRow === row) {
             collision = this.#checkPlayerCollision(glass, row);

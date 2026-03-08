@@ -20,7 +20,6 @@ const SPRITE_HEIGHT = 32;
 const BONUS_TIMEOUT_MS = 10 * 1000;
 
 class Customers {
-  #oneReachedEndOfRow;
   #leadingCustomerByRow;
   #customersList;
   #spriteImage = ResourceManager.getImageResource("customers");
@@ -37,7 +36,7 @@ class Customers {
   reset() {
     this.#customersList = new Array(5).fill(null).map(() => []);
     this.#leadingCustomerByRow = new Array(5).fill(null);
-    this.#oneReachedEndOfRow = false;
+    this.#bonus.timeoutReached = true;
     this.#bonus.visible = false;
   }
 
@@ -48,12 +47,10 @@ class Customers {
   checkBonus(row, customerXPosition) {
     if (!this.#bonus.visible && this.#bonus.timeoutReached) {
       if (
-        customerXPosition <
-        ROW_LEFT_BOUNDS[row] +
-          (ROW_RIGHT_BOUNDS[row] - ROW_LEFT_BOUNDS[row]) / 3
+        customerXPosition - ROW_LEFT_BOUNDS[row] <
+        (ROW_RIGHT_BOUNDS[row] - ROW_LEFT_BOUNDS[row]) / 3
       ) {
-        const randomRow = Math.floor(Math.random() * 6);
-        if (randomRow === row) {
+        if (Math.floor(Math.random() * 6) === row) {
           this.#bonus.visible = true;
           this.#bonus.row = row;
           this.#bonus.xPosition = customerXPosition;
@@ -87,7 +84,7 @@ class Customers {
     if (this.#bonus.visible) {
       context.drawImage(
         this.#miscImage,
-        BONUS_OFFSET << 5,
+        BONUS_OFFSET * SPRITE_WIDTH,
         0,
         SPRITE_WIDTH,
         SPRITE_HEIGHT,
@@ -113,52 +110,29 @@ class Customers {
   }
 
   draw(context) {
-    let lost = false;
-
-    this.#leadingCustomerByRow = [null, null, null, null, null];
-
-    for (let rowCount = 1; rowCount <= 4; rowCount++) {
-      const customerArrayCopy = this.#customersList[rowCount].slice();
-      let copyFlag = false;
-
-      for (let i = this.#customersList[rowCount].length; i--; ) {
-        const customer = this.#customersList[rowCount][i];
-
-        if (!this.#oneReachedEndOfRow && GameState.state === STATE_PLAY) {
-          customer.update();
-
-          if (customer.isOut) {
-            customerArrayCopy.splice(i, 1);
-            copyFlag = true;
+    for (let row = 1; row <= 4; row++) {
+      this.#leadingCustomerByRow[row] = null;
+      for (let i = this.#customersList[row].length; i--; i >= 0) {
+        const customer = this.#customersList[row][i];
+        if (GameState.state === STATE_PLAY) {
+          if (customer.update()) return true;
+          if (customer.xPosition < ROW_LEFT_BOUNDS[row]) {
+            this.#customersList[row].splice(i, 1);
             SoundManager.play(OUT_DOOR);
             LevelManager.addScore(SCORE_CUSTOMER);
-            continue;
-          }
-
-          const first = this.#leadingCustomerByRow[rowCount]?.xPosition || 0;
-          if (customer.waiting() && customer.xPosition > first) {
-            this.#leadingCustomerByRow[rowCount] = customer;
+          } else if (customer.waiting()) {
+            const first = this.#leadingCustomerByRow[row]?.xPosition || 0;
+            if (customer.xPosition > first) {
+              this.#leadingCustomerByRow[row] = customer;
+            }
           }
         }
-
-        if (customer.endOfRow && !this.#oneReachedEndOfRow) {
-          this.#oneReachedEndOfRow = true;
-          lost = true;
-        }
-
         customer.draw(context, this.#spriteImage);
       }
-
-      if (copyFlag) {
-        this.#customersList[rowCount] = customerArrayCopy.slice();
-      }
     }
-
     this.drawBonus(context);
-    return lost;
+    return false;
   }
 }
 
-const customers = new Customers();
-
-export default customers;
+export default new Customers();

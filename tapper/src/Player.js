@@ -58,7 +58,6 @@ const GO_4 = 7;
 
 const SPRITE_WIDTH = 32;
 const SPRITE_HEIGHT = 32;
-const SPRITE_SHIFT = 5;
 
 const ROW_X_POSITIONS = [null, 336, 368, 400, 432];
 const ROW_Y_POSITIONS = [null, 96, 192, 288, 384];
@@ -152,7 +151,7 @@ class Player {
   drawSprite(context, sprite, x, y) {
     context.drawImage(
       this.#spriteImage,
-      sprite << SPRITE_SHIFT,
+      sprite * SPRITE_WIDTH,
       0,
       SPRITE_WIDTH,
       SPRITE_HEIGHT,
