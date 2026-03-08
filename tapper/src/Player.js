@@ -1,4 +1,4 @@
-import Customers from "./Customers.js";
+import Tip from "./Tip.js";
 import Beers from "./Beers.js";
 import SoundManager, {
   BARMAN_ZIP_DOWN,
@@ -335,7 +335,7 @@ class Player {
             this.#legState = RUN_DOWN_1;
           }
 
-          Customers.checkBonusCollision(this.currentRow, this.xPosition);
+          Tip.collect(this.currentRow, this.xPosition);
         }
 
         this.#isGoingLeft = true;

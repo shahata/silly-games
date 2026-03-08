@@ -1,6 +1,7 @@
 import Player, { DOWN, FIRE, LEFT, NONE, RIGHT, UP } from "./Player.js";
 import Customers from "./Customers.js";
 import Beers from "./Beers.js";
+import Tip from "./Tip.js";
 import LevelManager from "./LevelManager.js";
 import SoundManager, {
   GET_READY,
@@ -51,8 +52,8 @@ class Game {
         SoundManager.play(OH_SUSANNA, true);
         Player.reset();
         Beers.reset();
+        Tip.reset();
         Customers.reset();
-        LevelManager.reset();
       }
     }, 2.5 * 1000);
   }
@@ -89,6 +90,7 @@ class Game {
         ) {
           this.#lost();
         }
+        Tip.draw(this.#frameBuffer);
         this.#isKeyPressAllowed = Player.draw(this.#frameBuffer);
         if (GameState.state === STATE_GAME_OVER) {
           LevelManager.displayGameOver(this.#frameBuffer);

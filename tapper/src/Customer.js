@@ -5,7 +5,7 @@ import {
   ROW_Y_POSITIONS,
 } from "./LevelManager.js";
 import { FPS } from "./GameState.js";
-import customers from "./Customers.js";
+import Tip from "./Tip.js";
 
 const HOLDING_BEER_1 = 4;
 const HOLDING_BEER_2 = 7;
@@ -101,7 +101,7 @@ export default class Customer {
           this.#state = CUSTOMER_STATE_WAIT;
           this.#sprite = MOVING_PATTERN[this.#row][0];
           Beers.add(this.#row, this.xPosition + SPRITE_WIDTH, false);
-          customers.checkBonus(this.#row, this.xPosition);
+          Tip.add(this.#row, this.xPosition);
         }
         break;
       }

@@ -1,7 +1,4 @@
-import Customers from "./Customers.js";
-import SoundManager, { POP_OUT } from "./SoundManager.js";
 import ResourceManager from "./ResourceManager.js";
-import GameState, { STATE_PLAY } from "./GameState.js";
 
 export const ROW_LEFT_BOUNDS = [null, 120, 88, 56, 24];
 export const ROW_RIGHT_BOUNDS = [null, 304, 334, 368, 400];
@@ -12,7 +9,6 @@ export const SCORE_EMPTY_BEER = 100;
 export const SCORE_CUSTOMER = 50;
 
 const MAX_LIFE = 3;
-const TIME_STEP_SECONDS = 3;
 
 const GAME_TITLE_LOGO_WIDTH = 416;
 const GAME_TITLE_LOGO_HEIGHT = 160;
@@ -30,50 +26,15 @@ const SCORE_Y_POSITION = 8;
 const LIFE_Y_POSITION = 24;
 const DIFFICULTY_X_POSITION = 376;
 
-const CUSTOMER_GREEN_HAT_COWBOY = 0;
-const CUSTOMER_WOMAN = 1;
-const CUSTOMER_BLACK_GUY = 2;
-const CUSTOMER_GRAY_HAT_COWBOY = 3;
-const MAX_CUSTOMER_TYPE = 4;
-
 class LevelManager {
   #lives;
-  #difficulty;
   #score;
-  #wave;
-  #lastRandomRow;
+  #difficulty;
   #fontImage = ResourceManager.getImageResource("font");
   #miscImage = ResourceManager.getImageResource("misc");
   #gameTitleImage = ResourceManager.getImageResource("game_title");
   #backgroundImage = ResourceManager.getImageResource("background");
   #readyToPlayImage = ResourceManager.getImageResource("ready_to_play");
-
-  #addCustomer() {
-    if (GameState.state !== STATE_PLAY) return;
-
-    if (Customers.count() < 2) {
-      if (this.#wave++ === this.#difficulty * 2) this.#difficulty++;
-      for (let i = 1; i <= this.#difficulty; i++) {
-        Customers.add(1, i, CUSTOMER_GREEN_HAT_COWBOY);
-        Customers.add(2, i, CUSTOMER_WOMAN);
-        Customers.add(3, i, CUSTOMER_BLACK_GUY);
-        Customers.add(4, i, CUSTOMER_GRAY_HAT_COWBOY);
-        SoundManager.play(POP_OUT);
-      }
-    } else {
-      const randomRow = Math.floor(Math.random() * 5);
-      if (randomRow !== 0 && randomRow !== this.#lastRandomRow) {
-        const randomCustomerType = Math.floor(
-          Math.random() * MAX_CUSTOMER_TYPE,
-        );
-        Customers.add(randomRow, 1, randomCustomerType);
-        SoundManager.play(POP_OUT);
-        this.#lastRandomRow = randomRow;
-      }
-    }
-
-    setTimeout(() => this.#addCustomer(), TIME_STEP_SECONDS * 1000);
-  }
 
   #displayText(context, text, xPosition) {
     for (let i = text.length; i--; ) {
@@ -162,6 +123,14 @@ class LevelManager {
     this.#displayText(context, `${this.#difficulty}`, DIFFICULTY_X_POSITION);
   }
 
+  get difficulty() {
+    return this.#difficulty;
+  }
+
+  increaseDifficulty() {
+    this.#difficulty++;
+  }
+
   addScore(points) {
     this.#score += points;
   }
@@ -170,17 +139,10 @@ class LevelManager {
     return --this.#lives;
   }
 
-  reset() {
-    this.#wave--;
-    this.#addCustomer();
-  }
-
   newGame() {
-    this.#lastRandomRow = -1;
     this.#lives = MAX_LIFE;
     this.#difficulty = 1;
     this.#score = 0;
-    this.#wave = 1;
   }
 }
 
