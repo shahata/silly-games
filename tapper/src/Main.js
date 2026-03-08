@@ -21,14 +21,34 @@ import GameState, {
   STATE_READY,
 } from "./GameState.js";
 
+const GAME_WIDTH = 512;
+const GAME_HEIGHT = 480;
+const WRAPPER = document.getElementById("tapperJS");
+const CHROME_HEIGHT = WRAPPER.getBoundingClientRect().top;
+
 class Game {
   #isKeyPressAllowed = true;
-  #frameBuffer = System.initVideo("tapperJS", 512, 480);
+  #frameBuffer = System.initVideo(
+    WRAPPER,
+    GAME_WIDTH,
+    GAME_HEIGHT,
+    this.#calcZoom(),
+  );
 
   constructor() {
     GameState.changeState(STATE_LOADING);
     setInterval(() => this.#onUpdateFrame(), 1000 / FPS);
     ResourceManager.loadAllResources(() => this.#loaded());
+    window.addEventListener("resize", () => {
+      this.#frameBuffer = System.resize(this.#calcZoom());
+    });
+  }
+
+  #calcZoom() {
+    return Math.min(
+      (window.innerWidth - 20) / GAME_WIDTH,
+      (window.innerHeight - CHROME_HEIGHT - 20) / GAME_HEIGHT,
+    );
   }
 
   #loaded() {
