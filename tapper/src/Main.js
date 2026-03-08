@@ -19,6 +19,7 @@ import GameState, {
   STATE_MENU,
   STATE_PLAY,
   STATE_READY,
+  STATE_PAUSE,
 } from "./GameState.js";
 
 const GAME_WIDTH = 512;
@@ -113,7 +114,9 @@ class Game {
         Tip.draw(this.#frameBuffer);
         this.#isKeyPressAllowed = Player.draw(this.#frameBuffer);
         if (GameState.state === STATE_GAME_OVER) {
-          LevelManager.displayGameOver(this.#frameBuffer);
+          LevelManager.displayTextOverlay(this.#frameBuffer, "Game Over !");
+        } else if (GameState.state === STATE_PAUSE) {
+          LevelManager.displayTextOverlay(this.#frameBuffer, "Game Paused");
         }
         break;
     }
@@ -144,6 +147,15 @@ class Game {
           this.#reset();
         } else if (GameState.state === STATE_GAME_OVER) {
           GameState.changeState(STATE_MENU);
+        }
+        break;
+      case "Escape":
+        if (GameState.state === STATE_PLAY) {
+          GameState.changeState(STATE_PAUSE);
+          SoundManager.stop(OH_SUSANNA);
+        } else if (GameState.state === STATE_PAUSE) {
+          GameState.changeState(STATE_PLAY);
+          SoundManager.play(OH_SUSANNA, true);
         }
         break;
       default:

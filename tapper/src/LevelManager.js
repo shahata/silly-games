@@ -14,7 +14,6 @@ const GAME_TITLE_LOGO_WIDTH = 416;
 const GAME_TITLE_LOGO_HEIGHT = 160;
 const COPYRIGHT_1 = "Based on the Original Tapper Game";
 const COPYRIGHT_2 = "(c) 1983 Bally Midway MFG";
-const GAME_OVER_TEXT = "GAME OVER !";
 
 const LIFE_ICON_OFFSET = 0;
 const ICON_SIZE = 16;
@@ -96,7 +95,7 @@ class LevelManager {
     context.drawImage(this.#readyToPlayImage, 0, 0);
   }
 
-  displayGameOver(context) {
+  displayTextOverlay(context, text) {
     context.fillStyle = "rgb(0,0,0)";
     context.fillRect(
       (context.canvas.width - 180) / 2,
@@ -110,7 +109,7 @@ class LevelManager {
     context.textBaseline = "top";
 
     context.fillText(
-      GAME_OVER_TEXT,
+      text,
       (context.canvas.width - 180) / 2 + 48,
       (context.canvas.height - 32) / 2 + 8,
     );
