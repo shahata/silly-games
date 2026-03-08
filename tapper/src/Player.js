@@ -68,8 +68,8 @@ const DEFAULT_ROW = 2;
 const LEG_ANIMATION_TIMING = 20;
 
 class Player {
-  currentRow;
-  xPosition;
+  #row;
+  #xPosition;
   #yPosition;
   #goState;
   #legState;
@@ -85,11 +85,19 @@ class Player {
   #lastXPosition = null;
   #spriteImage = ResourceManager.getImageResource("barman");
 
+  get row() {
+    return this.#row;
+  }
+
+  get xPosition() {
+    return this.#xPosition;
+  }
+
   reset() {
-    this.currentRow = DEFAULT_ROW;
+    this.#row = DEFAULT_ROW;
     this.#lastRow = 0;
-    this.xPosition = ROW_X_POSITIONS[this.currentRow];
-    this.#yPosition = ROW_Y_POSITIONS[this.currentRow];
+    this.#xPosition = ROW_X_POSITIONS[this.#row];
+    this.#yPosition = ROW_Y_POSITIONS[this.#row];
 
     this.#playerAction = STAND_L1;
 
@@ -126,11 +134,7 @@ class Player {
 
   #drawTapper(context) {
     for (let rowNumber = 1; rowNumber <= 4; rowNumber++) {
-      if (
-        this.currentRow !== rowNumber ||
-        !this.#isServing ||
-        this.#goState !== 0
-      ) {
+      if (this.#row !== rowNumber || !this.#isServing || this.#goState !== 0) {
         this.#drawSprite(
           context,
           TAPPER_1,
@@ -167,7 +171,7 @@ class Player {
       this.#drawSprite(
         context,
         BEER_FILL[i],
-        this.xPosition + 12,
+        this.#xPosition + 12,
         this.#yPosition + 2,
       );
     }
@@ -176,38 +180,38 @@ class Player {
       this.#drawSprite(
         context,
         SERVE_UP_1_1,
-        this.xPosition - 20,
+        this.#xPosition - 20,
         this.#yPosition + 2,
       );
       this.#drawSprite(
         context,
         SERVE_UP_1_2,
-        this.xPosition + 12,
+        this.#xPosition + 12,
         this.#yPosition + 2,
       );
       this.#drawSprite(
         context,
         SERVE_DOWN_1,
-        this.xPosition - 20,
+        this.#xPosition - 20,
         this.#yPosition + SPRITE_HEIGHT + 2,
       );
     } else {
       this.#drawSprite(
         context,
         SERVE_UP_2_1,
-        this.xPosition - 20,
+        this.#xPosition - 20,
         this.#yPosition + 2,
       );
       this.#drawSprite(
         context,
         SERVE_UP_2_2,
-        this.xPosition + 12,
+        this.#xPosition + 12,
         this.#yPosition + 2,
       );
       this.#drawSprite(
         context,
         SERVE_DOWN_2,
-        this.xPosition - 20,
+        this.#xPosition - 20,
         this.#yPosition + SPRITE_HEIGHT + 2,
       );
     }
@@ -241,7 +245,7 @@ class Player {
     this.#drawSprite(
       context,
       this.#playerAction,
-      this.xPosition,
+      this.#xPosition,
       this.#yPosition,
     );
 
@@ -250,33 +254,33 @@ class Player {
       this.#drawSprite(
         context,
         2 + this.#playerAction,
-        this.xPosition,
+        this.#xPosition,
         this.#yPosition + SPRITE_HEIGHT,
       );
     } else if (this.#isGoingLeft) {
       this.#drawSprite(
         context,
         this.#legState,
-        this.xPosition,
+        this.#xPosition,
         this.#yPosition + SPRITE_HEIGHT,
       );
       this.#drawSprite(
         context,
         this.#legState + 1,
-        this.xPosition + SPRITE_HEIGHT,
+        this.#xPosition + SPRITE_HEIGHT,
         this.#yPosition + SPRITE_HEIGHT,
       );
     } else {
       this.#drawSprite(
         context,
         this.#legState + RUN_DOWN_RIGHT_OFFSET,
-        this.xPosition,
+        this.#xPosition,
         this.#yPosition + SPRITE_HEIGHT,
       );
       this.#drawSprite(
         context,
         this.#legState + 1 + RUN_DOWN_RIGHT_OFFSET,
-        this.xPosition - SPRITE_HEIGHT,
+        this.#xPosition - SPRITE_HEIGHT,
         this.#yPosition + SPRITE_HEIGHT,
       );
     }
@@ -291,30 +295,30 @@ class Player {
     switch (direction) {
       case UP: {
         this.#isServing = false;
-        this.#lastRow = this.currentRow;
+        this.#lastRow = this.#row;
 
-        if (this.currentRow === 1) this.currentRow = 4;
-        else this.currentRow--;
+        if (this.#row === 1) this.#row = 4;
+        else this.#row--;
 
         this.#goState = GO_1;
-        this.#lastXPosition = this.xPosition;
-        this.xPosition = ROW_X_POSITIONS[this.currentRow];
-        this.#yPosition = ROW_Y_POSITIONS[this.currentRow];
+        this.#lastXPosition = this.#xPosition;
+        this.#xPosition = ROW_X_POSITIONS[this.#row];
+        this.#yPosition = ROW_Y_POSITIONS[this.#row];
         SoundManager.play(BARMAN_ZIP_UP);
         break;
       }
 
       case DOWN: {
         this.#isServing = false;
-        this.#lastRow = this.currentRow;
+        this.#lastRow = this.#row;
 
-        if (this.currentRow === 4) this.currentRow = 1;
-        else this.currentRow++;
+        if (this.#row === 4) this.#row = 1;
+        else this.#row++;
 
         this.#goState = GO_1;
-        this.#lastXPosition = this.xPosition;
-        this.xPosition = ROW_X_POSITIONS[this.currentRow];
-        this.#yPosition = ROW_Y_POSITIONS[this.currentRow];
+        this.#lastXPosition = this.#xPosition;
+        this.#xPosition = ROW_X_POSITIONS[this.#row];
+        this.#yPosition = ROW_Y_POSITIONS[this.#row];
         SoundManager.play(BARMAN_ZIP_DOWN);
         break;
       }
@@ -322,11 +326,8 @@ class Player {
       case LEFT: {
         this.#isServing = false;
 
-        if (
-          this.#isGoingLeft &&
-          this.xPosition > ROW_LEFT_BOUNDS[this.currentRow]
-        ) {
-          this.xPosition -= STEP;
+        if (this.#isGoingLeft && this.#xPosition > ROW_LEFT_BOUNDS[this.#row]) {
+          this.#xPosition -= STEP;
           this.#isRunning = true;
           this.#playerAction = RUN_UP_L1;
 
@@ -335,7 +336,7 @@ class Player {
             this.#legState = RUN_DOWN_1;
           }
 
-          Tip.collect(this.currentRow, this.xPosition);
+          Tip.collect(this.#row, this.#xPosition);
         }
 
         this.#isGoingLeft = true;
@@ -347,9 +348,9 @@ class Player {
 
         if (
           !this.#isGoingLeft &&
-          this.xPosition < ROW_RIGHT_BOUNDS[this.currentRow]
+          this.#xPosition < ROW_RIGHT_BOUNDS[this.#row]
         ) {
-          this.xPosition += STEP;
+          this.#xPosition += STEP;
           this.#isRunning = true;
           this.#playerAction = RUN_UP_R1;
 
@@ -364,11 +365,11 @@ class Player {
       }
 
       case FIRE: {
-        if (this.xPosition !== ROW_RIGHT_BOUNDS[this.currentRow]) {
-          this.#lastRow = this.currentRow;
+        if (this.#xPosition !== ROW_RIGHT_BOUNDS[this.#row]) {
+          this.#lastRow = this.#row;
           this.#goState = GO_1;
-          this.#lastXPosition = this.xPosition;
-          this.xPosition = ROW_X_POSITIONS[this.currentRow];
+          this.#lastXPosition = this.#xPosition;
+          this.#xPosition = ROW_X_POSITIONS[this.#row];
         }
 
         if (!this.#isServing) {
@@ -406,7 +407,7 @@ class Player {
 
           if (this.#servingCounter === SERVING_MAX) {
             this.#servingCounter = 0;
-            Beers.add(this.currentRow, this.xPosition - SPRITE_WIDTH, true);
+            Beers.add(this.#row, this.#xPosition - SPRITE_WIDTH, true);
             this.#isServing = false;
             this.#isGoingLeft = false;
             this.#playerAction = STAND_R1;

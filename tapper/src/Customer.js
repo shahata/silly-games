@@ -53,14 +53,18 @@ export default class Customer {
   #secondaryYPosition;
   #fpsCount = 0;
   #targetXPosition = 0;
-  xPosition;
+  #xPosition;
   #yPosition;
 
-  constructor(row, type, position) {
+  constructor(row, position, type) {
     this.#row = row;
     this.#type = type;
-    this.xPosition = ROW_LEFT_BOUNDS[row] + (position - 1) * SPRITE_WIDTH;
+    this.#xPosition = ROW_LEFT_BOUNDS[row] + (position - 1) * SPRITE_WIDTH;
     this.#yPosition = ROW_Y_POSITIONS[row];
+  }
+
+  get xPosition() {
+    return this.#xPosition;
   }
 
   waiting() {
@@ -77,15 +81,15 @@ export default class Customer {
         this.#sprite = MOVING_PATTERN[this.#row][current];
 
         if (this.#sprite === REGULAR_1 || this.#sprite === REGULAR_2) {
-          this.xPosition += STEP;
-          if (this.xPosition >= ROW_RIGHT_BOUNDS[this.#row]) return true;
+          this.#xPosition += STEP;
+          if (this.#xPosition >= ROW_RIGHT_BOUNDS[this.#row]) return true;
         }
         break;
       }
 
       case CUSTOMER_STATE_CATCH: {
-        this.xPosition -= STEP * 2;
-        if (this.xPosition < this.#targetXPosition) {
+        this.#xPosition -= STEP * 2;
+        if (this.#xPosition < this.#targetXPosition) {
           this.#fpsCount = 0;
           this.#state = CUSTOMER_STATE_DRINK;
           this.#sprite = DRINKING_BEER_1;
@@ -100,8 +104,8 @@ export default class Customer {
           this.#fpsCount = 0;
           this.#state = CUSTOMER_STATE_WAIT;
           this.#sprite = MOVING_PATTERN[this.#row][0];
-          Beers.add(this.#row, this.xPosition + SPRITE_WIDTH, false);
-          Tip.add(this.#row, this.xPosition);
+          Beers.add(this.#row, this.#xPosition + SPRITE_WIDTH, false);
+          Tip.add(this.#row, this.#xPosition);
         }
         break;
       }
@@ -110,7 +114,7 @@ export default class Customer {
 
   catchBeer() {
     this.#targetXPosition =
-      this.xPosition -
+      this.#xPosition -
       ((ROW_RIGHT_BOUNDS[this.#row] - ROW_LEFT_BOUNDS[this.#row]) / 5) * 2;
     this.#state = CUSTOMER_STATE_CATCH;
     this.#sprite = HOLDING_BEER_1;
@@ -125,7 +129,7 @@ export default class Customer {
       SPRITE_HEIGHT * this.#type,
       SPRITE_WIDTH,
       SPRITE_HEIGHT,
-      this.xPosition,
+      this.#xPosition,
       this.#yPosition,
       SPRITE_WIDTH,
       SPRITE_HEIGHT,
@@ -138,7 +142,7 @@ export default class Customer {
         SPRITE_HEIGHT * this.#type,
         SPRITE_WIDTH,
         SPRITE_HEIGHT,
-        this.xPosition + SPRITE_WIDTH,
+        this.#xPosition + SPRITE_WIDTH,
         this.#secondaryYPosition,
         SPRITE_WIDTH,
         SPRITE_HEIGHT,

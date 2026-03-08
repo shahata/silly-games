@@ -8,9 +8,14 @@ export const STATE_LOADING = 5;
 export const STATE_PAUSE = 6;
 
 class GameState {
-  state;
+  #state;
+
+  get state() {
+    return this.#state;
+  }
+
   changeState(newState) {
-    this.state = newState;
+    this.#state = newState;
   }
 }
 

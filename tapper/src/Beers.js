@@ -91,7 +91,7 @@ class Beers {
         customer.catchBeer();
         return true;
       }
-    } else if (Player.currentRow === row) {
+    } else if (Player.row === row) {
       if (glass.xPosition + SPRITE_WIDTH >= Player.xPosition) {
         SoundManager.play(GRAB_MUG);
         LevelManager.addScore(SCORE_EMPTY_BEER);

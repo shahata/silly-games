@@ -31,8 +31,8 @@ class Customers {
     this.#addCustomer();
   }
 
-  add(row, pos, type) {
-    this.#customersList[row].push(new Customer(row, type, pos));
+  #add(row, position, type) {
+    this.#customersList[row].push(new Customer(row, position, type));
   }
 
   #addCustomer() {
@@ -42,10 +42,10 @@ class Customers {
       if (this.#wave++ === LevelManager.difficulty * 2)
         LevelManager.increaseDifficulty();
       for (let i = 1; i <= LevelManager.difficulty; i++) {
-        this.add(1, i, CUSTOMER_GREEN_HAT_COWBOY);
-        this.add(2, i, CUSTOMER_WOMAN);
-        this.add(3, i, CUSTOMER_BLACK_GUY);
-        this.add(4, i, CUSTOMER_GRAY_HAT_COWBOY);
+        this.#add(1, i, CUSTOMER_GREEN_HAT_COWBOY);
+        this.#add(2, i, CUSTOMER_WOMAN);
+        this.#add(3, i, CUSTOMER_BLACK_GUY);
+        this.#add(4, i, CUSTOMER_GRAY_HAT_COWBOY);
         SoundManager.play(POP_OUT);
       }
     } else {
@@ -54,7 +54,7 @@ class Customers {
         const randomCustomerType = Math.floor(
           Math.random() * MAX_CUSTOMER_TYPE,
         );
-        this.add(randomRow, 1, randomCustomerType);
+        this.#add(randomRow, 1, randomCustomerType);
         SoundManager.play(POP_OUT);
         this.#lastRandomRow = randomRow;
       }
