@@ -84,20 +84,19 @@ class Beers {
     this.#glasses[row].push(new Glass(row, xPosition, isFull));
   }
 
-  #checkCustomerCollision(glass, row) {
-    const customer = Customers.getFirstWaitingCustomer(row);
-    if (customer && glass.xPosition <= customer.xPosition + 24) {
-      customer.catchBeer();
-      return true;
-    }
-    return false;
-  }
-
-  #checkPlayerCollision(glass, row) {
-    if (glass.xPosition + SPRITE_WIDTH >= Player.xPosition) {
-      SoundManager.play(GRAB_MUG);
-      LevelManager.addScore(SCORE_EMPTY_BEER);
-      return true;
+  #checkCollision(glass, row) {
+    if (glass.isFull) {
+      const customer = Customers.getFirstWaitingCustomer(row);
+      if (customer && glass.xPosition <= customer.xPosition + 24) {
+        customer.catchBeer();
+        return true;
+      }
+    } else if (Player.currentRow === row) {
+      if (glass.xPosition + SPRITE_WIDTH >= Player.xPosition) {
+        SoundManager.play(GRAB_MUG);
+        LevelManager.addScore(SCORE_EMPTY_BEER);
+        return true;
+      }
     }
     return false;
   }
@@ -107,14 +106,8 @@ class Beers {
       for (let i = this.#glasses[row].length; i--; i >= 0) {
         const glass = this.#glasses[row][i];
         if (GameState.state === STATE_PLAY) {
-          let collision = false;
           if (glass.update()) return true;
-          if (glass.isFull) {
-            collision = this.#checkCustomerCollision(glass, row);
-          } else if (Player.currentRow === row) {
-            collision = this.#checkPlayerCollision(glass, row);
-          }
-          if (collision) this.#glasses[row].splice(i, 1);
+          if (this.#checkCollision(glass, row)) this.#glasses[row].splice(i, 1);
         }
         glass.draw(context, this.#spriteImage);
       }
