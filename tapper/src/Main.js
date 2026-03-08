@@ -1,4 +1,4 @@
-import Player, { DOWN, FIRE, LEFT, NONE, RIGHT, UP } from "./Player.js";
+import Player from "./Player.js";
 import Customers from "./Customers.js";
 import Beers from "./Beers.js";
 import Tip from "./Tip.js";
@@ -127,19 +127,11 @@ class Game {
     if (!this.#isKeyPressAllowed) return;
     switch (event.key) {
       case "ArrowUp":
-        Player.move(UP);
-        break;
       case "ArrowDown":
-        Player.move(DOWN);
-        break;
       case "ArrowLeft":
-        Player.move(LEFT);
-        break;
       case "ArrowRight":
-        Player.move(RIGHT);
-        break;
       case " ":
-        Player.move(FIRE);
+        Player.move(event.key);
         break;
       case "Enter":
         if (GameState.state === STATE_MENU) {
@@ -171,7 +163,7 @@ class Game {
       case "ArrowLeft":
       case "ArrowRight":
       case " ":
-        Player.move(NONE);
+        Player.move(null);
         break;
     }
     event.preventDefault();

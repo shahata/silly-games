@@ -11,13 +11,6 @@ import SoundManager, {
 import ResourceManager from "./ResourceManager.js";
 import GameState, { STATE_PLAY } from "./GameState.js";
 
-export const LEFT = 0;
-export const RIGHT = 1;
-export const UP = 2;
-export const DOWN = 3;
-export const FIRE = 4;
-export const NONE = 6;
-
 const STAND_LEFT = [0, 1];
 const STAND_RIGHT = [8, 9];
 const RUN_UP_LEFT = 12;
@@ -25,13 +18,13 @@ const RUN_UP_RIGHT = 13;
 const RUN_DOWN = [14, 16, 18, 20];
 const RUN_DOWN_RIGHT_OFFSET = 8;
 const GO = [4, 5, 6, 7];
-const LOST = 43;
 
 const TAPPER = [30, 31, 32];
 const SERVE_UP_A = [null, 33, 36];
 const SERVE_UP_B = [null, 34, 37];
 const SERVE_DOWN = [null, 35, 38];
 const BEER_FILL = [39, 40, 41, 42];
+const LOST = 43;
 
 const ROW_X_POSITIONS = [null, 336, 368, 400, 432];
 const ROW_Y_POSITIONS = [null, 96, 192, 288, 384];
@@ -47,19 +40,18 @@ const LEG_ANIMATION_TIMING = 20;
 
 class Player {
   #row;
+  #lastRow;
+  #lastXPosition;
   #xPosition;
   #yPosition;
   #goState;
   #legState;
+  #fillState;
   #tapperState;
   #playerAction;
-  #lastRow;
   #faceLeft;
   #isRunning;
-  #isServing;
   #fpsCount;
-  #servingCounter;
-  #lastXPosition;
   #spriteImage = ResourceManager.getImageResource("barman");
 
   get row() {
@@ -79,19 +71,18 @@ class Player {
 
     this.#goState = 0;
     this.#legState = 0;
+    this.#fillState = 0;
     this.#tapperState = 0;
-    this.#servingCounter = 0;
     this.#playerAction = STAND_LEFT[0];
 
     this.#faceLeft = true;
     this.#isRunning = false;
-    this.#isServing = false;
     this.#fpsCount = 0;
   }
 
   lost() {
+    this.#fillState = 0;
     this.#isRunning = false;
-    this.#isServing = false;
     this.#playerAction = LOST;
   }
 
@@ -136,7 +127,7 @@ class Player {
 
   #drawTap(context) {
     for (let rowNumber = 1; rowNumber <= 4; rowNumber++) {
-      if (this.#row === rowNumber && this.#isServing) {
+      if (this.#row === rowNumber && this.#fillState > 0) {
         this.#drawSprite(
           context,
           TAPPER[this.#tapperState],
@@ -155,7 +146,7 @@ class Player {
   }
 
   #drawServing(context) {
-    for (let i = 0; i < this.#servingCounter; i++) {
+    for (let i = 0; i < this.#fillState; i++) {
       this.#drawSprite(
         context,
         BEER_FILL[i],
@@ -220,21 +211,21 @@ class Player {
   draw(context) {
     this.#drawTap(context);
     if (GO[this.#goState]) return this.#drawWind(context);
-    if (this.#isServing) this.#drawServing(context);
+    if (this.#fillState > 0) this.#drawServing(context);
     else if (!this.#isRunning) this.#drawStanding(context);
     else if (this.#faceLeft) this.#drawRunningLeft(context);
     else this.#drawRunningRight(context);
     return true;
   }
 
-  move(direction) {
+  move(key) {
     if (GameState.state !== STATE_PLAY) return;
     this.#isRunning = false;
 
-    switch (direction) {
-      case UP: {
+    switch (key) {
+      case "ArrowUp": {
         this.#goState = 0;
-        this.#isServing = false;
+        this.#fillState = 0;
         this.#lastRow = this.#row;
         if (--this.#row === 0) this.#row = 4;
         this.#lastXPosition = this.#xPosition;
@@ -244,9 +235,9 @@ class Player {
         break;
       }
 
-      case DOWN: {
+      case "ArrowDown": {
         this.#goState = 0;
-        this.#isServing = false;
+        this.#fillState = 0;
         this.#lastRow = this.#row;
         if (++this.#row > 4) this.#row = 1;
         this.#lastXPosition = this.#xPosition;
@@ -256,8 +247,8 @@ class Player {
         break;
       }
 
-      case LEFT: {
-        this.#isServing = false;
+      case "ArrowLeft": {
+        this.#fillState = 0;
         if (this.#faceLeft && this.#xPosition > ROW_LEFT_BOUNDS[this.#row]) {
           this.#xPosition -= STEP;
           this.#isRunning = true;
@@ -269,8 +260,8 @@ class Player {
         break;
       }
 
-      case RIGHT: {
-        this.#isServing = false;
+      case "ArrowRight": {
+        this.#fillState = 0;
         if (!this.#faceLeft && this.#xPosition < ROW_RIGHT_BOUNDS[this.#row]) {
           this.#xPosition += STEP;
           this.#isRunning = true;
@@ -281,39 +272,32 @@ class Player {
         break;
       }
 
-      case FIRE: {
+      case " ": {
+        this.#tapperState = 2;
+        this.#faceLeft = false;
         if (this.#xPosition !== ROW_RIGHT_BOUNDS[this.#row]) {
           this.#goState = 0;
           this.#lastRow = this.#row;
           this.#lastXPosition = this.#xPosition;
           this.#xPosition = ROW_X_POSITIONS[this.#row];
         }
-        if (!this.#isServing) {
-          this.#servingCounter = 0;
-          this.#isServing = true;
-          this.#tapperState = 2;
-        }
-        if (this.#servingCounter < SERVING_MAX) {
-          this.#servingCounter++;
-          if (this.#servingCounter === SERVING_MAX) SoundManager.play(FULL_MUG);
-          else if (this.#servingCounter === 1) SoundManager.play(MUG_FILL_1);
+        if (this.#fillState < BEER_FILL.length) {
+          this.#fillState++;
+          if (this.#fillState === BEER_FILL.length) SoundManager.play(FULL_MUG);
+          else if (this.#fillState === 1) SoundManager.play(MUG_FILL_1);
           else SoundManager.play(MUG_FILL_2);
         }
         break;
       }
 
-      case NONE: {
-        if (this.#isServing) {
-          this.#tapperState = 1;
-          if (this.#servingCounter === SERVING_MAX) {
-            this.#servingCounter = 0;
-            this.#isServing = false;
-            this.#faceLeft = false;
-            Beers.add(this.#row, this.#xPosition - SPRITE_WIDTH, true);
-            SoundManager.play(THROW_MUG);
-          }
-        }
+      case null: {
         this.#legState = 0;
+        this.#tapperState = 1;
+        if (this.#fillState === BEER_FILL.length) {
+          this.#fillState = 0;
+          Beers.add(this.#row, this.#xPosition - SPRITE_WIDTH, true);
+          SoundManager.play(THROW_MUG);
+        }
         break;
       }
     }
