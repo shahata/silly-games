@@ -76,7 +76,6 @@ class Player {
   #tapperState;
   #playerAction;
   #lastRow;
-  #isGamePlay;
   #isGoingLeft;
   #isRunning;
   #isServing;
@@ -107,7 +106,6 @@ class Player {
 
     this.#isGoingLeft = true;
     this.#isRunning = false;
-    this.#isGamePlay = true;
     this.#isServing = false;
     this.#fpsCount = 0;
   }
@@ -115,12 +113,14 @@ class Player {
   lost() {
     this.#isRunning = false;
     this.#isServing = false;
-    this.#isGamePlay = false;
     this.#playerAction = LOST_1;
   }
 
   #setAnimation() {
-    if (this.#fpsCount++ > LEG_ANIMATION_TIMING && this.#isGamePlay) {
+    if (
+      GameState.state === STATE_PLAY &&
+      this.#fpsCount++ > LEG_ANIMATION_TIMING
+    ) {
       if (this.#isGoingLeft) {
         this.#playerAction =
           this.#playerAction === STAND_L1 ? STAND_L2 : STAND_L1;

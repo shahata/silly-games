@@ -6,27 +6,28 @@ import LevelManager, {
 } from "./LevelManager.js";
 import SoundManager, { COLLECT_TIP, TIP_APPEAR } from "./SoundManager.js";
 import ResourceManager from "./ResourceManager.js";
+import GameState, { FPS, STATE_PLAY } from "./GameState.js";
 
 const TIP_OFFSET = 5;
 const SPRITE_WIDTH = 32;
 const SPRITE_HEIGHT = 32;
-const TIP_TIMEOUT_MS = 10 * 1000;
+const TIP_INTERVAL = 10 * FPS;
 
 class Tip {
   #visible = false;
-  #timeoutReached = true;
+  #tipTimer = null;
   #xPosition = 100;
   #yPosition = 0;
   #row = 1;
   #spriteImage = ResourceManager.getImageResource("beer_glass");
 
   reset() {
-    this.#timeoutReached = true;
+    this.#tipTimer = null;
     this.#visible = false;
   }
 
   add(row, customerXPosition) {
-    if (!this.#visible && this.#timeoutReached) {
+    if (!this.#visible && this.#tipTimer === null) {
       if (
         customerXPosition - ROW_LEFT_BOUNDS[row] <
         (ROW_RIGHT_BOUNDS[row] - ROW_LEFT_BOUNDS[row]) / 3
@@ -36,13 +37,7 @@ class Tip {
           this.#row = row;
           this.#xPosition = customerXPosition;
           this.#yPosition = ROW_Y_POSITIONS[row] + 16;
-          this.#timeoutReached = false;
-
-          setTimeout(() => {
-            this.#visible = false;
-            this.#timeoutReached = true;
-          }, TIP_TIMEOUT_MS);
-
+          this.#tipTimer = 0;
           SoundManager.play(TIP_APPEAR);
         }
       }
@@ -62,6 +57,14 @@ class Tip {
   }
 
   draw(context) {
+    if (
+      GameState.state === STATE_PLAY &&
+      this.#tipTimer !== null &&
+      ++this.#tipTimer >= TIP_INTERVAL
+    ) {
+      this.#visible = false;
+      this.#tipTimer = null;
+    }
     if (this.#visible) {
       context.drawImage(
         this.#spriteImage,

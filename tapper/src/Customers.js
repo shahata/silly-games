@@ -5,9 +5,9 @@ import LevelManager, {
 } from "./LevelManager.js";
 import SoundManager, { OUT_DOOR, POP_OUT } from "./SoundManager.js";
 import ResourceManager from "./ResourceManager.js";
-import GameState, { STATE_PLAY } from "./GameState.js";
+import GameState, { FPS, STATE_PLAY } from "./GameState.js";
 
-const TIME_STEP_SECONDS = 3;
+const SPAWN_INTERVAL = 3 * FPS;
 
 const CUSTOMER_GREEN_HAT_COWBOY = 0;
 const CUSTOMER_WOMAN = 1;
@@ -21,45 +21,43 @@ class Customers {
   #spriteImage = ResourceManager.getImageResource("customers");
   #wave;
   #lastRandomRow;
+  #spawnTimer;
 
   reset() {
     this.#wave = LevelManager.difficulty * 2 >= this.#wave ? this.#wave - 1 : 0;
     this.#lastRandomRow = -1;
     this.#customersList = new Array(5).fill(null).map(() => []);
     this.#leadingCustomerByRow = new Array(5).fill(null);
-    this.#addCustomer();
+    this.#spawn();
   }
 
   #add(row, position, type) {
     this.#customersList[row].push(new Customer(row, position, type));
   }
 
-  #addCustomer() {
-    if (GameState.state === STATE_PLAY) {
-      if (this.#count() < 2) {
-        if (this.#wave++ === LevelManager.difficulty * 2)
-          LevelManager.increaseDifficulty();
-        for (let i = 1; i <= LevelManager.difficulty; i++) {
-          this.#add(1, i, CUSTOMER_GREEN_HAT_COWBOY);
-          this.#add(2, i, CUSTOMER_WOMAN);
-          this.#add(3, i, CUSTOMER_BLACK_GUY);
-          this.#add(4, i, CUSTOMER_GRAY_HAT_COWBOY);
-          SoundManager.play(POP_OUT);
-        }
-      } else {
-        const randomRow = Math.floor(Math.random() * 5);
-        if (randomRow !== 0 && randomRow !== this.#lastRandomRow) {
-          const randomCustomerType = Math.floor(
-            Math.random() * MAX_CUSTOMER_TYPE,
-          );
-          this.#add(randomRow, 1, randomCustomerType);
-          SoundManager.play(POP_OUT);
-          this.#lastRandomRow = randomRow;
-        }
+  #spawn() {
+    this.#spawnTimer = 0;
+    if (this.#count() < 2) {
+      if (this.#wave++ === LevelManager.difficulty * 2)
+        LevelManager.increaseDifficulty();
+      for (let i = 1; i <= LevelManager.difficulty; i++) {
+        this.#add(1, i, CUSTOMER_GREEN_HAT_COWBOY);
+        this.#add(2, i, CUSTOMER_WOMAN);
+        this.#add(3, i, CUSTOMER_BLACK_GUY);
+        this.#add(4, i, CUSTOMER_GRAY_HAT_COWBOY);
+        SoundManager.play(POP_OUT);
+      }
+    } else {
+      const randomRow = Math.floor(Math.random() * 5);
+      if (randomRow !== 0 && randomRow !== this.#lastRandomRow) {
+        const randomCustomerType = Math.floor(
+          Math.random() * MAX_CUSTOMER_TYPE,
+        );
+        this.#add(randomRow, 1, randomCustomerType);
+        SoundManager.play(POP_OUT);
+        this.#lastRandomRow = randomRow;
       }
     }
-
-    setTimeout(() => this.#addCustomer(), TIME_STEP_SECONDS * 1000);
   }
 
   getFirstWaitingCustomer(row) {
@@ -96,6 +94,10 @@ class Customers {
         customer.draw(context, this.#spriteImage);
       }
     }
+
+    if (GameState.state === STATE_PLAY && ++this.#spawnTimer >= SPAWN_INTERVAL)
+      this.#spawn();
+
     return false;
   }
 }
