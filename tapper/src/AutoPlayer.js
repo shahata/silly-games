@@ -3,11 +3,12 @@ import Customers from "./Customers.js";
 import Beers from "./Beers.js";
 import Tip from "./Tip.js";
 import GameState, { STATE_PLAY } from "./GameState.js";
-import { ROW_RIGHT_BOUNDS } from "./LevelManager.js";
+import { ROW_RIGHT_BOUNDS, ROW_LEFT_BOUNDS } from "./LevelManager.js";
 
 const FILL_PRESSES = 4;
 const SWITCH_COOLDOWN = 0;
 const SPRITE_WIDTH = 32;
+const EXIT_FRACTION = 0.4; // catchBeer pushes back 40% of row length
 
 class AutoPlayer {
   #active = false;
@@ -71,27 +72,40 @@ class AutoPlayer {
     const glasses = Beers.glasses;
     const customers = Customers.customers;
 
-    let bestAction = { type: "idle", score: Infinity };
+    let bestCatch = { type: "idle", score: Infinity };
+    let bestServe = { type: "idle", score: Infinity };
+    let bestEntranceServe = { type: "idle", score: Infinity };
 
     for (let row = 1; row <= 4; row++) {
       const fullBeers = glasses[row]
         ? glasses[row].filter((g) => g.isFull).length
         : 0;
 
-      // Prefer staying on current row to avoid switch overhead
       const switchCost = row === Player.row ? 0 : 3;
+      const rowLength = ROW_RIGHT_BOUNDS[row] - ROW_LEFT_BOUNDS[row];
+      const exitThreshold = ROW_LEFT_BOUNDS[row] + rowLength * EXIT_FRACTION;
 
       // Customer urgency: serve if more waiting customers than beers in flight
       if (customers[row]) {
         let waitingCount = 0;
         for (const customer of customers[row]) {
-          if (customer.waiting()) {
-            waitingCount++;
-            if (waitingCount > fullBeers) {
-              const score =
-                ROW_RIGHT_BOUNDS[row] - customer.xPosition + switchCost;
-              if (score < bestAction.score) {
-                bestAction = { type: "serve", row, score };
+          if (customer.waiting()) waitingCount++;
+        }
+
+        if (waitingCount > fullBeers) {
+          for (const customer of customers[row]) {
+            if (customer.waiting()) {
+              const distFromEnd = ROW_RIGHT_BOUNDS[row] - customer.xPosition;
+              const score = distFromEnd + switchCost;
+              if (customer.xPosition < exitThreshold) {
+                // Entrance-area: exits without empty, may tip
+                if (score < bestEntranceServe.score) {
+                  bestEntranceServe = { type: "serve", row, score };
+                }
+              } else {
+                if (score < bestServe.score) {
+                  bestServe = { type: "serve", row, score };
+                }
               }
             }
           }
@@ -104,19 +118,26 @@ class AutoPlayer {
         for (const glass of glasses[row]) {
           if (!glass.isFull) {
             const score = fallPoint - glass.xPosition + switchCost;
-            if (score < bestAction.score) {
-              bestAction = { type: "catch", row, score };
+            if (score < bestCatch.score) {
+              bestCatch = { type: "catch", row, score };
             }
           }
         }
       }
     }
 
-    if (bestAction.type === "idle" && Tip.visible) {
-      return { type: "tip" };
-    }
+    // Priority: catch empties > serve bar-area customers > serve entrance customers > tip
+    // But entrance customers get priority over bar-area when nothing is urgent
+    const hasUrgentCatch = bestCatch.score < 80;
+    const hasUrgentServe = bestServe.score < 80;
 
-    return bestAction;
+    if (hasUrgentCatch && bestCatch.score <= bestServe.score) return bestCatch;
+    if (hasUrgentServe) return bestServe;
+    if (bestEntranceServe.type !== "idle") return bestEntranceServe;
+    if (bestCatch.type !== "idle") return bestCatch;
+    if (bestServe.type !== "idle") return bestServe;
+    if (Tip.visible) return { type: "tip" };
+    return { type: "idle" };
   }
 
   #continueFilling() {

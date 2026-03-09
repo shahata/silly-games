@@ -55,20 +55,23 @@ function simulate(difficulty, maxFrames = 60 * 180) {
     const custLost = Customers.draw(mockCtx);
     const beerLost = Beers.draw(mockCtx);
     if (custLost || beerLost) {
-      return { frame, lost: true, custLost };
+      return { frame, lost: true, custLost, score: LevelManager.score, difficulty: LevelManager.difficulty };
     }
     Tip.draw(mockCtx);
     AutoPlayer.update();
     Player.draw(mockCtx);
   }
-  return { frame: maxFrames, lost: false };
+  return { frame: maxFrames, lost: false, score: LevelManager.score, difficulty: LevelManager.difficulty };
 }
 
 const N = 50;
 for (let d = 3; d <= 6; d++) {
   let survived = 0, custLosses = 0, beerLosses = 0, totalLossFrame = 0;
+  let totalScore = 0, maxDiff = 0;
   for (let t = 0; t < N; t++) {
     const r = simulate(d);
+    totalScore += r.score;
+    if (r.difficulty > maxDiff) maxDiff = r.difficulty;
     if (!r.lost) survived++;
     else {
       if (r.custLost) custLosses++;
@@ -78,5 +81,6 @@ for (let d = 3; d <= 6; d++) {
   }
   const losses = N - survived;
   const avg = losses ? (totalLossFrame / losses / 60).toFixed(0) : "-";
-  console.log(`d${d}: ${survived}/${N} survived | ${custLosses}C ${beerLosses}B losses | avg ${avg}s`);
+  const avgScore = (totalScore / N).toFixed(0);
+  console.log(`d${d}: ${survived}/${N} survived | ${custLosses}C ${beerLosses}B losses | avg ${avg}s | avgScore ${avgScore} | maxDiff ${maxDiff}`);
 }

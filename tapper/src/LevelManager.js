@@ -130,6 +130,10 @@ class LevelManager {
     this.#difficulty++;
   }
 
+  get score() {
+    return this.#score;
+  }
+
   addScore(points) {
     this.#score += points;
   }
