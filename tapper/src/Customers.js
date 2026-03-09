@@ -99,7 +99,7 @@ class Customers {
       }
     }
 
-    if (GameState.state === STATE_PLAY && ++this.#spawnTimer >= SPAWN_INTERVAL)
+    if (GameState.state === STATE_PLAY && (this.#spawnTimer += GameState.speed) >= SPAWN_INTERVAL)
       this.#spawn();
 
     return false;

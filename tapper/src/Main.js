@@ -146,6 +146,13 @@ class Game {
       case "Tab":
         AutoPlayer.toggle();
         break;
+      case "+":
+      case "=":
+        GameState.faster();
+        break;
+      case "-":
+        GameState.slower();
+        break;
       case "Escape":
         if (GameState.state === STATE_PLAY) {
           GameState.changeState(STATE_PAUSE);

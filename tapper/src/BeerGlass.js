@@ -3,6 +3,7 @@ import {
   ROW_RIGHT_BOUNDS,
   ROW_Y_POSITIONS,
 } from "./LevelManager.js";
+import GameState from "./GameState.js";
 
 const SPRITE_FULL_1 = 0;
 const SPRITE_FULL_2 = 1;
@@ -49,7 +50,7 @@ export default class BeerGlass {
     } else {
       if (this.#xPosition < ROW_RIGHT_BOUNDS[this.#row] + SPRITE_WIDTH) {
         this.#sprite = SPRITE_EMPTY_1;
-        this.#xPosition += STEP_EMPTY;
+        this.#xPosition += STEP_EMPTY * GameState.speed;
       } else {
         this.#sprite = SPRITE_FALLING;
         return true;

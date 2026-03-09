@@ -72,7 +72,7 @@ class Tip {
     if (
       GameState.state === STATE_PLAY &&
       this.#tipTimer !== null &&
-      ++this.#tipTimer >= TIP_INTERVAL
+      (this.#tipTimer += GameState.speed) >= TIP_INTERVAL
     ) {
       this.#visible = false;
       this.#tipTimer = null;

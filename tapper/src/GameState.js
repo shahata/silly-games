@@ -9,9 +9,22 @@ export const STATE_PAUSE = 6;
 
 class GameState {
   #state;
+  #speed = 1;
 
   get state() {
     return this.#state;
+  }
+
+  get speed() {
+    return this.#speed;
+  }
+
+  faster() {
+    this.#speed = Math.min(this.#speed + 0.25, 3);
+  }
+
+  slower() {
+    this.#speed = Math.max(this.#speed - 0.25, 0.25);
   }
 
   changeState(newState) {

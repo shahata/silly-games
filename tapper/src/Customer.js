@@ -4,7 +4,7 @@ import {
   ROW_RIGHT_BOUNDS,
   ROW_Y_POSITIONS,
 } from "./LevelManager.js";
-import { FPS } from "./GameState.js";
+import GameState, { FPS } from "./GameState.js";
 import Tip from "./Tip.js";
 
 const HOLDING_BEER_1 = 4;
@@ -72,23 +72,24 @@ export default class Customer {
   }
 
   update() {
+    const speed = GameState.speed;
     switch (this.#state) {
       case CUSTOMER_STATE_WAIT: {
-        this.#fpsCount++;
+        this.#fpsCount += speed;
         const current =
           Math.floor((4 * this.#fpsCount) / FPS) %
           MOVING_PATTERN[this.#row].length;
         this.#sprite = MOVING_PATTERN[this.#row][current];
 
         if (this.#sprite === REGULAR_1 || this.#sprite === REGULAR_2) {
-          this.#xPosition += STEP;
+          this.#xPosition += STEP * speed;
           if (this.#xPosition >= ROW_RIGHT_BOUNDS[this.#row]) return true;
         }
         break;
       }
 
       case CUSTOMER_STATE_CATCH: {
-        this.#xPosition -= STEP * 2;
+        this.#xPosition -= STEP * 2 * speed;
         if (this.#xPosition < this.#targetXPosition) {
           this.#fpsCount = 0;
           this.#state = CUSTOMER_STATE_DRINK;
@@ -100,7 +101,8 @@ export default class Customer {
       }
 
       case CUSTOMER_STATE_DRINK: {
-        if (this.#fpsCount++ >= FPS / 3) {
+        this.#fpsCount += speed;
+        if (this.#fpsCount >= FPS / 3) {
           this.#fpsCount = 0;
           this.#state = CUSTOMER_STATE_WAIT;
           this.#sprite = MOVING_PATTERN[this.#row][0];

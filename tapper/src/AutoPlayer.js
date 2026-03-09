@@ -8,7 +8,8 @@ import { ROW_RIGHT_BOUNDS, ROW_LEFT_BOUNDS } from "./LevelManager.js";
 const FILL_PRESSES = 4;
 const SWITCH_COOLDOWN = 0;
 const SPRITE_WIDTH = 32;
-const EXIT_FRACTION = 0.4; // catchBeer pushes back 40% of row length
+const TIP_ZONE_FRACTION = 1 / 3; // Tip.add checks left 1/3 of row
+const DANGER_THRESHOLD = 80; // only interrupt tip-farming for imminent threats
 
 class AutoPlayer {
   #active = false;
@@ -83,7 +84,7 @@ class AutoPlayer {
 
       const switchCost = row === Player.row ? 0 : 3;
       const rowLength = ROW_RIGHT_BOUNDS[row] - ROW_LEFT_BOUNDS[row];
-      const exitThreshold = ROW_LEFT_BOUNDS[row] + rowLength * EXIT_FRACTION;
+      const tipThreshold = ROW_LEFT_BOUNDS[row] + rowLength * TIP_ZONE_FRACTION;
 
       // Customer urgency: serve if more waiting customers than beers in flight
       if (customers[row]) {
@@ -97,8 +98,8 @@ class AutoPlayer {
             if (customer.waiting()) {
               const distFromEnd = ROW_RIGHT_BOUNDS[row] - customer.xPosition;
               const score = distFromEnd + switchCost;
-              if (customer.xPosition < exitThreshold) {
-                // Entrance-area: exits without empty, may tip
+              if (customer.xPosition < tipThreshold) {
+                // Tip zone: serve ASAP for 1500pt tip chance + no empty glass
                 if (score < bestEntranceServe.score) {
                   bestEntranceServe = { type: "serve", row, score };
                 }
@@ -126,17 +127,22 @@ class AutoPlayer {
       }
     }
 
-    // Priority: catch empties > serve bar-area customers > serve entrance customers > tip
-    // But entrance customers get priority over bar-area when nothing is urgent
-    const hasUrgentCatch = bestCatch.score < 80;
-    const hasUrgentServe = bestServe.score < 80;
+    // Priority: tip-zone serves first (1500pt tip chance), only yield to imminent death
+    const hasDanger =
+      (bestCatch.score < DANGER_THRESHOLD) ||
+      (bestServe.score < DANGER_THRESHOLD);
 
-    if (hasUrgentCatch && bestCatch.score <= bestServe.score) return bestCatch;
-    if (hasUrgentServe) return bestServe;
+    if (hasDanger) {
+      // Handle the most urgent threat
+      if (bestCatch.score <= bestServe.score) return bestCatch;
+      return bestServe;
+    }
+    // Tip-zone serves are top priority for score
     if (bestEntranceServe.type !== "idle") return bestEntranceServe;
+    // Collect tips when available (1500 points)
+    if (Tip.visible) return { type: "tip" };
     if (bestCatch.type !== "idle") return bestCatch;
     if (bestServe.type !== "idle") return bestServe;
-    if (Tip.visible) return { type: "tip" };
     return { type: "idle" };
   }
 
