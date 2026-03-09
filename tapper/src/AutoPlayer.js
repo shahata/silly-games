@@ -71,22 +71,28 @@ class AutoPlayer {
     const glasses = Beers.glasses;
     const customers = Customers.customers;
 
-    // Score each row: combine customer urgency and empty beer urgency
     let bestAction = { type: "idle", score: Infinity };
 
     for (let row = 1; row <= 4; row++) {
-      const hasFullBeer = glasses[row] && glasses[row].some((g) => g.isFull);
+      const fullBeers = glasses[row]
+        ? glasses[row].filter((g) => g.isFull).length
+        : 0;
 
       // Prefer staying on current row to avoid switch overhead
       const switchCost = row === Player.row ? 0 : 3;
 
-      // Customer urgency on this row
-      if (!hasFullBeer && customers[row]) {
+      // Customer urgency: serve if more waiting customers than beers in flight
+      if (customers[row]) {
+        let waitingCount = 0;
         for (const customer of customers[row]) {
           if (customer.waiting()) {
-            const score = ROW_RIGHT_BOUNDS[row] - customer.xPosition + switchCost;
-            if (score < bestAction.score) {
-              bestAction = { type: "serve", row, score };
+            waitingCount++;
+            if (waitingCount > fullBeers) {
+              const score =
+                ROW_RIGHT_BOUNDS[row] - customer.xPosition + switchCost;
+              if (score < bestAction.score) {
+                bestAction = { type: "serve", row, score };
+              }
             }
           }
         }
@@ -106,8 +112,7 @@ class AutoPlayer {
       }
     }
 
-    // Tip collection when nothing is urgent
-    if (bestAction.score > 100 && Tip.visible) {
+    if (bestAction.type === "idle" && Tip.visible) {
       return { type: "tip" };
     }
 
