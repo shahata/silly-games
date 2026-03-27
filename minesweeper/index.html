@@ -11,8 +11,10 @@
       }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.js"></script>
-    <script type="module" crossorigin src="/silly-games/assets/minesweeper-Dk-gEqOC.js"></script>
-    <link rel="modulepreload" crossorigin href="/silly-games/assets/modulepreload-polyfill-B5Qt9EMX.js">
+    <script type="module" crossorigin src="/silly-games/assets/minesweeper-BIC1TZ63.js"></script>
+    <link rel="modulepreload" crossorigin href="/silly-games/assets/party-init-BRcgcz_H.js">
+    <link rel="modulepreload" crossorigin href="/silly-games/assets/firebaseSafe-CXs9FCF0.js">
+    <link rel="modulepreload" crossorigin href="/silly-games/assets/partyState-DTzUUJuf.js">
     <link rel="stylesheet" crossorigin href="/silly-games/assets/minesweeper-Cj-xRDmT.css">
     <link rel="stylesheet" crossorigin href="/silly-games/assets/theme-B3nrMUQu.css">
   </head>
@@ -29,8 +31,8 @@
       <div class="grid-wrapper">
         <table id="minesweeper">
           <tr ng-repeat="row in minefield.game">
-            <td ng-repeat="cell in row" ng-click="cell.$reveal()" ng-dblclick="cell.$autoReveal()"
-              on-contextmenu="cell.$flag()" ng-class="{covered: !cell.revealed}">
+            <td ng-repeat="cell in row" ng-click="cell.$reveal(); syncAfterAction()" ng-dblclick="cell.$autoReveal(); syncAfterAction()"
+              on-contextmenu="cell.$flag(); syncAfterAction()" ng-class="{covered: !cell.revealed}">
               <div class="cell-value" ng-show="cell.revealed">{{cell.$displayValue()}}</div>
               <div class="cell-flag" ng-show="cell.flagged">Flag</div>
             </td>

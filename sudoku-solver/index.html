@@ -11,8 +11,10 @@
       }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.js"></script>
-    <script type="module" crossorigin src="/silly-games/assets/sudoku-solver-Ct99HTgQ.js"></script>
-    <link rel="modulepreload" crossorigin href="/silly-games/assets/modulepreload-polyfill-B5Qt9EMX.js">
+    <script type="module" crossorigin src="/silly-games/assets/sudoku-solver-8kaqaC__.js"></script>
+    <link rel="modulepreload" crossorigin href="/silly-games/assets/party-init-BRcgcz_H.js">
+    <link rel="modulepreload" crossorigin href="/silly-games/assets/firebaseSafe-CXs9FCF0.js">
+    <link rel="modulepreload" crossorigin href="/silly-games/assets/partyState-DTzUUJuf.js">
     <link rel="stylesheet" crossorigin href="/silly-games/assets/sudoku-solver-CUjcYPGp.css">
     <link rel="stylesheet" crossorigin href="/silly-games/assets/theme-B3nrMUQu.css">
   </head>
@@ -36,7 +38,7 @@
         <table>
           <tr ng-repeat="row in main.cells" ng-init="rowScope = this">
             <td ng-repeat="cell in row" style="{{main.getStyle(rowScope.$index, $index)}}">
-              <input ng-model="cell.value" type="number">
+              <input ng-model="cell.value" ng-change="main.syncCells()" type="number">
               {{main.showPossibilities ? cell.possibilities : ''}}
             </td>
           </tr>
