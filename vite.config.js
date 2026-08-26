@@ -21,7 +21,11 @@ const gameInputs = Object.fromEntries(
 );
 
 export default defineConfig({
-  base: "/silly-games/",
+  base: process.env.NODE_ENV === "production" ? "/silly-games/" : "/",
+  server: {
+    host: true,
+    allowedHosts: true,
+  },
   define: {
     __GAMES__: JSON.stringify(Object.keys(gameInputs).sort()),
   },
