@@ -139,7 +139,7 @@ export default function App() {
   if (!roomId) {
     return (
       <div className="game-page">
-        <h1>נקודות ותיבות</h1>
+        <h1>קווים וריבועים</h1>
         <div className="lobby">
           <button className="create-btn" onClick={createRoom}>צור משחק</button>
         </div>
@@ -150,7 +150,7 @@ export default function App() {
   if (!room) {
     return (
       <div className="game-page">
-        <h1>נקודות ותיבות</h1>
+        <h1>קווים וריבועים</h1>
         <p className="pulse">מתחבר...</p>
       </div>
     );
@@ -160,7 +160,7 @@ export default function App() {
   if (room.status === "waiting") {
     return (
       <div className="game-page">
-        <h1>נקודות ותיבות</h1>
+        <h1>קווים וריבועים</h1>
         <div className="waiting">
           <div className="share-box">
             <p>שלח קישור זה לחבר:</p>
@@ -289,7 +289,7 @@ export default function App() {
 
   return (
     <div className="game-page">
-      <h1>נקודות ותיבות</h1>
+      <h1>קווים וריבועים</h1>
       {myRole && (
         <p className="player-badge">
           אתה שחקן <span className={myRole.toLowerCase()}>{myRole === "A" ? "1" : "2"}</span>
