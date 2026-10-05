@@ -139,9 +139,9 @@ export default function App() {
   if (!roomId) {
     return (
       <div className="game-page">
-        <h1>Dots & Boxes</h1>
+        <h1>נקודות ותיבות</h1>
         <div className="lobby">
-          <button className="create-btn" onClick={createRoom}>Create Game</button>
+          <button className="create-btn" onClick={createRoom}>צור משחק</button>
         </div>
       </div>
     );
@@ -150,8 +150,8 @@ export default function App() {
   if (!room) {
     return (
       <div className="game-page">
-        <h1>Dots & Boxes</h1>
-        <p className="pulse">Connecting...</p>
+        <h1>נקודות ותיבות</h1>
+        <p className="pulse">מתחבר...</p>
       </div>
     );
   }
@@ -160,10 +160,10 @@ export default function App() {
   if (room.status === "waiting") {
     return (
       <div className="game-page">
-        <h1>Dots & Boxes</h1>
+        <h1>נקודות ותיבות</h1>
         <div className="waiting">
           <div className="share-box">
-            <p>Send this link to a friend:</p>
+            <p>שלח קישור זה לחבר:</p>
             <div className="share-link">
               <input
                 readOnly
@@ -171,11 +171,11 @@ export default function App() {
                 onFocus={(e) => e.target.select()}
               />
               <button className="copy-btn" onClick={copyLink}>
-                {copied ? "Copied!" : "Copy"}
+                {copied ? "הועתק!" : "העתק"}
               </button>
             </div>
           </div>
-          <p className="pulse">Waiting for opponent...</p>
+          <p className="pulse">מחכה ליריב...</p>
         </div>
       </div>
     );
@@ -195,18 +195,18 @@ export default function App() {
   let statusText;
   if (room.status === "done") {
     if (scores.A > scores.B) {
-      statusText = myRole === "A" ? "You win!" : myRole === "B" ? "You lose!" : "Player 1 wins!";
+      statusText = myRole === "A" ? "ניצחת!" : myRole === "B" ? "הפסדת!" : "שחקן 1 מנצח!";
     } else if (scores.B > scores.A) {
-      statusText = myRole === "B" ? "You win!" : myRole === "A" ? "You lose!" : "Player 2 wins!";
+      statusText = myRole === "B" ? "ניצחת!" : myRole === "A" ? "הפסדת!" : "שחקן 2 מנצח!";
     } else {
-      statusText = "It's a draw!";
+      statusText = "זה שוויון!";
     }
   } else if (isSpectator) {
-    statusText = `Player ${room.turn === "A" ? "1" : "2"}'s turn`;
+    statusText = `תור של שחקן ${room.turn === "A" ? "1" : "2"}`;
   } else if (isMyTurn) {
-    statusText = "Your turn";
+    statusText = "התור שלך";
   } else {
-    statusText = "Opponent's turn...";
+    statusText = "תור היריב...";
   }
 
   // Build board elements
@@ -289,10 +289,10 @@ export default function App() {
 
   return (
     <div className="game-page">
-      <h1>Dots & Boxes</h1>
+      <h1>נקודות ותיבות</h1>
       {myRole && (
         <p className="player-badge">
-          You are Player <span className={myRole.toLowerCase()}>{myRole === "A" ? "1" : "2"}</span>
+          אתה שחקן <span className={myRole.toLowerCase()}>{myRole === "A" ? "1" : "2"}</span>
         </p>
       )}
       <div className="scoreboard">
@@ -313,9 +313,9 @@ export default function App() {
       </div>
       <div className="actions">
         {room.status === "done" && !isSpectator && (
-          <button onClick={handleRematch}>Rematch</button>
+          <button onClick={handleRematch}>משחק חזרה</button>
         )}
-        <button onClick={handleNewGame}>New Game</button>
+        <button onClick={handleNewGame}>משחק חדש</button>
       </div>
     </div>
   );

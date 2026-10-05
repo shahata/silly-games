@@ -152,9 +152,9 @@ export default function App() {
   if (!roomId) {
     return (
       <div className="game-page">
-        <h1>Four in a Row</h1>
+        <h1>ארבע בשורה</h1>
         <div className="lobby">
-          <button className="create-btn" onClick={createRoom}>Create Game</button>
+          <button className="create-btn" onClick={createRoom}>צור משחק</button>
         </div>
       </div>
     );
@@ -163,8 +163,8 @@ export default function App() {
   if (!room) {
     return (
       <div className="game-page">
-        <h1>Four in a Row</h1>
-        <p className="pulse">Connecting...</p>
+        <h1>ארבע בשורה</h1>
+        <p className="pulse">מתחבר...</p>
       </div>
     );
   }
@@ -173,10 +173,10 @@ export default function App() {
   if (room.status === "waiting") {
     return (
       <div className="game-page">
-        <h1>Four in a Row</h1>
+        <h1>ארבע בשורה</h1>
         <div className="waiting">
           <div className="share-box">
-            <p>Send this link to a friend:</p>
+            <p>שלח קישור זה לחבר:</p>
             <div className="share-link">
               <input
                 readOnly
@@ -184,11 +184,11 @@ export default function App() {
                 onFocus={(e) => e.target.select()}
               />
               <button className="copy-btn" onClick={copyLink}>
-                {copied ? "Copied!" : "Copy"}
+                {copied ? "הועתק!" : "העתק"}
               </button>
             </div>
           </div>
-          <p className="pulse">Waiting for opponent...</p>
+          <p className="pulse">מחכה ליריב...</p>
         </div>
       </div>
     );
@@ -207,29 +207,29 @@ export default function App() {
   let statusText;
   if (room.status === "done") {
     if (room.winner === "draw") {
-      statusText = "It's a draw!";
+      statusText = "זה שוויון!";
     } else if (room.winner === myColor) {
-      statusText = "You win!";
+      statusText = "ניצחת!";
     } else if (isSpectator) {
-      statusText = `${room.winner === R ? "Red" : "Yellow"} wins!`;
+      statusText = `${room.winner === R ? "אדום" : "צהוב"} מנצח!`;
     } else {
-      statusText = "You lose!";
+      statusText = "הפסדת!";
     }
   } else if (isSpectator) {
-    statusText = `${room.turn === R ? "Red" : "Yellow"}'s turn`;
+    statusText = `תור של ${room.turn === R ? "אדום" : "צהוב"}`;
   } else if (isMyTurn) {
-    statusText = "Your turn";
+    statusText = "התור שלך";
   } else {
-    statusText = "Opponent's turn...";
+    statusText = "תור היריב...";
   }
 
   return (
     <div className="game-page" style={{ "--cell-size": `${cellSize}px` }}>
-      <h1>Four in a Row</h1>
+      <h1>ארבע בשורה</h1>
       {myColor && (
         <p className="player-badge">
-          You are <span className={myColor.toLowerCase()}>
-            {myColor === R ? "Red" : "Yellow"}
+          אתה <span className={myColor.toLowerCase()}>
+            {myColor === R ? "אדום" : "צהוב"}
           </span>
         </p>
       )}
@@ -266,9 +266,9 @@ export default function App() {
       </div>
       <div className="actions">
         {room.status === "done" && !isSpectator && (
-          <button onClick={handleRematch}>Rematch</button>
+          <button onClick={handleRematch}>משחק חזרה</button>
         )}
-        <button onClick={handleNewGame}>New Game</button>
+        <button onClick={handleNewGame}>משחק חדש</button>
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 <!doctype html>
-<html ng-app="sudokuApp">
+<html lang="he" ng-app="sudokuApp">
   <head>
-    <title>Sudoku Solver</title>
+    <title>פותר סודוקו</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#1a1a2e">
@@ -16,18 +16,18 @@
   </head>
   <body>
     <script>document.fonts.ready.then(() => document.body.classList.add('ready'))</script>
-    <a class="back-home" href="../">&larr; Home</a>
+    <a class="back-home" href="../">&larr; בית</a>
     <div class="game-page" ng-controller="MainController as main">
-      <span class="new-game" role="img" aria-label="Restart" ng-click="main.restart()">🔄</span>
+      <span class="new-game" role="img" aria-label="התחל מחדש" ng-click="main.restart()">🔄</span>
       <div class="controls">
-        <button ng-click="main.solve(true)">Solve!</button>
+        <button ng-click="main.solve(true)">פתור!</button>
         <label>
           <input type="checkbox" ng-model="main.showPossibilities" id="showPossibilities">
-          possibilities
+          אפשרויות
         </label>
         <label>
           <input type="checkbox" ng-model="main.showCode" id="showCode">
-          code
+          קוד
         </label>
       </div>
       <div class="grid-wrapper">
@@ -44,7 +44,7 @@
       <div class="game-popup-overlay" ng-if="main.showPopup">
         <div class="game-popup">
           <h2>{{main.result}}</h2>
-          <button class="ok-btn" ng-click="main.dismissPopup()">OK</button>
+          <button class="ok-btn" ng-click="main.dismissPopup()">אישור</button>
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Suez+One&display=swap');
 
 :root {
   --neon-accent: #00d4ff;
@@ -14,7 +14,7 @@
 
 body {
   background: var(--bg-dark);
-  font-family: 'Press Start 2P', monospace;
+  font-family: 'Suez One', 'Press Start 2P', monospace;
   min-height: 100vh;
   color: #eee;
   overflow-x: hidden;
@@ -54,7 +54,7 @@ body::after {
   position: fixed;
   top: 12px;
   left: 12px;
-  font-family: 'Press Start 2P', monospace;
+  font-family: 'Suez One', 'Press Start 2P', monospace;
   font-size: 10px;
   color: #888;
   text-decoration: none;
@@ -111,7 +111,7 @@ body::after {
 }
 
 .game-popup h2 {
-  font-family: 'Press Start 2P', monospace;
+  font-family: 'Suez One', 'Press Start 2P', monospace;
   color: var(--neon-accent);
   font-size: clamp(16px, 4vw, 24px);
   margin-bottom: 24px;
@@ -125,7 +125,7 @@ body::after {
   border: 2px solid var(--neon-accent);
   border-radius: 4px;
   color: var(--neon-accent);
-  font-family: 'Press Start 2P', monospace;
+  font-family: 'Suez One', 'Press Start 2P', monospace;
   font-size: 11px;
   cursor: pointer;
   transition: background-color 0.2s, box-shadow 0.2s;

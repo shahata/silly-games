@@ -1,13 +1,13 @@
 <!doctype html>
-<html lang="en">
+<html lang="he">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     <meta name="theme-color" content="#1a1a2e">
-    <title>Silly Games</title>
+    <title>משחקים מטופשים</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Suez+One&display=swap" rel="stylesheet">
     <style>
       * {
         margin: 0;
@@ -17,7 +17,7 @@
 
       body {
         background: #1a1a2e;
-        font-family: 'Press Start 2P', monospace;
+        font-family: 'Suez One', 'Press Start 2P', monospace;
         min-height: 100vh;
         display: flex;
         flex-direction: column;
@@ -82,7 +82,7 @@
         justify-content: center;
         text-align: center;
         padding: 1.4rem 1rem;
-        font-family: 'Press Start 2P', monospace;
+        font-family: 'Suez One', 'Press Start 2P', monospace;
         font-size: clamp(0.55rem, 1.5vw, 0.8rem);
         line-height: 1.6;
         color: #fff;
@@ -126,21 +126,32 @@
     </style>
   </head>
   <body>
-    <h1>Silly Games</h1>
+    <h1>משחקים מטופשים</h1>
     <div id="games"></div>
-    <footer>Insert Coin To Continue</footer>
+    <footer>הכניסו מטבע להמשך</footer>
     <template id="game-link">
       <a class="game-btn"></a>
     </template>
     <script>document.fonts.ready.then(() => document.body.classList.add('ready'))</script>
     <script type="module">
+      const gameNames = {
+        "15-puzzle": "פאזל 15",
+        "bulls-and-cows": "פרים ופרות",
+        "dots-and-boxes": "נקודות ותיבות",
+        "four-in-a-row": "ארבע בשורה",
+        "memory-game": "משחק זיכרון",
+        "minesweeper": "שדה מוקשים",
+        "sudoku-solver": "פותר סודוקו",
+        "tapper": "מיני טאפר",
+        "tic-tac-toe": "איקס עיגול",
+      };
       const template = document.getElementById("game-link");
       const container = document.getElementById("games");
       for (const name of __GAMES__) {
         const clone = template.content.cloneNode(true);
         const a = clone.querySelector("a");
         a.href = name + "/";
-        a.textContent = name
+        a.textContent = gameNames[name] || name
           .replace(/-/g, " ")
           .replace(/\b\w/g, (c) => c.toUpperCase());
         container.append(clone);

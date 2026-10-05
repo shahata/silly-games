@@ -136,10 +136,10 @@ export default function App() {
   if (!roomId) {
     return (
       <div className="game-page">
-        <h1>Tic Tac Toe</h1>
+        <h1>איקס עיגול</h1>
         <div className="lobby">
           <button className="create-btn" onClick={createRoom}>
-            Create Game
+            צור משחק
           </button>
         </div>
       </div>
@@ -150,8 +150,8 @@ export default function App() {
   if (!room) {
     return (
       <div className="game-page">
-        <h1>Tic Tac Toe</h1>
-        <p className="pulse">Connecting...</p>
+        <h1>איקס עיגול</h1>
+        <p className="pulse">מתחבר...</p>
       </div>
     );
   }
@@ -163,10 +163,10 @@ export default function App() {
   if (room.status === "waiting") {
     return (
       <div className="game-page">
-        <h1>Tic Tac Toe</h1>
+        <h1>איקס עיגול</h1>
         <div className="waiting">
           <div className="share-box">
-            <p>Send this link to a friend:</p>
+            <p>שלח קישור זה לחבר:</p>
             <div className="share-link">
               <input
                 readOnly
@@ -174,11 +174,11 @@ export default function App() {
                 onFocus={(e) => e.target.select()}
               />
               <button className="copy-btn" onClick={copyLink}>
-                {copied ? "Copied!" : "Copy"}
+                {copied ? "הועתק!" : "העתק"}
               </button>
             </div>
           </div>
-          <p className="pulse">Waiting for opponent...</p>
+          <p className="pulse">מחכה ליריב...</p>
         </div>
       </div>
     );
@@ -193,28 +193,28 @@ export default function App() {
   let statusText;
   if (room.status === "done") {
     if (result === "draw") {
-      statusText = "It's a draw!";
+      statusText = "זה שוויון!";
     } else if (result === mySymbol) {
-      statusText = "You win!";
+      statusText = "ניצחת!";
     } else if (isSpectator) {
-      statusText = `${result} wins!`;
+      statusText = `${result} מנצח!`;
     } else {
-      statusText = "You lose!";
+      statusText = "הפסדת!";
     }
   } else if (isSpectator) {
-    statusText = `${room.turn}'s turn`;
+    statusText = `התור של ${room.turn}`;
   } else if (isMyTurn) {
-    statusText = "Your turn";
+    statusText = "התור שלך";
   } else {
-    statusText = "Opponent's turn...";
+    statusText = "תור היריב...";
   }
 
   return (
     <div className="game-page">
-      <h1>Tic Tac Toe</h1>
+      <h1>איקס עיגול</h1>
       {mySymbol && (
         <p className="player-badge">
-          You are <span className={mySymbol.toLowerCase()}>{mySymbol}</span>
+          אתה <span className={mySymbol.toLowerCase()}>{mySymbol}</span>
         </p>
       )}
       <p className={`status ${isMyTurn && room.status === "playing" ? "your-turn" : ""}`}>
@@ -233,9 +233,9 @@ export default function App() {
       </div>
       <div className="actions">
         {room.status === "done" && !isSpectator && (
-          <button onClick={handleRematch}>Rematch</button>
+          <button onClick={handleRematch}>משחק חזרה</button>
         )}
-        <button onClick={handleNewGame}>New Game</button>
+        <button onClick={handleNewGame}>משחק חדש</button>
       </div>
     </div>
   );

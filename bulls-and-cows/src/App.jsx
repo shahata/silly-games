@@ -66,7 +66,7 @@ function Game() {
       <span
         className="NewGame"
         role="img"
-        aria-label="Restart"
+        aria-label="התחל מחדש"
         onClick={restart}
       >
         🔄
@@ -108,9 +108,9 @@ function Game() {
       {showPopup && (
         <div className="game-popup-overlay">
           <div className="game-popup">
-            <h2>{won ? "You Win!" : "You Lost!"}</h2>
+            <h2>{won ? "ניצחת!" : "הפסדת!"}</h2>
             <button className="ok-btn" onClick={() => setShowPopup(false)}>
-              OK
+              אישור
             </button>
           </div>
         </div>
