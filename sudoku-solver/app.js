@@ -45,7 +45,7 @@ class MainController {
       return new Cell(v);
     }
 
-    this.code = "code is generated when you click the solve button";
+    this.code = "הקוד נוצר כאשר לוחצים על כפתור הפתרון";
 
     this.cells = [];
     for (let i = 0; i < TABLE_WIDTH; i++) {
@@ -255,12 +255,12 @@ class MainController {
       this.$timeout(() => this.solve(), 10);
     } else if (this.getAll().some((cell) => !cell.value)) {
       this.$timeout(() => {
-        this.result = "Stuck!";
+        this.result = "תקוע!";
         this.showPopup = true;
       }, 0);
     } else {
       this.$timeout(() => {
-        this.result = "Solved!";
+        this.result = "נפתר!";
         this.showPopup = true;
       }, 0);
     }

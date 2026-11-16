@@ -31,7 +31,7 @@ function Game() {
       <span
         className="NewGame"
         role="img"
-        aria-label="New Game"
+        aria-label="משחק חדש"
         onClick={startGame}
       >
         🔄
@@ -61,7 +61,7 @@ function Game() {
               className="ok-btn"
               onClick={() => setShowPopup(false)}
             >
-              OK
+              אישור
             </button>
           </div>
         </div>

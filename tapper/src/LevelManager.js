@@ -12,7 +12,7 @@ const MAX_LIFE = 3;
 
 const GAME_TITLE_LOGO_WIDTH = 416;
 const GAME_TITLE_LOGO_HEIGHT = 160;
-const COPYRIGHT_1 = "Based on the Original Tapper Game";
+const COPYRIGHT_1 = "מבוסס על משחק הטאפר המקורי";
 const COPYRIGHT_2 = "(c) 1983 Bally Midway MFG";
 
 const LIFE_ICON_OFFSET = 0;
@@ -85,10 +85,12 @@ class LevelManager {
     context.fillStyle = "rgb(255,255,255)";
     context.font = "bold 14px Courier";
     context.textBaseline = "top";
+    context.textAlign = "center";
 
-    context.fillText(COPYRIGHT_1, 122, 290);
-    context.fillText(COPYRIGHT_2, 154, 310);
-    context.fillText("Press [ENTER] to play", 172, 400);
+    context.fillText(COPYRIGHT_1, context.canvas.width / 2, 290);
+    context.fillText(COPYRIGHT_2, context.canvas.width / 2, 310);
+    context.fillText("הקש [ENTER] למשחק", context.canvas.width / 2, 400);
+    context.textAlign = "left";
   }
 
   displayReadyToPlay(context) {
@@ -107,12 +109,14 @@ class LevelManager {
     context.fillStyle = "rgb(255,255,255)";
     context.font = "bold 14px Courier";
     context.textBaseline = "top";
+    context.textAlign = "center";
 
     context.fillText(
       text,
-      (context.canvas.width - 180) / 2 + 48,
+      context.canvas.width / 2,
       (context.canvas.height - 32) / 2 + 8,
     );
+    context.textAlign = "left";
   }
 
   drawLevelBackground(context) {

@@ -116,9 +116,9 @@ class Game {
         AutoPlayer.update();
         this.#isKeyPressAllowed = Player.draw(this.#frameBuffer);
         if (GameState.state === STATE_GAME_OVER) {
-          LevelManager.displayTextOverlay(this.#frameBuffer, "Game Over !");
+          LevelManager.displayTextOverlay(this.#frameBuffer, "המשחק נגמר!");
         } else if (GameState.state === STATE_PAUSE) {
-          LevelManager.displayTextOverlay(this.#frameBuffer, "Game Paused");
+          LevelManager.displayTextOverlay(this.#frameBuffer, "המשחק מושהה");
         }
         break;
     }

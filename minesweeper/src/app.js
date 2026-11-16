@@ -25,10 +25,10 @@ function MinesweeperCtrl($scope) {
   $scope.$watch("minefield.state", (newValue) => {
     $scope.$evalAsync(() => {
       if (newValue === gameState.LOST) {
-        $scope.endMessage = "You Lost!";
+        $scope.endMessage = "הפסדת!";
         $scope.showPopup = true;
       } else if (newValue === gameState.WON) {
-        $scope.endMessage = "You Won!";
+        $scope.endMessage = "ניצחת!";
         $scope.showPopup = true;
       }
     });

@@ -70,7 +70,9 @@ class ResourceManager {
     context.fillStyle = "white";
     context.font = "bold 14px Courier";
     context.textBaseline = "top";
-    context.fillText("Loading...", 218, 300);
+    context.textAlign = "center";
+    context.fillText("טוען...", context.canvas.width / 2, 300);
+    context.textAlign = "left";
   }
 
   getImageResource(name) {

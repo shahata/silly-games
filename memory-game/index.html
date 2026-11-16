@@ -1,7 +1,7 @@
 <!doctype html>
-<html ng-app="angularMemoryGameApp">
+<html lang="he" ng-app="angularMemoryGameApp">
   <head>
-    <title>Memory Game</title>
+    <title>משחק זיכרון</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#1a1a2e">
@@ -16,10 +16,10 @@
   </head>
   <body>
     <script>document.fonts.ready.then(() => document.body.classList.add('ready'))</script>
-    <a class="back-home" href="../">&larr; Home</a>
+    <a class="back-home" href="../">&larr; בית</a>
     <div class="game-page" ng-controller="GameController as gameCtrl">
-      <span class="new-game" role="img" aria-label="New Game" ng-click="gameCtrl.restart()">🔄</span>
-      <div class="pairs-left">Pairs left: {{gameCtrl.game.unmatchedPairs}}</div>
+      <span class="new-game" role="img" aria-label="משחק חדש" ng-click="gameCtrl.restart()">🔄</span>
+      <div class="pairs-left">זוגות שנותרו: {{gameCtrl.game.unmatchedPairs}}</div>
       <table>
         <tr ng-repeat="row in gameCtrl.game.grid">
           <td ng-repeat="tile in row" class="container">
@@ -33,8 +33,8 @@
       <div class="message" ng-if="gameCtrl.game.unmatchedPairs > 0">{{gameCtrl.game.message}}</div>
       <div class="game-popup-overlay" ng-if="gameCtrl.game.unmatchedPairs === 0 && !gameCtrl.popupDismissed">
         <div class="game-popup">
-          <h2>You Win!</h2>
-          <button class="ok-btn" ng-click="gameCtrl.dismissPopup()">OK</button>
+          <h2>ניצחת!</h2>
+          <button class="ok-btn" ng-click="gameCtrl.dismissPopup()">אישור</button>
         </div>
       </div>
     </div>
